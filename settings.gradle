@@ -1,0 +1,3 @@
+rootProject.name = "2018powerup"
+
+include "common", "5333", "5663"

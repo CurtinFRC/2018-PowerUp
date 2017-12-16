@@ -1,0 +1,37 @@
+apply plugin: "jaci.openrio.gradle.GradleRIO"
+apply plugin: "cpp"
+
+deploy {
+    targets {
+        target("roborio5333", jaci.openrio.gradle.frc.RoboRIO) {
+            team = 5333
+        }
+    }
+    artifacts {
+        artifact("robotCode", jaci.openrio.gradle.frc.FRCNativeArtifact) {
+            targets << "roborio5333"
+            component = 'frcUserProgram'
+        }
+    }
+}
+
+model {
+    components {
+        frcUserProgram(NativeExecutableSpec) {
+            targetPlatform 'roborio'
+            sources.cpp {
+                source {
+                    srcDir 'src/cpp'
+                    include '**/*.cpp'
+                }
+                exportedHeaders {
+                    srcDir 'src/include'
+                    include '**/*.hpp', '**/*.h'
+                }
+
+                lib library: "wpilib"
+                lib project: ":common", library: "curtinFrcCommon", linkage: "static"
+            }
+        }
+    }
+}

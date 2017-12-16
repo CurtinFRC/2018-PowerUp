@@ -1,0 +1,22 @@
+apply plugin: "jaci.openrio.gradle.GradleRIO"
+apply plugin: "cpp"
+
+model {
+    components {
+        curtinFrcCommon(NativeLibrarySpec) {
+            targetPlatform 'roborio'
+            sources.cpp {
+                source {
+                    srcDir 'src/cpp'
+                    include '**/*.cpp'
+                }
+                exportedHeaders {
+                    srcDir 'src/include'
+                    include '**/*.hpp', '**/*.h'
+                }
+
+                lib library: "wpilib"
+            }
+        }
+    }
+}
