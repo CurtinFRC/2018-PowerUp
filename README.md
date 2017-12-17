@@ -3,6 +3,7 @@
 
 ## Getting Started
 *if you're on mac or linux, you will have to run `chmod +x gradlew` before working*  
+Make sure to read 'Making Changes' to get your repository set up first!  
 
 1. Install the Toolchain (`./gradlew :common:installToolchain`)  
 2. Run a build (`./gradlew :5333:build` or `./gradlew :5663:build`)  
