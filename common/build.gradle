@@ -16,6 +16,8 @@ model {
                 }
 
                 lib library: "wpilib"
+                lib library: "ctre"
+                lib library: "navx"
             }
         }
     }

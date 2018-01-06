@@ -1,5 +1,5 @@
 plugins {
-    id "jaci.openrio.gradle.GradleRIO" version "2018.01.06" apply false
+    id "jaci.openrio.gradle.GradleRIO" version "2018.01.06b" apply false
     id "jaci.gradle.EmbeddedTools" version "2017.12.23" apply false
 }
 

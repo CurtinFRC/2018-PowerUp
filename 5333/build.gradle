@@ -30,6 +30,8 @@ model {
                 }
 
                 lib library: "wpilib"
+                lib library: "ctre"
+                lib library: "navx"
                 lib project: ":common", library: "curtinFrcCommon", linkage: "static"
             }
         }
