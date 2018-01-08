@@ -4,6 +4,7 @@
 #include <string>
 #include <SmartDashboard/SmartDashboard.h>
 #include <PowerDistributionPanel.h>
+#include "ctre/Phoenix.h"
 
 using namespace frc;
 using namespace curtinfrc;
@@ -13,7 +14,12 @@ class Robot : public IterativeRobot {
   XboxController *xbox = new XboxController(0);
   PowerDistributionPanel *pdp = new PowerDistributionPanel(0);
   SendableChooser<int*> *AutoChooser = new SendableChooser<int*>; // Choose auto mode
+  TalonSRX *left1 = new TalonSRX(1), *left2 = new TalonSRX(2), *left3 = new TalonSRX(3),
+    *right1 = new TalonSRX(4), *right2 = new TalonSRX(5), *right3 = new TalonSRX(6);
 public:
+  // Configuration settings: (maybe make a sperate file for these?)
+  double deadzone = 0.04; //Stop the robot being a sneaky snail
+  // Regular variables
   string gameData;
   bool A,B,X,Y,LB,RB,back,start,LS,RS;
   double LX,LY,RX,RY,LT,RT,Dpad;
@@ -27,7 +33,16 @@ public:
     updateDash();
   }
 
-  void getValues() { //Set variables for the xbox controller values for easy coding
+  void Drive(double l, double r) {  //probably a wpi class to do this for us but I couldnt find one so.
+    if(-deadzone < l && l < deadzone) l == 0;
+    if(-deadzone < r && r < deadzone) r == 0;
+    l *= abs(l);
+    r *= abs(r); // square inputs
+    left1->Set(ControlMode::PercentOutput,l); left2->Set(ControlMode::PercentOutput,l); left3->Set(ControlMode::PercentOutput,l);
+    right1->Set(ControlMode::PercentOutput,l); right2->Set(ControlMode::PercentOutput,l); right2->Set(ControlMode::PercentOutput,l);
+  }
+
+  void getValues() { //Set variables for the xbox controller values for easy coding (put in seperate file?)
     A = xbox->GetRawButton(1);
     B = xbox->GetRawButton(2);
     X = xbox->GetRawButton(3);
@@ -47,7 +62,7 @@ public:
     Dpad = xbox->GetPOV();
   }
 
-  void updateDash() { //Put new controller values to the dashboard
+  void updateDash() { //Put new controller values to the dashboard (put in seperate file?)
     SmartDashboard::PutNumber("D-Pad", Dpad);
     SmartDashboard::PutNumber("Current Draw", pdp->GetTotalCurrent());
     SmartDashboard::PutBoolean("A", A);
@@ -84,6 +99,7 @@ public:
   void TeleopPeriodic() {
     void getValues();
     void updateDash();
+    Drive(LY,RY);
   }
 
   void TestInit() { }
