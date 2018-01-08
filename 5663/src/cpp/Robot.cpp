@@ -11,11 +11,11 @@ using namespace curtinfrc;
 using namespace std;
 
 class Robot : public IterativeRobot {
-  XboxController *xbox = new XboxController(0);
-  PowerDistributionPanel *pdp = new PowerDistributionPanel(0);
-  SendableChooser<int*> *AutoChooser = new SendableChooser<int*>; // Choose auto mode
-  TalonSRX *left1 = new TalonSRX(1), *left2 = new TalonSRX(2), *left3 = new TalonSRX(3),
-    *right1 = new TalonSRX(4), *right2 = new TalonSRX(5), *right3 = new TalonSRX(6);
+  XboxController *xbox;
+  PowerDistributionPanel *pdp;
+  SendableChooser<int*> *AutoChooser; // Choose auto mode
+  TalonSRX *left1, *left2, *left3,
+    *right1, *right2, *right3;
 public:
   // Configuration settings: (maybe make a sperate file for these?)
   double deadzone = 0.04; //Stop the robot being a sneaky snail
@@ -25,7 +25,11 @@ public:
   double LX,LY,RX,RY,LT,RT,Dpad;
   int Auto;
   void RobotInit() {
-    std::cout << "0.5^2 = " << math::square_keep_sign(0.5) << std::endl; //?
+    xbox = new XboxController(0);
+    pdp = new PowerDistributionPanel(0);
+    AutoChooser = new SendableChooser<int*>;
+    left1 = new TalonSRX(1); left2 = new TalonSRX(2); left3 = new TalonSRX(3);
+    right1 = new TalonSRX(4); right2 = new TalonSRX(4); right3 = new TalonSRX(5);
     AutoChooser->AddDefault("Cross Baseline",(int*) 0);
     AutoChooser->AddObject("Auto 1",(int*) 1);
     AutoChooser->AddObject("Auto 2",(int*) 2);
