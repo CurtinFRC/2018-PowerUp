@@ -29,7 +29,6 @@ public:
   int Auto, gearMode;
   void RobotInit() {
     xbox = new XboxController(0);
-    out = new gyroPID();
     pdp = new PowerDistributionPanel(0);
     AutoChooser = new SendableChooser<int*>;
     left1 = new TalonSRX(1); left2 = new TalonSRX(2); left3 = new TalonSRX(3);
