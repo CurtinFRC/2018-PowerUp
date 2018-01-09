@@ -1,25 +1,30 @@
 #include "WPILib.h"
-
 #include "curtinfrc/math.h"
-
+#include "DriveBase.h"
+#include "IO.h"
 #include <iostream>
 
-using namespace frc;
-using namespace curtinfrc;
+using namespace frc; // WPILib classes/functions
 
 class Robot : public IterativeRobot {
-    void RobotInit() {
-        std::cout << "0.5^2 = " << math::square_keep_sign(0.5) << std::endl;
-    }
+public:
+  DriveControl *drive;
 
-    void AutonomousInit() { }
-    void AutonomousPeriodic() { }
-    
-    void TeleopInit() { }
-    void TeleopPeriodic() { }
+  Robot() { }
 
-    void TestInit() { }
-    void TestPeriodic() { }
+  void RobotInit() {
+    IO::get_instance();
+    drive = new DriveControl();
+  }
+
+  void AutonomousInit() { }
+  void AutonomousPeriodic() { }
+
+  void TeleopInit() { }
+  void TeleopPeriodic() { }
+
+  void TestInit() { }
+  void TestPeriodic() { }
 };
 
 START_ROBOT_CLASS(Robot)
