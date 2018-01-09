@@ -7,5 +7,3 @@ public:
   double get_tank_right(double input_right_y);
   void send_to_robot(double input_left_y, double input_right_y);
 };
-
-double square_keep_sign(double input);
