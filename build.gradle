@@ -12,3 +12,9 @@ subprojects {
 task wrapper(type: Wrapper) {
     gradleVersion = '4.4'
 }
+
+task visualStudio() {
+    dependsOn ":common:curtinFrcCommonVisualStudio"
+    dependsOn ":5333:frcUserProgramVisualStudio"
+    dependsOn ":5663:frcUserProgramVisualStudio"
+}
