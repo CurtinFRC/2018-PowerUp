@@ -9,6 +9,8 @@ void IO::setup() { // Sets up IO
   right_motors[0] = new Victor(2);
   right_motors[1] = new Victor(3);
 
+  arm_motor = new Victor(4);
+
   // loader = new DoubleSolonoid(1,0,1);
 
   xbox = new XboxController(0);

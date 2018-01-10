@@ -7,6 +7,8 @@ class IO {
 public:
   Victor *left_motors[2];
   Victor *right_motors[2];
+  
+  Victor *arm_motor;
 
   // DoubleSolonoid *loader;
 
