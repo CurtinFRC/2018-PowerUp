@@ -1,7 +1,7 @@
 #include "WPILib.h"
-#include "curtinfrc/math.h"
 #include "DriveBase.h"
 #include "IO.h"
+#include "Lift.h"
 #include <iostream>
 
 using namespace frc; // WPILib classes/functions
@@ -9,19 +9,26 @@ using namespace frc; // WPILib classes/functions
 class Robot : public IterativeRobot {
 public:
   DriveControl *drive;
+  LiftControl *lift;
 
   Robot() { }
 
   void RobotInit() {
     IO::get_instance();
     drive = new DriveControl();
+    lift = new LiftControl();
   }
 
   void AutonomousInit() { }
   void AutonomousPeriodic() { }
 
   void TeleopInit() { }
-  void TeleopPeriodic() { }
+  void TeleopPeriodic() {
+    lift->send_to_robot(
+      IO::get_instance()->xbox->GetTriggerAxis(XboxController::JoystickHand::kRightHand)
+      - IO::get_instance()->xbox->GetTriggerAxis(XboxController::JoystickHand::kRightHand)
+    );
+  }
 
   void TestInit() { }
   void TestPeriodic() { }
