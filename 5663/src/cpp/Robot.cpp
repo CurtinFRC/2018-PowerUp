@@ -7,6 +7,7 @@
 #include <PowerDistributionPanel.h>
 #include "ctre/Phoenix.h"
 #include <PIDOutput.h>
+#include "components/Drive.h"
 
 using namespace frc;
 using namespace curtinfrc;
