@@ -5,8 +5,8 @@
 #include <string>
 #include <SmartDashboard/SmartDashboard.h>
 #include <PowerDistributionPanel.h>
-#include "ctre/Phoenix.h"
 #include <PIDOutput.h>
+
 #include "components/Drive.h"
 
 using namespace frc;
@@ -18,8 +18,6 @@ class Robot : public IterativeRobot {
   XboxController *xbox;
   PowerDistributionPanel *pdp;
   SendableChooser<int*> *AutoChooser; // Choose auto mode
-// Solenoids for pneumatics, I'm just using them for ball shifters atm;
-  // AHRS *ahrs;
   PIDController *turn;
   Drive *drive;
 public:
@@ -28,6 +26,7 @@ public:
   // Regular variables
   string gameData;
   int Auto, gearMode;
+
   void RobotInit() {
     xbox = new XboxController(0);
     pdp = new PowerDistributionPanel(0);
@@ -47,6 +46,7 @@ public:
     SmartDashboard::PutString("Enemy Switch:", &gameData[2]);  //Put data on shuffleboard
     Auto = (int) AutoChooser->GetSelected(); //What auto mode you wanna do
   }
+
   void AutonomousPeriodic() {
     // gameData will be an array with 3 characters, eg. "LRL"
     // check https://wpilib.screenstepslive.com/s/currentCS/m/getting_started/l/826278-2018-game-data-details
@@ -56,6 +56,7 @@ public:
   void TeleopInit() {
     drive->SetFastGear();
   }
+
   void TeleopPeriodic() {
     if(xbox->GetYButtonPressed()) {
       drive->ToggleGear();
