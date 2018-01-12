@@ -38,7 +38,7 @@ namespace components {
       double kP = 0.025, kI = 0.0004, kD = 0.04, kM = 26.0;
       int slowGear = rightGear->kForward;
       int fastGear = rightGear->kReverse;
-      double deadzone = 0.0;
+      double deadzone = 0.02;
       int currentGear = 0;
       int leftFinalDistance, rightFinalDistance;
   };

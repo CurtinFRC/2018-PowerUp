@@ -18,20 +18,16 @@ class Robot : public IterativeRobot {
   XboxController *xbox;
   PowerDistributionPanel *pdp;
   SendableChooser<int*> *AutoChooser; // Choose auto mode
-  PIDController *turn;
   Drive *drive;
 public:
-  // Configuration settings: (maybe make a sperate file for these?)
-  double deadzone = 0.04; //Stop the robot being a sneaky snail
-  // Regular variables
   string gameData;
-  int Auto, gearMode;
+  int Auto;
 
   void RobotInit() {
     xbox = new XboxController(0);
     pdp = new PowerDistributionPanel(0);
-    AutoChooser = new SendableChooser<int*>;
 
+    AutoChooser = new SendableChooser<int*>;
     AutoChooser->AddDefault("Cross Baseline",(int*) 0);
     AutoChooser->AddObject("Auto 1",(int*) 1);
     AutoChooser->AddObject("Auto 2",(int*) 2);
@@ -50,7 +46,6 @@ public:
   void AutonomousPeriodic() {
     // gameData will be an array with 3 characters, eg. "LRL"
     // check https://wpilib.screenstepslive.com/s/currentCS/m/getting_started/l/826278-2018-game-data-details
-    //SetSlowGear();
   }
 
   void TeleopInit() {
@@ -58,17 +53,11 @@ public:
   }
 
   void TeleopPeriodic() {
+    drive->TankDrive(xbox->GetY(xbox->kLeftHand), xbox->GetY(xbox->kRightHand));
     if(xbox->GetYButtonPressed()) {
       drive->ToggleGear();
     }
     drive->RunPeriodic();
-  }
-
-  void TestInit() {
-
-  }
-
-  void TestPeriodic() {
   }
 };
 

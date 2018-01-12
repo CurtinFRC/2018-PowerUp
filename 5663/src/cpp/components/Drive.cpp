@@ -19,6 +19,7 @@ Drive::Drive(int l1, int l2, int l3, int r1, int r2, int r3) {
   right2 = new TalonSRX(r2);
   right3 = new TalonSRX(r3);
 
+  //left2->Set(ControlMode::Follow, l1);
   imu = new AHRS(I2C::Port::kMXP);
 
   out = new gyroPID();
