@@ -2,5 +2,5 @@
 
 class IntakeControl {
 public:
-  void send_to_robot(double input);
+  void send_to_robot(bool input);
 };

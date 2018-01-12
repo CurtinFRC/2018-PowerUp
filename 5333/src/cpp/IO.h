@@ -1,25 +1,28 @@
 #pragma once
 #include "WPILib.h"
-#include "CANTalon.h"
+#include "curtinfrc/motors/CurtinTalonSRX.h"
 
 using namespace frc;
+using namespace curtinfrc;
 
 class IO {
 public:
-  CANTalon *left_motors[2];
-  CANTalon *right_motors[2];
+  CurtinTalonSRX *left_motors[2];
+  CurtinTalonSRX *right_motors[2];
 
-  CANTalon *lift_motor[1];
-
-  // DoubleSolonoid *loader;
+  CurtinTalonSRX *lift_motor[1];
+  CurtinTalonSRX *intake_motor[1];
 
   XboxController *xbox;
+
+  void setup();
 
   double get_left_trigger();
   double get_right_trigger();
   double get_left_y();
   double get_right_y();
+  bool get_left_bumper();
+  bool get_right_bumper();
 
-  void setup();
   static IO *get_instance();
 };
