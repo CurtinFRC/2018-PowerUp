@@ -34,6 +34,10 @@ void CurtinTalonSRX::StopMotor() {
   TalonSRX::NeutralOutput();
 }
 
+void CurtinTalonSRX::PIDWrite(double val) {
+  Set(val);
+}
+
 void CurtinTalonSRX::selftest_onstart() {
   StopMotor();
   _st_stage = 0;

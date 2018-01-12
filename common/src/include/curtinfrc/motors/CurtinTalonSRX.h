@@ -22,6 +22,7 @@ namespace curtinfrc {
     bool GetInverted() const override;
     void Disable() override;
     void StopMotor() override;
+    void PIDWrite(double val) override;
 
     // SELF TEST //
 
