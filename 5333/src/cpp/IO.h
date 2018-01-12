@@ -21,6 +21,7 @@ public:
   double get_right_trigger();
   double get_left_y();
   double get_right_y();
+  bool get_left_bumper();
   bool get_right_bumper();
 
   static IO *get_instance();
