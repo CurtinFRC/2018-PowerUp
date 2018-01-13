@@ -3,6 +3,7 @@
 #include "WPILib.h"
 #include "IO.h"
 #include "Lift.h"
+#include "Map.h"
 // #include "Claw.h"
 // #include "Intake.h"
 #include <iostream>
