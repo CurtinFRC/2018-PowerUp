@@ -3,13 +3,20 @@
 #include "curtinfrc/selftest/selftest.h"
 
 #include <SpeedController.h>
+#include <ctre/phoenix/MotorControl/CAN/BaseMotorController.h>
 #include <ctre/phoenix/MotorControl/CAN/TalonSRX.h>
 
 namespace curtinfrc {
 
-  class CurtinTalonSRX : public frc::SpeedController,
-    public ctre::phoenix::motorcontrol::can::TalonSRX,
+  class CurtinTalonSRX : public virtual ctre::phoenix::motorcontrol::can::TalonSRX,
+    public virtual frc::SpeedController,
     public ISelfTestable {
+  public:
+    using ctre::phoenix::motorcontrol::can::TalonSRX::TalonSRX;
+    using ctre::phoenix::motorcontrol::can::BaseMotorController::BaseMotorController;
+    
+    CurtinTalonSRX() = delete;
+    CurtinTalonSRX(int c) : BaseMotorController(c | 0x02040000), TalonSRX(c) {}
 
     typedef ctre::phoenix::motorcontrol::ControlMode ControlMode;
 
@@ -22,6 +29,7 @@ namespace curtinfrc {
     bool GetInverted() const override;
     void Disable() override;
     void StopMotor() override;
+    void PIDWrite(double val) override;
 
     // SELF TEST //
 
