@@ -10,8 +10,8 @@ public:
   CurtinTalonSRX *left_motors[2];
   CurtinTalonSRX *right_motors[2];
 
-  CurtinTalonSRX *lift_motor[1];
-  CurtinTalonSRX *intake_motor[1];
+  CurtinTalonSRX *lift_motor;
+  CurtinTalonSRX *intake_motor;
 
   XboxController *xbox;
 

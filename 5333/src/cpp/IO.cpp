@@ -1,23 +1,24 @@
 #include "IO.h"
+#include "Map.h"
 
 static IO *io;
 
 void IO::setup() { // Sets up IO
   // Assign ports to the pointers, as instance to be called from other classes
-  left_motors[0] = new CurtinTalonSRX(32);
+  left_motors[0] = new CurtinTalonSRX(Map::Motors::left_motors[0]);
   left_motors[0]->SetInverted(true); // Inverts left
-  left_motors[1] = new CurtinTalonSRX(34);
+  left_motors[1] = new CurtinTalonSRX(Map::Motors::left_motors[1]);
   left_motors[1]->SetInverted(true);
 
-  right_motors[0] = new CurtinTalonSRX(36);
-  right_motors[1] = new CurtinTalonSRX(35);
+  right_motors[0] = new CurtinTalonSRX(Map::Motors::right_motors[0]);
+  right_motors[1] = new CurtinTalonSRX(Map::Motors::right_motors[1]);
 
-  lift_motor[0] = new CurtinTalonSRX(4);
-  intake_motor[0] = new CurtinTalonSRX(5);
+  lift_motor = new CurtinTalonSRX(Map::Motors::lift_motor);
+  intake_motor = new CurtinTalonSRX(Map::Motors::intake_motor);
 
   // loader = new DoubleSolonoid(1,0,1);
 
-  xbox = new XboxController(0);
+  xbox = new XboxController(Map::Controllers::xbox);
 }
 
 // Aliases
