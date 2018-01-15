@@ -6,6 +6,9 @@
 #include "Map.h"
 // #include "Claw.h"
 // #include "Intake.h"
+
+#include <string>
+#include <SmartDashboard/SmartDashboard.h>
 #include <iostream>
 
 using namespace frc; // WPILib classes/functions
@@ -40,7 +43,9 @@ public:
   void AutonomousInit() { }
   void AutonomousPeriodic() { }
 
-  void TeleopInit() { }
+  void TeleopInit() {
+    SmartDashboard::PutString("Test:", "A");
+  }
   void TeleopPeriodic() {
     double output_left = math::square_keep_sign(io->get_left_y());
     double output_right = math::square_keep_sign(io->get_right_y());

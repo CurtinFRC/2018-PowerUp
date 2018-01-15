@@ -1,4 +1,5 @@
 #pragma once
+
 #include "WPILib.h"
 #include "curtinfrc/motors/CurtinTalonSRX.h"
 
@@ -19,10 +20,10 @@ public:
 
   double get_left_trigger();
   double get_right_trigger();
-  double get_left_y();
-  double get_right_y();
   bool get_left_bumper();
   bool get_right_bumper();
+  double get_left_y();
+  double get_right_y();
 
   static IO *get_instance();
 };

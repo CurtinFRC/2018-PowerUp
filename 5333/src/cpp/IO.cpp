@@ -15,7 +15,7 @@ void IO::setup() { // Sets up IO
 
   lift_motor[0] = new CurtinTalonSRX(Map::Motors::lift_motor[0]);
   intake_motor[0] = new CurtinTalonSRX(Map::Motors::intake_motor[0]);
-
+  
   // loader = new DoubleSolonoid(1,0,1);
 
   xbox = new XboxController(Map::Controllers::xbox);
