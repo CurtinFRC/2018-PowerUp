@@ -13,8 +13,8 @@ void IO::setup() { // Sets up IO
   right_motors[0] = new CurtinTalonSRX(Map::Motors::right_motors[0]);
   right_motors[1] = new CurtinTalonSRX(Map::Motors::right_motors[1]);
 
-  lift_motor = new CurtinTalonSRX(Map::Motors::lift_motor);
-  intake_motor = new CurtinTalonSRX(Map::Motors::intake_motor);
+  lift_motor[0] = new CurtinTalonSRX(Map::Motors::lift_motor[0]);
+  intake_motor[0] = new CurtinTalonSRX(Map::Motors::intake_motor[0]);
 
   // loader = new DoubleSolonoid(1,0,1);
 
