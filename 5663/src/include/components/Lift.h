@@ -1,6 +1,7 @@
 #pragma once
 
 #include <ctre/Phoenix.h>
+#include <SmartDashboard/SmartDashboard.h>
 
 namespace components {
   class Lift {
@@ -9,8 +10,15 @@ namespace components {
     public:
       Lift(int m1, int m2);
       void SetHighPosition();
+      void SetMidPosition();
       void SetLowPosition();
       void SetSpeed(double speed);
+      void ResetEncoder();
       void RunPeriodic();
+
+    private:
+      bool manualMode = false;
+      int pos;
+      double deadzone = 0.1;
   };
 }

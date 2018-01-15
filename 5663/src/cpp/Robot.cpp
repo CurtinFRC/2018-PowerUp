@@ -8,6 +8,9 @@
 #include <PIDOutput.h>
 
 #include "components/Drive.h"
+#include "components/Lift.h"
+#include "components/Ramp.h"
+#include "components/Manipulator.h"
 
 using namespace frc;
 using namespace curtinfrc;
@@ -15,16 +18,20 @@ using namespace std;
 using namespace components;
 
 class Robot : public IterativeRobot {
-  XboxController *xbox;
+  XboxController *xbox, *xbox2;
   PowerDistributionPanel *pdp;
   SendableChooser<int*> *AutoChooser; // Choose auto mode
   Drive *drive;
+  Lift *lift;
+  Ramp *ramp;
 public:
   string gameData;
   int Auto;
 
   void RobotInit() {
     xbox = new XboxController(0);
+    xbox2 = new XboxController(1);
+
     pdp = new PowerDistributionPanel(0);
 
     AutoChooser = new SendableChooser<int*>;
@@ -33,9 +40,12 @@ public:
     AutoChooser->AddObject("Auto 2",(int*) 2);
 
     drive = new Drive(1, 2, 3, 4, 5, 6);
+    lift = new Lift(2, 8);
+    ramp = new Ramp(1, 2);
   }
 
   void AutonomousInit() {
+    drive->SetSlowGear();
     gameData = DriverStation::GetInstance().GetGameSpecificMessage(); //Get specific match data
     SmartDashboard::PutString("Alliance Switch:", &gameData[0]);
     SmartDashboard::PutString("Scale:", &gameData[1]);
@@ -50,14 +60,37 @@ public:
 
   void TeleopInit() {
     drive->SetFastGear();
+    lift->ResetEncoder();
   }
 
   void TeleopPeriodic() {
+
+    //controller 1
     drive->TankDrive(xbox->GetY(xbox->kLeftHand), xbox->GetY(xbox->kRightHand));
     if(xbox->GetYButtonPressed()) {
       drive->ToggleGear();
     }
-    drive->RunPeriodic();
+
+
+    //controller 2
+    if(xbox2->GetAButton()) {
+      lift->SetLowPosition();
+    } else if(xbox2->GetBButton()) {
+      lift->SetMidPosition();
+    } else if(xbox2->GetYButton()) {
+      lift->SetHighPosition();
+    } else if(xbox2->GetXButton()) {
+      lift->ResetEncoder();
+    }
+    lift->SetSpeed(xbox2->GetY(xbox->kRightHand));
+
+    //confirmation of intentional ramp deployment
+    if(xbox->GetBumper(xbox->kLeftHand) && xbox->GetBumper(xbox->kRightHand) && xbox2->GetBumper(xbox2->kLeftHand) && xbox2->GetBumper(xbox2->kRightHand)) {
+      ramp->ConfirmIntentionalDeployment();
+    }
+
+    //drive->RunPeriodic();
+    lift->RunPeriodic();
   }
 };
 
