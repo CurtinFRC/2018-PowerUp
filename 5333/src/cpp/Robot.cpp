@@ -3,9 +3,12 @@
 #include "WPILib.h"
 #include "IO.h"
 #include "Lift.h"
+#include "Map.h"
 // #include "Claw.h"
 // #include "Intake.h"
 #include <iostream>
+#include <string>
+#include <SmartDashboard/SmartDashboard.h>
 
 using namespace frc; // WPILib classes/functions
 using namespace std;
@@ -13,6 +16,7 @@ using namespace std;
 class Robot : public IterativeRobot {
 public:
   Drivetrain<2> *drive;
+  double deadzone = 0.04; // Prevents robot from moving within this zone
   double throttle;
   bool toggle_left_bumper, toggle_right_bumper;
 
@@ -41,10 +45,15 @@ public:
 
   void TeleopInit() { }
   void TeleopPeriodic() {
-    double output_left = math::square_keep_sign(io->get_left_y());
-    double output_right = math::square_keep_sign(io->get_right_y());
-    drive->set_left(output_left * throttle);
-    drive->set_right(output_right * throttle);
+    // Only move if joystick is not in deadzone
+    if(io->get_left_y() > deadzone) {
+      double output_left = math::square_keep_sign(io->get_left_y());
+      drive->set_left(output_left * throttle);
+    }
+    if(io->get_right_y() > deadzone) {
+      double output_right = math::square_keep_sign(io->get_right_y());
+      drive->set_right(output_right * throttle);
+    }
 
     lift->send_to_robot(io->get_right_trigger() - io->get_left_trigger()); // Right controls up, left controls down
     // claw->send_to_robot(io->get_());
