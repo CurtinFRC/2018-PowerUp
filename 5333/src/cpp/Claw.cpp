@@ -3,5 +3,5 @@
 #include "IO.h"
 
 void ClawControl::send_to_robot(DoubleSolenoid::Value output) { // Sends the output to motor
-  IO::get_instance()->claw_solenoid->Set(output);
+  for(auto solenoid : IO::get_instance()->claw_solenoids) solenoid->Set(output);
 }

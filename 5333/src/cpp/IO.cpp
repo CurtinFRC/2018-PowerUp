@@ -13,9 +13,25 @@ void IO::setup() { // Sets up IO
   right_motors[0] = new CurtinTalonSRX(Map::Motors::right_motors[0]);
   right_motors[1] = new CurtinTalonSRX(Map::Motors::right_motors[1]);
 
-  lift_motor[0] = new CurtinTalonSRX(Map::Motors::lift_motor[0]);
-  intake_motor[0] = new CurtinTalonSRX(Map::Motors::intake_motor[0]);
-  claw_solenoid = new DoubleSolenoid(0, 0, 1);
+  belev_motors[0] = new CurtinTalonSRX(Map::Motors::belev_motors[0]);
+  intake_motors[0][0] = new CurtinTalonSRX(Map::Motors::intake_motors[0][0]);
+  intake_motors[1][0] = new CurtinTalonSRX(Map::Motors::intake_motors[1][0]);
+
+  intake_solenoids[0] = new DoubleSolenoid(
+    Map::Pneumatics::intake_solenoids[0][0],
+    Map::Pneumatics::intake_solenoids[0][1],
+    Map::Pneumatics::intake_solenoids[0][1] + 1
+  );
+  intake_solenoids[1] = new DoubleSolenoid(
+    Map::Pneumatics::intake_solenoids[1][0],
+    Map::Pneumatics::intake_solenoids[1][1],
+    Map::Pneumatics::intake_solenoids[1][1] + 1
+  );
+  claw_solenoids[0] = new DoubleSolenoid(
+    Map::Pneumatics::claw_solenoids[0][0],
+    Map::Pneumatics::claw_solenoids[0][1],
+    Map::Pneumatics::claw_solenoids[0][1] + 1
+  );
 
   xbox = new XboxController(Map::Controllers::xbox);
 }
