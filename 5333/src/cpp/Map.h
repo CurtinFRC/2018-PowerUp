@@ -2,7 +2,7 @@
 
 #include "WPILib.h"
 
-namespace Map {
+namespace Map { // Map ports
   struct Controllers {
     static const int xbox = 0;
   };
@@ -16,6 +16,7 @@ namespace Map {
     static constexpr int lift_motor[1] = {37};
 
     static constexpr int intake_motor[1] = {39};
+    // Add claw_motor later
   };
 
   struct Pneumatics { };
