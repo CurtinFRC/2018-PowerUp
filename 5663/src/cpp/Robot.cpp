@@ -24,7 +24,10 @@ class Robot : public IterativeRobot {
   Drive *drive;
   Lift *lift;
   Ramp *ramp;
+<<<<<<< HEAD
   Manipulator *man;
+=======
+>>>>>>> f18d3e0019cdbea3d4159615c678b0a926e73ae1
 public:
   string gameData;
   int Auto;
@@ -43,7 +46,10 @@ public:
     drive = new Drive(1, 2, 3, 4, 5, 6);
     lift = new Lift(2, 8);
     ramp = new Ramp(1, 2);
+<<<<<<< HEAD
     man = new Manipulator(9, 3, 4);
+=======
+>>>>>>> f18d3e0019cdbea3d4159615c678b0a926e73ae1
   }
 
   void AutonomousInit() {
@@ -68,13 +74,18 @@ public:
 
   void TeleopPeriodic() {
 
+<<<<<<< HEAD
 //———[controller 1]—————————————————————————————————————————————————————————————
+=======
+    //controller 1
+>>>>>>> f18d3e0019cdbea3d4159615c678b0a926e73ae1
     drive->TankDrive(xbox->GetY(xbox->kLeftHand), xbox->GetY(xbox->kRightHand));
     if(xbox->GetYButtonPressed()) {
       drive->ToggleGear();
     }
 
 
+<<<<<<< HEAD
 //———[controller 2]—————————————————————————————————————————————————————————————
     // if(xbox2->GetAButton()) {
     //   lift->SetLowPosition();
@@ -97,6 +108,21 @@ public:
 
 
 //———[confirmation of intentional ramp deployment]——————————————————————————————
+=======
+    //controller 2
+    if(xbox2->GetAButton()) {
+      lift->SetLowPosition();
+    } else if(xbox2->GetBButton()) {
+      lift->SetMidPosition();
+    } else if(xbox2->GetYButton()) {
+      lift->SetHighPosition();
+    } else if(xbox2->GetXButton()) {
+      lift->ResetEncoder();
+    }
+    lift->SetSpeed(xbox2->GetY(xbox->kRightHand));
+
+    //confirmation of intentional ramp deployment
+>>>>>>> f18d3e0019cdbea3d4159615c678b0a926e73ae1
     if(xbox->GetBumper(xbox->kLeftHand) && xbox->GetBumper(xbox->kRightHand) && xbox2->GetBumper(xbox2->kLeftHand) && xbox2->GetBumper(xbox2->kRightHand)) {
       ramp->ConfirmIntentionalDeployment();
     }

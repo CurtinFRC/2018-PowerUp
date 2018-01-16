@@ -9,7 +9,11 @@ Manipulator::Manipulator(int intakePort, int restrainerFwd, int restrainerRev) {
 }
 
 // Set speed of intake motor
+<<<<<<< HEAD
 void Manipulator::SetIntakeSpeed(double speed) {
+=======
+void Manipulator::SetIntakeSpeed(int speed) {
+>>>>>>> f18d3e0019cdbea3d4159615c678b0a926e73ae1
   intake->Set(ControlMode::PercentOutput, speed);
 }
 

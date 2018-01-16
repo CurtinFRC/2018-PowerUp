@@ -19,6 +19,10 @@ namespace components {
     private:
       bool manualMode = false;
       int pos;
+<<<<<<< HEAD
       double deadzone = 0.05;
+=======
+      double deadzone = 0.1;
+>>>>>>> f18d3e0019cdbea3d4159615c678b0a926e73ae1
   };
 }

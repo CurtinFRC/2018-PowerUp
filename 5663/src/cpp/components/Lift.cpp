@@ -13,8 +13,12 @@ Lift::Lift(int m1, int m2) {
 	motor1->ConfigNominalOutputReverse(0, 0);
 	motor1->ConfigPeakOutputForward(1, 0);
 	motor1->ConfigPeakOutputReverse(-1, 0);
+<<<<<<< HEAD
   motor1->Config_kF(0, 0, 10);
   motor1->Config_kP(0, 5, 10);
+=======
+  motor1->Config_kF(0, 0.0147, 10);
+>>>>>>> f18d3e0019cdbea3d4159615c678b0a926e73ae1
   motor1->ConfigMotionAcceleration(1500, 10);
   motor1->ConfigMotionCruiseVelocity(3600, 10);
   motor1->SetSensorPhase(true);
@@ -43,6 +47,7 @@ void Lift::SetLowPosition() {
 
 // Set speed of Lift class motors
 void Lift::SetSpeed(double speed) {
+<<<<<<< HEAD
   // if(abs(speed) < deadzone) {
   //   speed = 0;
   //   if(manualMode) {
@@ -54,6 +59,19 @@ void Lift::SetSpeed(double speed) {
      motor1->Set(ControlMode::Velocity, speed * 500); //Need to test later
   //   pos = 3;
   // }
+=======
+  if(abs(speed) < deadzone) {
+    speed = 0;
+    if(manualMode) {
+      motor1->Set(ControlMode::Velocity, 0);
+    }
+  } else {
+    manualMode = true;
+    speed *= abs(speed);
+    motor1->Set(ControlMode::Velocity, speed); //Need to test later
+    pos = 3;
+  }
+>>>>>>> f18d3e0019cdbea3d4159615c678b0a926e73ae1
 }
 
 // Reset Lift class motor encoder
@@ -64,7 +82,10 @@ void Lift::ResetEncoder() {
 // Run periodic tasks
 void Lift::RunPeriodic() {
   SmartDashboard::PutNumber("Lift Encoder", motor1->GetSelectedSensorPosition(0));
+<<<<<<< HEAD
   SmartDashboard::PutNumber("Lift Motor Speed", motor1->GetSelectedSensorVelocity(0));
+=======
+>>>>>>> f18d3e0019cdbea3d4159615c678b0a926e73ae1
 
   switch(pos) {
     case 0:
