@@ -2,16 +2,14 @@
 #include "curtinfrc/drivetrain.h" // Shared drivetrain in commons
 #include "WPILib.h"
 #include "IO.h"
-#include "Lift.h"
+#include "Belev.h"
 #include "Map.h"
 #include "Claw.h"
-// #include "Intake.h"
+#include "Intake.h"
 
 #include <string>
 #include <SmartDashboard/SmartDashboard.h>
 #include <iostream>
-#include <string>
-#include <SmartDashboard/SmartDashboard.h>
 
 using namespace frc; // WPILib classes/functions
 using namespace std;
@@ -23,9 +21,9 @@ public:
   double throttle;
   bool left_bumper_toggle, right_bumper_toggle;
 
-  LiftControl *lift;
+  BelevatorControl *belev;
   ClawControl *claw;
-  // IntakeControl *intake;
+  IntakeControl *intake;
 
   IO *io;
 
@@ -35,8 +33,8 @@ public:
     io = IO::get_instance(); // Refer to IO
 
     drive = new Drivetrain<2>(io->left_motors, io->right_motors);
-    lift = new LiftControl();
-    // intake = new IntakeControl();
+    belev = new BelevatorControl();
+    intake = new IntakeControl();
     claw = new ClawControl();
 
     throttle = 0.6;
@@ -65,7 +63,7 @@ public:
       drive->set_right(0);
     }
 
-    lift->send_to_robot(io->get_right_trigger() - io->get_left_trigger()); // Right controls up, left controls down
+    belev->send_to_robot(io->get_right_trigger() - io->get_left_trigger()); // Right controls up, left controls down
     // claw->send_to_robot(io->get_());
     // intake->send_to_robot(io->get_right_bumper());
 

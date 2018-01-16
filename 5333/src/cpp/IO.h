@@ -11,9 +11,11 @@ public:
   CurtinTalonSRX *left_motors[2];
   CurtinTalonSRX *right_motors[2];
 
-  CurtinTalonSRX *lift_motor[1];
-  CurtinTalonSRX *intake_motor[1];
-  DoubleSolenoid *claw_solenoid;
+  CurtinTalonSRX *belev_motors[1];
+  CurtinTalonSRX *intake_motors[2][1];
+
+  DoubleSolenoid *intake_solenoids[2];
+  DoubleSolenoid *claw_solenoids[1];
 
   XboxController *xbox;
 
