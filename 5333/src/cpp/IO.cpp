@@ -15,19 +15,30 @@ void IO::setup() { // Sets up IO
 
   lift_motor[0] = new CurtinTalonSRX(Map::Motors::lift_motor[0]);
   intake_motor[0] = new CurtinTalonSRX(Map::Motors::intake_motor[0]);
-  
-  // loader = new DoubleSolonoid(1,0,1);
+  claw_solenoid = new DoubleSolenoid(0, 0, 1);
 
   xbox = new XboxController(Map::Controllers::xbox);
 }
 
 // Aliases
 double IO::get_left_trigger() { return xbox->GetTriggerAxis(XboxController::JoystickHand::kLeftHand); }
-double IO::get_right_trigger() { return xbox->GetTriggerAxis(XboxController::JoystickHand::kRightHand); }
-double IO::get_left_y() { return xbox->GetY(XboxController::JoystickHand::kLeftHand); }
-double IO::get_right_y() { return xbox->GetY(XboxController::JoystickHand::kRightHand); }
 bool IO::get_left_bumper() { return xbox->GetBumper(XboxController::JoystickHand::kLeftHand); }
+double IO::get_left_X() { return xbox->GetX(XboxController::JoystickHand::kLeftHand); }
+double IO::get_left_Y() { return xbox->GetY(XboxController::JoystickHand::kLeftHand); }
+bool IO::get_left_stick() { return xbox->GetStickButton(XboxController::JoystickHand::kLeftHand); }
+
+double IO::get_right_trigger() { return xbox->GetTriggerAxis(XboxController::JoystickHand::kRightHand); }
 bool IO::get_right_bumper() { return xbox->GetBumper(XboxController::JoystickHand::kRightHand); }
+double IO::get_right_X() { return xbox->GetX(XboxController::JoystickHand::kRightHand); }
+double IO::get_right_Y() { return xbox->GetY(XboxController::JoystickHand::kRightHand); }
+bool IO::get_right_stick() { return xbox->GetStickButton(XboxController::JoystickHand::kRightHand); }
+
+bool IO::get_A() { return xbox->GetAButton(); }
+bool IO::get_B() { return xbox->GetBButton(); }
+bool IO::get_X() { return xbox->GetXButton(); }
+bool IO::get_Y() { return xbox->GetYButton(); }
+bool IO::get_back() { return xbox->GetBackButton(); }
+bool IO::get_start() { return xbox->GetStartButton(); }
 
 IO *IO::get_instance() { // Only make one instance of IO
   if (io == NULL) {
