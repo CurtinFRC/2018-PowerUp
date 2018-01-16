@@ -13,22 +13,26 @@ Lift::Lift(int m1, int m2) {
 	motor1->ConfigNominalOutputReverse(0, 0);
 	motor1->ConfigPeakOutputForward(1, 0);
 	motor1->ConfigPeakOutputReverse(-1, 0);
-  motor1->Config_kF(0, 0, 10);
-  motor1->Config_kP(0, 5, 10);
-  motor1->ConfigMotionAcceleration(1500, 10);
-  motor1->ConfigMotionCruiseVelocity(3600, 10);
+  motor1->Config_kF(0, 1023.0/270.0, 10);
+  motor1->Config_kP(0, 1023.0/270.0, 10);
+  motor1->Config_kI(0, 1023.0/27000.0, 10);
+  motor1->Config_kD(0, 0, 10);
+  motor1->ConfigMotionAcceleration(540, 10);
+  motor1->ConfigMotionCruiseVelocity(270, 10);
   motor1->SetSensorPhase(true);
 }
 
 // Move lift to high position (for scale)
 void Lift::SetHighPosition() {
-  motor1->Set(ControlMode::MotionMagic, 994);
+  motor1->Set(ControlMode::PercentOutput, 0);
+  motor1->Set(ControlMode::MotionMagic, 19880);
   pos = 2;
   manualMode = false;
 }
 
 // Move lift to mid position (for switch)
 void Lift::SetMidPosition() {
+  motor1->Set(ControlMode::PercentOutput, 0);
   motor1->Set(ControlMode::MotionMagic, 1988);
   pos = 1;
   manualMode = false;
@@ -36,6 +40,7 @@ void Lift::SetMidPosition() {
 
 // Move lift to low position
 void Lift::SetLowPosition() {
+  motor1->Set(ControlMode::PercentOutput, 0);
   motor1->Set(ControlMode::MotionMagic, 497);
   pos = 0;
   manualMode = false;
@@ -43,17 +48,18 @@ void Lift::SetLowPosition() {
 
 // Set speed of Lift class motors
 void Lift::SetSpeed(double speed) {
-  // if(abs(speed) < deadzone) {
-  //   speed = 0;
-  //   if(manualMode) {
-  //     motor1->Set(ControlMode::Velocity, 0);
-  //   }
-  // } else {
-  //   manualMode = true;
-  //   speed *= abs(speed);
-     motor1->Set(ControlMode::Velocity, speed * 500); //Need to test later
-  //   pos = 3;
-  // }
+  if(-deadzone < speed && speed < deadzone) {
+    speed = 0;
+    if(manualMode) {
+      motor1->Set(ControlMode::Velocity, 0);
+    }
+  } else {
+    manualMode = true;
+    speed *= fabs(speed);
+    motor1->Set(ControlMode::Velocity, speed*270); //Need to test later
+    pos = 3;
+   }
+   SmartDashboard::PutNumber("motor manual speed", speed);
 }
 
 // Reset Lift class motor encoder

@@ -19,6 +19,6 @@ namespace components {
     private:
       bool manualMode = false;
       int pos;
-      double deadzone = 0.05;
+      double deadzone = 0.1;
   };
 }

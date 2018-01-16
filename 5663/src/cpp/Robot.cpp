@@ -40,7 +40,7 @@ public:
     AutoChooser->AddObject("Auto 1",(int*) 1);
     AutoChooser->AddObject("Auto 2",(int*) 2);
 
-    drive = new Drive(1, 2, 3, 4, 5, 6);
+    drive = new Drive(1, 7, 3, 4, 5, 6);
     lift = new Lift(2, 8);
     ramp = new Ramp(1, 2);
     man = new Manipulator(9, 3, 4);
@@ -58,12 +58,12 @@ public:
   void AutonomousPeriodic() {
     // gameData will be an array with 3 characters, eg. "LRL"
     // check https://wpilib.screenstepslive.com/s/currentCS/m/getting_started/l/826278-2018-game-data-details
-    lift->SetSpeed(1);
+    lift->SetSpeed(0);
   }
 
   void TeleopInit() {
-    drive->SetFastGear();
-    lift->ResetEncoder();
+    /*drive->SetFastGear();
+    lift->ResetEncoder(); */
   }
 
   void TeleopPeriodic() {
@@ -75,23 +75,23 @@ public:
     }
 
 //———[controller 2]—————————————————————————————————————————————————————————————
-    // if(xbox2->GetAButton()) {
-    //   lift->SetLowPosition();
-    // } else if(xbox2->GetBButton()) {
-    //   lift->SetMidPosition();
-    // } else if(xbox2->GetYButton()) {
-    //   lift->SetHighPosition();
-    // } else if(xbox2->GetXButton()) {
-    //   lift->ResetEncoder();
-    // }
+    if(xbox2->GetAButton()) {
+      lift->SetLowPosition();
+    } else if(xbox2->GetBButton()) {
+      lift->SetMidPosition();
+    } else if(xbox2->GetYButton()) {
+      lift->SetHighPosition();
+    } else if(xbox2->GetXButton()) {
+      lift->ResetEncoder();
+    }
 
+    lift->SetSpeed(xbox2->GetY(xbox2->kRightHand));
     if(xbox2->GetBumper(xbox2->kLeftHand)) {
       man->Release();
     } else {
       man->Restrain();
     }
 
-    lift->SetSpeed(xbox2->GetY(xbox->kRightHand));
     man->SetIntakeSpeed(xbox2->GetY(xbox2->kLeftHand));
 
 
