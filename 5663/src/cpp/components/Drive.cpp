@@ -30,7 +30,7 @@ Drive::Drive(int l1, int l2, int l3, int r1, int r2, int r3) {
   turn->SetAbsoluteTolerance(turnTolerance);
   turn->SetContinuous(true);
 
-  leftGear = new DoubleSolenoid(0,0,1);
+  leftGear = new DoubleSolenoid(0,4,5);
   rightGear = new DoubleSolenoid(0,2,3);
 }
 

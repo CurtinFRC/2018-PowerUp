@@ -13,5 +13,8 @@ namespace components {
       void SetIntakeSpeed(double speed);
       void Restrain();
       void Release();
+
+    private:
+      double intakeSpeed = 0.0;
   };
 }

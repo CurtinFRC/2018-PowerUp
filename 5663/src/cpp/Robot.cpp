@@ -21,10 +21,12 @@ class Robot : public IterativeRobot {
   XboxController *xbox, *xbox2;
   PowerDistributionPanel *pdp;
   SendableChooser<int*> *AutoChooser; // Choose auto mode
+  SendableChooser<int*> *ControlModeChooser; // Choose control mode
   Drive *drive;
   Lift *lift;
   Ramp *ramp;
   Manipulator *man;
+  Compressor *compressor;
 public:
   string gameData;
   int Auto;
@@ -40,10 +42,17 @@ public:
     AutoChooser->AddObject("Auto 1",(int*) 1);
     AutoChooser->AddObject("Auto 2",(int*) 2);
 
-    drive = new Drive(1, 7, 3, 4, 5, 6);
-    lift = new Lift(2, 8);
-    ramp = new Ramp(1, 2);
-    man = new Manipulator(9, 3, 4);
+    ControlModeChooser = new SendableChooser<int*>;
+    ControlModeChooser->AddDefault("Dual",(int*) 0);
+    ControlModeChooser->AddObject("Single (Debug)",(int*) 1);
+
+    drive = new Drive(1, 2, 3, 4, 5, 6);
+    lift = new Lift(7, 8);
+    ramp = new Ramp(2, 3);
+    man = new Manipulator(9, 0, 1);
+
+    compressor = new Compressor(0);
+    compressor->SetClosedLoopControl(true);
   }
 
   void AutonomousInit() {
@@ -62,19 +71,20 @@ public:
   }
 
   void TeleopInit() {
-    /*drive->SetFastGear();
-    lift->ResetEncoder(); */
+    drive->SetFastGear();
   }
 
   void TeleopPeriodic() {
 
 //———[controller 1]—————————————————————————————————————————————————————————————
+  //———[drivetrain]—————————————————————————————————————————————————————————————
     drive->TankDrive(xbox->GetY(xbox->kLeftHand), xbox->GetY(xbox->kRightHand));
     if(xbox->GetYButtonPressed()) {
       drive->ToggleGear();
     }
 
 //———[controller 2]—————————————————————————————————————————————————————————————
+  //———[lift]———————————————————————————————————————————————————————————————————
     if(xbox2->GetAButton()) {
       lift->SetLowPosition();
     } else if(xbox2->GetBButton()) {
@@ -84,24 +94,26 @@ public:
     } else if(xbox2->GetXButton()) {
       lift->ResetEncoder();
     }
-
     lift->SetSpeed(xbox2->GetY(xbox2->kRightHand));
+
+  //———[manipulator]————————————————————————————————————————————————————————————
     if(xbox2->GetBumper(xbox2->kLeftHand)) {
       man->Release();
-    } else {
+    }
+    if(xbox2->GetBumper(xbox2->kRightHand)) {
       man->Restrain();
     }
+    //man->SetIntakeSpeed(xbox2->GetY(xbox2->kLeftHand));
 
-    man->SetIntakeSpeed(xbox2->GetY(xbox2->kLeftHand));
-
-
-//———[confirmation of intentional ramp deployment]——————————————————————————————
+  //———[ramp]———————————————————————————————————————————————————————————————————
     if(xbox->GetBumper(xbox->kLeftHand) && xbox->GetBumper(xbox->kRightHand) && xbox2->GetBumper(xbox2->kLeftHand) && xbox2->GetBumper(xbox2->kRightHand)) {
       ramp->ConfirmIntentionalDeployment();
     }
 
-    //drive->RunPeriodic();
+  //———[periodic]———————————————————————————————————————————————————————————————————
+    drive->RunPeriodic();
     lift->RunPeriodic();
+
   }
 };
 
