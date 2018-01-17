@@ -46,13 +46,18 @@ public:
   void TeleopInit() { }
   void TeleopPeriodic() {
     // Only move if joystick is not in deadzone
-    if(io->get_left_y() > deadzone) {
+    if(abs(io->get_left_y()) > deadzone) {
       double output_left = math::square_keep_sign(io->get_left_y());
       drive->set_left(output_left * throttle);
+    } else {
+      drive->set_left(0);
     }
-    if(io->get_right_y() > deadzone) {
+
+    if(abs(io->get_right_y()) > deadzone) {
       double output_right = math::square_keep_sign(io->get_right_y());
       drive->set_right(output_right * throttle);
+    } else {
+      drive->set_right(0);
     }
 
     lift->send_to_robot(io->get_right_trigger() - io->get_left_trigger()); // Right controls up, left controls down
