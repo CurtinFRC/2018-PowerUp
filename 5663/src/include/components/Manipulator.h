@@ -13,8 +13,10 @@ namespace components {
       void SetIntakeSpeed(double speed);
       void Restrain();
       void Release();
+      void RunPeriodic();
 
     private:
       double intakeSpeed = 0.0;
+      double deadzone = 0.1;
   };
 }

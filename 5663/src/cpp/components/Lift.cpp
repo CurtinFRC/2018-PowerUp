@@ -13,12 +13,12 @@ Lift::Lift(int m1, int m2) {
 	motor1->ConfigNominalOutputReverse(0, 0);
 	motor1->ConfigPeakOutputForward(1, 0);
 	motor1->ConfigPeakOutputReverse(-1, 0);
-  motor1->Config_kF(0, 1023.0/270.0, 10);
-  motor1->Config_kP(0, 1023.0/270.0, 10);
-  motor1->Config_kI(0, 1023.0/27000.0, 10);
-  motor1->Config_kD(0, 0, 10);
-  motor1->ConfigMotionAcceleration(540, 10);
-  motor1->ConfigMotionCruiseVelocity(270, 10);
+  motor1->Config_kF(0, 1023.0/750.0, 10);
+  motor1->Config_kP(0, 50, 10);
+  motor1->Config_kI(0, 0, 10);
+  motor1->Config_kD(0, 500, 10);
+  motor1->ConfigMotionAcceleration(750, 10);
+  motor1->ConfigMotionCruiseVelocity(750, 10);
   motor1->SetSensorPhase(true);
 }
 
@@ -56,7 +56,8 @@ void Lift::SetSpeed(double speed) {
   } else {
     manualMode = true;
     speed *= fabs(speed);
-    motor1->Set(ControlMode::Velocity, speed*270); //Need to test later
+    //motor1->Set(ControlMode::Velocity, speed*270); //Need to test later
+    motor1->Set(ControlMode::PercentOutput, speed);
     pos = 3;
    }
    SmartDashboard::PutNumber("motor manual speed", speed);

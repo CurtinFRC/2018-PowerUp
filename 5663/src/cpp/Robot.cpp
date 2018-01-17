@@ -99,11 +99,11 @@ public:
   //———[manipulator]————————————————————————————————————————————————————————————
     if(xbox2->GetBumper(xbox2->kLeftHand)) {
       man->Release();
-    }
-    if(xbox2->GetBumper(xbox2->kRightHand)) {
+    } else {
       man->Restrain();
     }
-    //man->SetIntakeSpeed(xbox2->GetY(xbox2->kLeftHand));
+
+    man->SetIntakeSpeed(xbox2->GetY(xbox2->kLeftHand));
 
   //———[ramp]———————————————————————————————————————————————————————————————————
     if(xbox->GetBumper(xbox->kLeftHand) && xbox->GetBumper(xbox->kRightHand) && xbox2->GetBumper(xbox2->kLeftHand) && xbox2->GetBumper(xbox2->kRightHand)) {
@@ -113,7 +113,7 @@ public:
   //———[periodic]———————————————————————————————————————————————————————————————————
     drive->RunPeriodic();
     lift->RunPeriodic();
-
+    man->RunPeriodic();
   }
 };
 
