@@ -33,10 +33,19 @@ void IO::setup() { // Sets up IO
     Map::Pneumatics::claw_solenoids[0][1] + 1
   );
 
+  #ifdef XBOX_CONTROL
   xbox = new XboxController(Map::Controllers::xbox);
+
+  #elif JOY_CONTROL
+  left_joy = new Joystick(Map::Controllers::joy[0]);
+  right_joy = new Joystick(Map::Controllers::joy[1]);
+
+  #endif
 }
 
 // Aliases
+#ifdef XBOX_CONTROL
+
 double IO::get_left_trigger() { return xbox->GetTriggerAxis(XboxController::JoystickHand::kLeftHand); }
 bool IO::get_left_bumper() { return xbox->GetBumper(XboxController::JoystickHand::kLeftHand); }
 double IO::get_left_X() { return xbox->GetX(XboxController::JoystickHand::kLeftHand); }
@@ -55,6 +64,23 @@ bool IO::get_X() { return xbox->GetXButton(); }
 bool IO::get_Y() { return xbox->GetYButton(); }
 bool IO::get_back() { return xbox->GetBackButton(); }
 bool IO::get_start() { return xbox->GetStartButton(); }
+
+#elif JOY_CONTROL
+
+double get_left_Y() { return left_joy->GetY(); }
+double get_left_X() { return left_joy->GetX(); }
+double get_left_twist() { return left_joy->GetZ(); }
+
+bool get_left_trigger() { return left_joy->GetTrigger(); }
+
+
+double get_right_Y() { return right_joy->GetY(); }
+double get_right_X() { return right_joy->GetX(); }
+double get_right_twist() { return right_joy->GetZ(); }
+
+bool get_right_trigger() { return right_joy->GetTrigger(); }
+
+#endif
 
 IO *IO::get_instance() { // Only make one instance of IO
   if (io == NULL) {

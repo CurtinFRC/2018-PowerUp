@@ -6,6 +6,7 @@
 #include "Map.h"
 #include "Claw.h"
 #include "Intake.h"
+#include "ControlMap.h"
 
 #include <string>
 #include <SmartDashboard/SmartDashboard.h>
@@ -49,34 +50,34 @@ public:
   }
   void TeleopPeriodic() {
     // Only move if joystick is not in deadzone
-    if(abs(io->get_left_Y()) > deadzone) {
-      double output_left = math::square_keep_sign(io->get_left_Y());
+    if(abs(ControlMap::left_drive_power()) > deadzone) {
+      double output_left = math::square_keep_sign(ControlMap::left_drive_power());
       drive->set_left(output_left * throttle);
     } else {
       drive->set_left(0);
     }
 
-    if(abs(io->get_right_Y()) > deadzone) {
-      double output_right = math::square_keep_sign(io->get_right_Y());
+    if(abs(ControlMap::right_drive_power()) > deadzone) {
+      double output_right = math::square_keep_sign(ControlMap::right_drive_power());
       drive->set_right(output_right * throttle);
     } else {
       drive->set_right(0);
     }
 
-    belev->send_to_robot(io->get_right_trigger() - io->get_left_trigger()); // Right controls up, left controls down
+    belev->send_to_robot(ControlMap::belevator_motor_power()); // Right controls up, left controls down
     // claw->send_to_robot(io->get_());
     // intake->send_to_robot(io->get_right_bumper());
 
     // Throttle Control
-    if (left_bumper_toggle != io->get_left_bumper()) { // Prevent registering as multiple presses
-      left_bumper_toggle = io->get_left_bumper();
+    if (left_bumper_toggle != ControlMap::throttle_decrement()) { // Prevent registering as multiple presses
+      left_bumper_toggle = ControlMap::throttle_decrement();
       if (left_bumper_toggle) { // Left bumper decreases throttle, while right increases throttle
         throttle -= 0.1;
         throttle = max(throttle, 0.1);
         cout << "Throttle changed to " << throttle << endl;
       }
-    } else if (right_bumper_toggle != io->get_right_bumper()) {
-      right_bumper_toggle = io->get_right_bumper();
+    } else if (right_bumper_toggle != ControlMap::throttle_increment()) {
+      right_bumper_toggle = ControlMap::throttle_increment();
       if (right_bumper_toggle) {
         throttle += 0.1;
         throttle = min(throttle, 1.0);
@@ -85,7 +86,7 @@ public:
     }
 
     claw->send_to_robot(
-      io->get_left_stick() || io->get_right_stick() ? DoubleSolenoid::Value::kForward : DoubleSolenoid::Value::kReverse
+      ControlMap::claw_state() ? DoubleSolenoid::Value::kForward : DoubleSolenoid::Value::kReverse
     ); // Note: The claw solenoid is reversed
     // 14 changes to 5 cylinders reduce upstream from 120 to 60
   }

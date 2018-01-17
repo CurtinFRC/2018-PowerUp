@@ -2,6 +2,7 @@
 
 #include "WPILib.h"
 #include "curtinfrc/motors/CurtinTalonSRX.h"
+#include "Map.h"
 
 using namespace frc;
 using namespace curtinfrc;
@@ -17,9 +18,11 @@ public:
   DoubleSolenoid *intake_solenoids[2];
   DoubleSolenoid *claw_solenoids[1];
 
-  XboxController *xbox;
-
   void setup();
+
+  #ifdef XBOX_CONTROL
+
+  XboxController *xbox;
 
   double get_left_trigger();
   bool get_left_bumper();
@@ -39,6 +42,25 @@ public:
   bool get_Y();
   bool get_back();
   bool get_start();
+
+  #elif JOY_CONTROL
+
+  Joystick *left_joy, *right_joy;
+
+  double get_left_Y();
+  double get_left_X();
+  double get_left_twist();
+
+  bool get_left_trigger();
+
+
+  double get_right_Y();
+  double get_right_X();
+  double get_right_twist();
+
+  bool get_right_trigger();
+
+  #endif
 
   static IO *get_instance();
 };

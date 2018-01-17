@@ -2,9 +2,15 @@
 
 #include "WPILib.h"
 
+#define XBOX_CONTROL 1
+
 namespace Map { // Map ports
   struct Controllers {
+    #ifdef XBOX_CONTROL
     static const int xbox = 0;
+    #elif JOY_CONTROL
+    static const int joy[2] = {0, 1};
+    #endif
   };
 
   struct Sensors { };
