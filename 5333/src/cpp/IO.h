@@ -9,6 +9,8 @@ using namespace curtinfrc;
 
 class IO {
 public:
+  int init();
+
   CurtinTalonSRX *left_motors[2];
   CurtinTalonSRX *right_motors[2];
 
@@ -17,8 +19,6 @@ public:
 
   DoubleSolenoid *intake_solenoids[2];
   DoubleSolenoid *claw_solenoids[1];
-
-  void setup();
 
   #ifdef XBOX_CONTROL
 

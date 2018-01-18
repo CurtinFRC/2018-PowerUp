@@ -3,7 +3,7 @@
 
 static IO *io;
 
-void IO::setup() { // Sets up IO
+int IO::init() { // Sets up IO
   // Assign ports to the pointers, as instance to be called from other classes
   left_motors[0] = new CurtinTalonSRX(Map::Motors::left_motors[0]);
   left_motors[0]->SetInverted(true); // Inverts left
@@ -85,7 +85,7 @@ bool get_right_trigger() { return right_joy->GetTrigger(); }
 IO *IO::get_instance() { // Only make one instance of IO
   if (io == NULL) {
     io = new IO();
-    io->setup();
+    io->init();
   }
   return io;
 }

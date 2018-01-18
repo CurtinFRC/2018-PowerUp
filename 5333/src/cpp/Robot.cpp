@@ -1,12 +1,15 @@
 #include "curtinfrc/math.h"
 #include "curtinfrc/drivetrain.h" // Shared drivetrain in commons
 #include "WPILib.h"
+#include <pathfinder.h>
+
 #include "IO.h"
 #include "Belev.h"
 #include "Map.h"
 #include "Claw.h"
 #include "Intake.h"
 #include "ControlMap.h"
+#include "Auto.h"
 
 #include <string>
 #include <SmartDashboard/SmartDashboard.h>
@@ -18,9 +21,10 @@ using namespace std;
 class Robot : public IterativeRobot {
 public:
   Drivetrain<2> *drive;
-  double deadzone = 0.04; // Prevents robot from moving within this zone
   double throttle;
   bool left_bumper_toggle, right_bumper_toggle;
+
+  AutoControl *auto_;
 
   BelevatorControl *belev;
   ClawControl *claw;
@@ -50,14 +54,14 @@ public:
   }
   void TeleopPeriodic() {
     // Only move if joystick is not in deadzone
-    if(abs(ControlMap::left_drive_power()) > deadzone) {
+    if(abs(ControlMap::left_drive_power()) > Map::Controllers::deadzone) {
       double output_left = math::square_keep_sign(ControlMap::left_drive_power());
       drive->set_left(output_left * throttle);
     } else {
       drive->set_left(0);
     }
 
-    if(abs(ControlMap::right_drive_power()) > deadzone) {
+    if(abs(ControlMap::right_drive_power()) > Map::Controllers::deadzone) {
       double output_right = math::square_keep_sign(ControlMap::right_drive_power());
       drive->set_right(output_right * throttle);
     } else {
