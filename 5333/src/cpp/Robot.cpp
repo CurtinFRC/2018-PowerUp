@@ -1,7 +1,7 @@
 #include "curtinfrc/math.h"
 #include "curtinfrc/drivetrain.h" // Shared drivetrain in commons
 #include "WPILib.h"
-#include <pathfinder.h>
+// #include <pathfinder.h>
 
 #include "IO.h"
 #include "Belev.h"
@@ -9,7 +9,7 @@
 #include "Claw.h"
 #include "Intake.h"
 #include "ControlMap.h"
-#include "Auto.h"
+// #include "Auto.h"
 
 #include <string>
 #include <SmartDashboard/SmartDashboard.h>
@@ -24,7 +24,7 @@ public:
   double throttle;
   bool left_bumper_toggle, right_bumper_toggle;
 
-  AutoControl *auto_;
+  // AutoControl *auto_;
 
   BelevatorControl *belev;
   ClawControl *claw;
@@ -47,7 +47,10 @@ public:
   }
 
   void AutonomousInit() { }
-  void AutonomousPeriodic() { }
+  void AutonomousPeriodic() {
+    drive->set_left(0);
+    drive->set_right(0);
+  }
 
   void TeleopInit() {
     SmartDashboard::PutString("Test:", "A");

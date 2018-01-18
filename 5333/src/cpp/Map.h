@@ -2,17 +2,17 @@
 
 #include "WPILib.h"
 
-#define XBOX_CONTROL 1
+#define JOY_CONTROL 2
 
 namespace Map { // Map ports
   struct Controllers {
     #ifdef XBOX_CONTROL
     static const int xbox = 0;
-    static const double deadzone = 0.04;
+    static constexpr double deadzone = 0.04;
 
     #elif JOY_CONTROL
-    static const int joy[2] = {0, 1};
-    static const double deadzone = 0.15;
+    static constexpr int joy[2] = {0, 1};
+    static constexpr double deadzone = 0.08;
 
     #endif
   };

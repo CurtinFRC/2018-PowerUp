@@ -41,6 +41,8 @@ int IO::init() { // Sets up IO
   right_joy = new Joystick(Map::Controllers::joy[1]);
 
   #endif
+
+  return 0;
 }
 
 // Aliases
@@ -67,18 +69,18 @@ bool IO::get_start() { return xbox->GetStartButton(); }
 
 #elif JOY_CONTROL
 
-double get_left_Y() { return left_joy->GetY(); }
-double get_left_X() { return left_joy->GetX(); }
-double get_left_twist() { return left_joy->GetZ(); }
+double IO::get_left_Y() { return left_joy->GetY(); }
+double IO::get_left_X() { return left_joy->GetX(); }
+double IO::get_left_twist() { return left_joy->GetZ(); }
 
-bool get_left_trigger() { return left_joy->GetTrigger(); }
+bool IO::get_left_trigger() { return left_joy->GetTrigger(); }
 
 
-double get_right_Y() { return right_joy->GetY(); }
-double get_right_X() { return right_joy->GetX(); }
-double get_right_twist() { return right_joy->GetZ(); }
+double IO::get_right_Y() { return right_joy->GetY(); }
+double IO::get_right_X() { return right_joy->GetX(); }
+double IO::get_right_twist() { return right_joy->GetZ(); }
 
-bool get_right_trigger() { return right_joy->GetTrigger(); }
+bool IO::get_right_trigger() { return right_joy->GetTrigger(); }
 
 #endif
 
