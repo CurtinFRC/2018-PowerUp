@@ -18,6 +18,7 @@ model {
                 lib library: "wpilib"
                 lib library: "ctre"
                 lib library: "navx"
+                lib library: "pathfinder"
             }
         }
     }
