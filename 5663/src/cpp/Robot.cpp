@@ -11,18 +11,20 @@
 #include "components/Lift.h"
 #include "components/Ramp.h"
 #include "components/Manipulator.h"
-
 #include "autonomous/Autonomous.h"
 
 using namespace frc;
 using namespace curtinfrc;
 using namespace std;
 using namespace components;
+using namespace cs;
 
 class Robot : public IterativeRobot {
+  UsbCamera camera;
   XboxController *xbox, *xbox2;
   PowerDistributionPanel *pdp;
   SendableChooser<int*> *AutoChooser; // Choose auto mode
+  SendableChooser<int*> *StartingPosition; // Choose starting position
   SendableChooser<int*> *ControlModeChooser; // Choose control mode
   Drive *drive;
   Lift *lift;
@@ -31,10 +33,12 @@ class Robot : public IterativeRobot {
   Compressor *compressor;
   Autonomous *auton;
 public:
-  string gameData;
-  int Auto;
+  int AutoStage;
 
   void RobotInit() {
+    camera = CameraServer::GetInstance()->StartAutomaticCapture();
+    camera.SetResolution(640, 480);
+
     xbox = new XboxController(0);
     xbox2 = new XboxController(1);
 
@@ -42,8 +46,13 @@ public:
 
     AutoChooser = new SendableChooser<int*>;
     AutoChooser->AddDefault("Cross Baseline",(int*) 0);
-    AutoChooser->AddObject("Auto 1",(int*) 1);
-    AutoChooser->AddObject("Auto 2",(int*) 2);
+    AutoChooser->AddObject("Single Switch",(int*) 1);
+    AutoChooser->AddObject("Single Scale",(int*) 2);
+
+    StartingPosition = new SendableChooser<int*>;
+    StartingPosition->AddObject("Left (1)", (int*) 1);
+    StartingPosition->AddDefault("Middle (2)", (int*) 2);
+    StartingPosition->AddObject("Right (3)", (int*) 3);
 
     ControlModeChooser = new SendableChooser<int*>;
     ControlModeChooser->AddDefault("Dual",(int*) 0);
@@ -57,17 +66,24 @@ public:
     compressor = new Compressor(0);
     compressor->SetClosedLoopControl(true);
 
-    auton = new Autonomous(*drive, *lift, *man, *ramp);
+    auton = new Autonomous(drive, *lift, *man, *ramp);
   }
 
   void AutonomousInit() {
     drive->SetSlowGear();
-    Auto = (int) AutoChooser->GetSelected(); //What auto mode you wanna do
+    auton->ChooseRoutine((int)AutoChooser->GetSelected(), (int)StartingPosition->GetSelected());
+    AutoStage = 0;
   }
 
   void AutonomousPeriodic() {
-    // gameData will be an array with 3 characters, eg. "LRL"
-    // check https://wpilib.screenstepslive.com/s/currentCS/m/getting_started/l/826278-2018-game-data-details
+    switch(AutoStage) {
+      case 0:
+        if(drive->DriveDistance(0.1, 0.05, false)) AutoStage++; //Need to make robot drive backwards into wall for a short time here, this is really important! Else gears do not change properly :(
+        break;
+      case 1:
+        auton->RunPeriodic();
+        break;
+    }
 
   }
 
@@ -79,7 +95,7 @@ public:
 
 //———[controller 1]—————————————————————————————————————————————————————————————
   //———[drivetrain]—————————————————————————————————————————————————————————————
-    drive->TankDrive(xbox->GetY(xbox->kLeftHand), xbox->GetY(xbox->kRightHand));
+    drive->TankDrive(xbox->GetY(xbox->kLeftHand), xbox->GetY(xbox->kRightHand), true);
     if(xbox->GetYButtonPressed()) {
       drive->ToggleGear();
     }

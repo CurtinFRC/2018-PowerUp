@@ -10,10 +10,11 @@
 namespace components {
   class Autonomous {
     public:
-      Autonomous(Drive drive, Lift lift, Manipulator man, Ramp ramp);
+      Autonomous(Drive *drive, Lift lift, Manipulator man, Ramp ramp);
       void ChooseRoutine(int autoMode, int startingPosition);
-
+      void RunPeriodic();
     private:
+      void Baseline();
       void S1L();
       void S2L();
       void S3L();
@@ -21,6 +22,6 @@ namespace components {
       void S2R();
       void S3R();
 
-      std::string gamedata;
+      std::string gameData;
   };
 }
