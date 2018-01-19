@@ -12,6 +12,8 @@
 #include "components/Ramp.h"
 #include "components/Manipulator.h"
 
+#include "autonomous/Autonomous.h"
+
 using namespace frc;
 using namespace curtinfrc;
 using namespace std;
@@ -27,6 +29,7 @@ class Robot : public IterativeRobot {
   Ramp *ramp;
   Manipulator *man;
   Compressor *compressor;
+  Autonomous *auton;
 public:
   string gameData;
   int Auto;
@@ -53,21 +56,19 @@ public:
 
     compressor = new Compressor(0);
     compressor->SetClosedLoopControl(true);
+
+    auton = new Autonomous(*drive, *lift, *man, *ramp);
   }
 
   void AutonomousInit() {
     drive->SetSlowGear();
-    gameData = DriverStation::GetInstance().GetGameSpecificMessage(); //Get specific match data
-    SmartDashboard::PutString("Alliance Switch:", &gameData[0]);
-    SmartDashboard::PutString("Scale:", &gameData[1]);
-    SmartDashboard::PutString("Enemy Switch:", &gameData[2]);  //Put data on shuffleboard
     Auto = (int) AutoChooser->GetSelected(); //What auto mode you wanna do
   }
 
   void AutonomousPeriodic() {
     // gameData will be an array with 3 characters, eg. "LRL"
     // check https://wpilib.screenstepslive.com/s/currentCS/m/getting_started/l/826278-2018-game-data-details
-    lift->SetSpeed(0);
+
   }
 
   void TeleopInit() {
@@ -110,7 +111,7 @@ public:
       ramp->ConfirmIntentionalDeployment();
     }
 
-  //———[periodic]———————————————————————————————————————————————————————————————————
+  //———[periodic]———————————————————————————————————————————————————————————————
     drive->RunPeriodic();
     lift->RunPeriodic();
     man->RunPeriodic();

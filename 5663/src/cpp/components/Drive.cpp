@@ -112,7 +112,7 @@ bool Drive::DriveDistance(double speed, double distance, bool holdAngle) {
     left1->ConfigPeakOutputForward(speed,10);
     left1->ConfigPeakOutputReverse(-speed,10);
 
-    left1->Config_kF(0,0.0,0); //set left PID-F values
+    left1->Config_kF(0,1.0/1672.0,0); //set left PID-F values    //VALUE FOR TOUGHBOX MINI
     left1->Config_kP(0,5.0,0);
     left1->Config_kI(0,0.0,0);
     left1->Config_kD(0,0.0,0);
@@ -122,7 +122,7 @@ bool Drive::DriveDistance(double speed, double distance, bool holdAngle) {
     right1->ConfigPeakOutputForward(speed,10);
     right1->ConfigPeakOutputReverse(-speed,10);
 
-    right1->Config_kF(0,0.0,0); //set right PID-F values
+    right1->Config_kF(0,1.0/1672.0,0); //set right PID-F values    //VALUE FOR TOUGHBOX MINI
     right1->Config_kP(0,5.0,0);
     right1->Config_kI(0,0.0,0);
     right1->Config_kD(0,0.0,0);
