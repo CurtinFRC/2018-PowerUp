@@ -43,21 +43,28 @@ public:
 
   void AutonomousInit() {
     cout << "Switched to Autonomous Mode" << endl;
-    // Set motors to position mode
-    for(auto motor : IO::get_instance()->left_motors) motor->SetControlMode(CurtinTalonSRX::ControlMode::Position);
-    for(auto motor : IO::get_instance()->right_motors) motor->SetControlMode(CurtinTalonSRX::ControlMode::Position);
-    drive->set_left(1000);
-    drive->set_right(1000);
-    drive->set_left(0);
-    drive->set_right(1000);
+    // Set lead motors to position mode
+    io->left_motors[0]->SetControlMode(CurtinTalonSRX::ControlMode::Position);
+    io->right_motors[0]->SetControlMode(CurtinTalonSRX::ControlMode::Position);
+    int state = 0; // For case switching in periodic
   }
-  void AutonomousPeriodic() { }
+  void AutonomousPeriodic() {
+    switch(state)
+    case 0:
+      drive->set_left(1000);
+      drive->set_right(1000);
+      break;
+    case 1:
+      drive->set_left(0);
+      drive->set_right(0);
+      break;
+  }
 
   void TeleopInit() {
     cout << "Switched to Teleop Mode" << endl;
-    // Set motors to speed mode
-    for(auto motor : IO::get_instance()->left_motors) motor->SetControlMode(CurtinTalonSRX::ControlMode::PercentOutput);
-    for(auto motor : IO::get_instance()->right_motors) motor->SetControlMode(CurtinTalonSRX::ControlMode::PercentOutput);
+    // Set lead motors to speed mode
+    io->left_motors[0]->SetControlMode(CurtinTalonSRX::ControlMode::PercentOutput);
+    io->left_motors[0]->SetControlMode(CurtinTalonSRX::ControlMode::PercentOutput);
   }
   void TeleopPeriodic() {
     // Only move if joystick is not in deadzone
