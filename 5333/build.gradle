@@ -32,6 +32,7 @@ model {
                 lib library: "wpilib"
                 lib library: "ctre"
                 lib library: "navx"
+                lib library: "pathfinder"
                 lib library: "openrio.powerup.matchData"
                 lib project: ":common", library: "curtinFrcCommon", linkage: "static"
             }

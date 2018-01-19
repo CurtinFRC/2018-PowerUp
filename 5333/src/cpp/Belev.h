@@ -1,6 +1,6 @@
 #pragma once
 
-class LiftControl {
+class BelevatorControl {
 public:
   void send_to_robot(double input);
 };
