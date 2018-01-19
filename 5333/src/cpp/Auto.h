@@ -9,4 +9,4 @@ public:
   int init();
 
   Waypoint points[nPOINTS];
-}
+};

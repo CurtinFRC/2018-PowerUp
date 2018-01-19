@@ -53,19 +53,22 @@ public:
   }
 
   void TeleopInit() {
-    SmartDashboard::PutString("Test:", "A");
+    SmartDashboard::PutNumber("Throttle:", throttle);
+    ControlMap::init();
   }
   void TeleopPeriodic() {
     // Only move if joystick is not in deadzone
     if(abs(ControlMap::left_drive_power()) > Map::Controllers::deadzone) {
-      double output_left = math::square_keep_sign(ControlMap::left_drive_power());
+      // double output_left = math::square_keep_sign(ControlMap::left_drive_power());
+      double output_left = ControlMap::left_drive_power();
       drive->set_left(output_left * throttle);
     } else {
       drive->set_left(0);
     }
 
     if(abs(ControlMap::right_drive_power()) > Map::Controllers::deadzone) {
-      double output_right = math::square_keep_sign(ControlMap::right_drive_power());
+      // double output_right = math::square_keep_sign(ControlMap::right_drive_power());
+      double output_right = ControlMap::right_drive_power();
       drive->set_right(output_right * throttle);
     } else {
       drive->set_right(0);
@@ -80,15 +83,17 @@ public:
       left_bumper_toggle = ControlMap::throttle_decrement();
       if (left_bumper_toggle) { // Left bumper decreases throttle, while right increases throttle
         throttle -= 0.1;
-        throttle = max(throttle, 0.1);
+        throttle = round(max(throttle, 0.1) * 10) / 10;
         cout << "Throttle changed to " << throttle << endl;
+        SmartDashboard::PutNumber("Throttle:", throttle);
       }
     } else if (right_bumper_toggle != ControlMap::throttle_increment()) {
       right_bumper_toggle = ControlMap::throttle_increment();
       if (right_bumper_toggle) {
         throttle += 0.1;
-        throttle = min(throttle, 1.0);
+        throttle = round(min(throttle, 1.0) * 10) / 10;
         cout << "Throttle changed to " << throttle << endl;
+        SmartDashboard::PutNumber("Throttle:", throttle);
       }
     }
 

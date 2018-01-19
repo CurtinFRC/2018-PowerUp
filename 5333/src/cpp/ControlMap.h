@@ -1,6 +1,8 @@
 #pragma once
 
 namespace ControlMap {
+  int init();
+
   double left_drive_power();
   double right_drive_power();
 

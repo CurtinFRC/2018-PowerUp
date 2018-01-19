@@ -52,6 +52,7 @@ public:
   double get_left_twist();
 
   bool get_left_trigger();
+  bool get_left_button(int nButton);
 
 
   double get_right_Y();
@@ -59,6 +60,39 @@ public:
   double get_right_twist();
 
   bool get_right_trigger();
+  bool get_right_button(int nButton);
+
+  #elif DRIVER_TRAINING
+
+  XboxController *xbox;
+
+  bool get_left_xbox_bumper();
+  double get_left_xbox_Y();
+  bool get_left_xbox_stick();
+
+  bool get_right_xbox_bumper();
+  double get_right_xbox_Y();
+  bool get_right_xbox_stick();
+
+  bool get_xbox_A();
+
+
+  Joystick *left_joy, *right_joy;
+
+  double get_left_Y();
+  double get_left_X();
+  double get_left_twist();
+
+  bool get_left_trigger();
+  bool get_left_button(int nButton);
+
+
+  double get_right_Y();
+  double get_right_X();
+  double get_right_twist();
+
+  bool get_right_trigger();
+  bool get_right_button(int nButton);
 
   #endif
 

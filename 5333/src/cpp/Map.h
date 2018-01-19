@@ -2,7 +2,7 @@
 
 #include "WPILib.h"
 
-#define JOY_CONTROL 2
+#define DRIVER_TRAINING 1
 
 namespace Map { // Map ports
   struct Controllers {
@@ -12,6 +12,11 @@ namespace Map { // Map ports
 
     #elif JOY_CONTROL
     static constexpr int joy[2] = {0, 1};
+    static constexpr double deadzone = 0.08;
+
+    #elif DRIVER_TRAINING
+    static constexpr int joy[2] = {0, 1};
+    static const int xbox = 2;
     static constexpr double deadzone = 0.08;
 
     #endif
