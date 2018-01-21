@@ -10,6 +10,7 @@ namespace components {
 
     public:
       Manipulator(int intakePort, int restrainerFwd, int restrainerRev);
+      Manipulator& operator=(const Manipulator&); //Copy Constructor
       void SetIntakeSpeed(double speed);
       void Restrain();
       void Release();

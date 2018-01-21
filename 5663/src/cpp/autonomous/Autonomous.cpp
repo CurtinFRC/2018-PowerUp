@@ -1,10 +1,12 @@
 #include "autonomous/Autonomous.h"
-#include <String.h>
+
 using namespace components;
 
 // Constructor for Autonomous class
-Autonomous::Autonomous(Drive *drive, Lift lift, Manipulator man, Ramp ramp) {
-  drive->Stop();
+Autonomous::Autonomous(Drive drive, Lift lift, Manipulator man, Ramp ramp) {
+  autoLift = new Lift(lift);
+  autoDrive = new Drive(drive);
+  autoMan = new Manipulator(man);
 }
 
 // Choose the best autonomous routine
@@ -15,8 +17,8 @@ void Autonomous::ChooseRoutine(int autoMode, int startingPosition) {
   SmartDashboard::PutString("Alliance Switch:", &gameData[0]);
   SmartDashboard::PutString("Scale:", &gameData[1]);
   SmartDashboard::PutString("Enemy Switch:", &gameData[2]);  //Put data on shuffleboard
-  switch (autoMode) {
 
+  switch (autoMode) {
     case 0:
       Baseline();
       break;
@@ -40,7 +42,7 @@ void Autonomous::RunPeriodic() {
 }
 
 void Autonomous::Baseline() {
-
+  drive->DriveDistance(0.5, -0.1, false);
 }
 
 // Routine: Initial (1) > Switch (left)

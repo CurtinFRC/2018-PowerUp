@@ -9,8 +9,11 @@
 
 namespace components {
   class Autonomous {
+    Lift *autoLift;
+    Drive *autoDrive;
+    Manipulator *autoMan;
     public:
-      Autonomous(Drive *drive, Lift lift, Manipulator man, Ramp ramp);
+      Autonomous(Drive drive, Lift lift, Manipulator man, Ramp ramp);
       void ChooseRoutine(int autoMode, int startingPosition);
       void RunPeriodic();
     private:

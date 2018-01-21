@@ -9,6 +9,7 @@ namespace components {
 
     public:
       Lift(int m1, int m2);
+      Lift& operator=(const Lift&); //Copy Constructor
       void SetHighPosition();
       void SetMidPosition();
       void SetLowPosition();

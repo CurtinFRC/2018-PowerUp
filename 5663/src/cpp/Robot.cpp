@@ -66,11 +66,12 @@ public:
     compressor = new Compressor(0);
     compressor->SetClosedLoopControl(true);
 
-    auton = new Autonomous(drive, *lift, *man, *ramp);
+    auton = new Autonomous(*drive, *lift, *man, *ramp);
   }
 
   void AutonomousInit() {
     drive->SetSlowGear();
+    lift->SetLowPosition();
     auton->ChooseRoutine((int)AutoChooser->GetSelected(), (int)StartingPosition->GetSelected());
     AutoStage = 0;
   }

@@ -23,6 +23,7 @@ namespace components {
 
     public:
       Drive(int l1, int l2, int l3, int r1, int r2, int r3); // Constructor
+      Drive& operator=(const Drive&); //Copy Constructor
       void TankDrive(double left, double right, bool square=false);
       void Stop();
       bool TurnAngle(double speed, double angle);
