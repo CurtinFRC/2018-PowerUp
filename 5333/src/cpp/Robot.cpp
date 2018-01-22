@@ -1,5 +1,6 @@
 #include "curtinfrc/math.h"
 #include "curtinfrc/drivetrain.h" // Shared drivetrain in commons
+#include "curtinfrc/vision/vision.h"
 #include "WPILib.h"
 // #include <pathfinder.h>
 
@@ -21,6 +22,7 @@ using namespace std;
 class Robot : public IterativeRobot {
 public:
   Drivetrain<2> *drive;
+  curtinfrc::VisionSystem *vision;
   double throttle;
   bool left_bumper_toggle, right_bumper_toggle;
 
@@ -36,6 +38,9 @@ public:
 
   void RobotInit() {
     io = IO::get_instance(); // Refer to IO
+
+	vision = new VisionSystem();
+	vision->start();
 
     drive = new Drivetrain<2>(io->left_motors, io->right_motors);
     belev = new BelevatorControl();
