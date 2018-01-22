@@ -1,5 +1,6 @@
 #include "autonomous/Autonomous.h"
 
+using namespace autonomous;
 using namespace components;
 
 // Constructor for Autonomous class
@@ -11,6 +12,7 @@ Autonomous::Autonomous(Drive drive, Lift lift, Manipulator man, Ramp ramp) {
 
 // Choose the best autonomous routine
 void Autonomous::ChooseRoutine(int autoMode, int startingPosition) {
+  AutoStage = 0;
   gameData = DriverStation::GetInstance().GetGameSpecificMessage(); //Get specific match data
   // gameData will be an array with 3 characters, eg. "LRL"
   // check https://wpilib.screenstepslive.com/s/currentCS/m/getting_started/l/826278-2018-game-data-details
@@ -38,11 +40,12 @@ void Autonomous::ChooseRoutine(int autoMode, int startingPosition) {
 }
 
 void Autonomous::RunPeriodic() {
-
+  if(AutoStage == 0) Baseline();
+  else autoDrive->Stop();
 }
 
 void Autonomous::Baseline() {
-  drive->DriveDistance(0.5, -0.1, false);
+  if(autoDrive->DriveDistance(1.0, 0.2, false)) AutoStage++;
 }
 
 // Routine: Initial (1) > Switch (left)

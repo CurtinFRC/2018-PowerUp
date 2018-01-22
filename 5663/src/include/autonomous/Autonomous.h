@@ -7,7 +7,9 @@
 #include "components/Ramp.h"
 #include <string>
 
-namespace components {
+using namespace components;
+
+namespace autonomous {
   class Autonomous {
     Lift *autoLift;
     Drive *autoDrive;
@@ -26,5 +28,6 @@ namespace components {
       void S3R();
 
       std::string gameData;
+      int AutoStage = 0;
   };
 }

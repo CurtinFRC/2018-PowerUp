@@ -11,6 +11,7 @@
 #include "components/Lift.h"
 #include "components/Ramp.h"
 #include "components/Manipulator.h"
+
 #include "autonomous/Autonomous.h"
 
 using namespace frc;
@@ -18,6 +19,7 @@ using namespace curtinfrc;
 using namespace std;
 using namespace components;
 using namespace cs;
+using namespace autonomous;
 
 class Robot : public IterativeRobot {
   UsbCamera camera;
@@ -58,8 +60,8 @@ public:
     ControlModeChooser->AddDefault("Dual",(int*) 0);
     ControlModeChooser->AddObject("Single (Debug)",(int*) 1);
 
-    drive = new Drive(1, 2, 3, 4, 5, 6);
-    lift = new Lift(7, 8);
+    drive = new Drive(1, 2, 5, 8, 7, 6);
+    lift = new Lift(3, 4);
     ramp = new Ramp(2, 3);
     man = new Manipulator(9, 0, 1);
 
@@ -77,14 +79,16 @@ public:
   }
 
   void AutonomousPeriodic() {
-    switch(AutoStage) {
-      case 0:
-        if(drive->DriveDistance(0.1, 0.05, false)) AutoStage++; //Need to make robot drive backwards into wall for a short time here, this is really important! Else gears do not change properly :(
-        break;
-      case 1:
-        auton->RunPeriodic();
-        break;
-    }
+
+    // switch(AutoStage) {
+    //   case 0:
+    //     if(drive->DriveDistance(0.1, 0.05, false)) AutoStage++; //Need to make robot drive backwards into wall for a short time here, this is really important! Else gears do not change properly :(
+    //     break;
+    //   case 1:
+         auton->RunPeriodic();
+         drive->RunPeriodic();
+    //     break;
+    // }
 
   }
 
@@ -96,7 +100,7 @@ public:
 
 //———[controller 1]—————————————————————————————————————————————————————————————
   //———[drivetrain]—————————————————————————————————————————————————————————————
-    drive->TankDrive(xbox->GetY(xbox->kLeftHand), xbox->GetY(xbox->kRightHand), true);
+    drive->TankDrive(xbox->GetY(xbox->kRightHand), xbox->GetY(xbox->kLeftHand), true);
     if(xbox->GetYButtonPressed()) {
       drive->ToggleGear();
     }

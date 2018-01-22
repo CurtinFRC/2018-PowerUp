@@ -19,6 +19,8 @@ Drive::Drive(int l1, int l2, int l3, int r1, int r2, int r3) {
   right2 = new TalonSRX(r2);
   right3 = new TalonSRX(r3);
 
+  left1->SetSensorPhase(true);
+
   //left2->Set(ControlMode::Follow, l1);
   imu = new AHRS(I2C::Port::kMXP);
 
@@ -49,8 +51,8 @@ void Drive::TankDrive(double left, double right, bool square) {
   if(-deadzone < left && left < deadzone) left = 0;
   if(-deadzone < right && right < deadzone) right = 0;
   if(square) {
-    left *= abs(left);
-    right *= abs(right); // square inputs
+    left *= fabs(left);
+    right *= fabs(right); // square inputs
   }
   left1->Set(ControlMode::PercentOutput, left);
   left2->Set(ControlMode::PercentOutput, left);
@@ -112,7 +114,7 @@ bool Drive::DriveDistance(double speed, double distance, bool holdAngle) {
     left1->ConfigPeakOutputForward(speed,10);
     left1->ConfigPeakOutputReverse(-speed,10);
 
-    left1->Config_kF(0,1.0/1672.0,0); //set left PID-F values    //VALUE FOR TOUGHBOX MINI
+    left1->Config_kF(0,0,0); //set left PID-F values    //VALUE FOR TOUGHBOX MINI
     left1->Config_kP(0,5.0,0);
     left1->Config_kI(0,0.0,0);
     left1->Config_kD(0,0.0,0);
@@ -122,7 +124,7 @@ bool Drive::DriveDistance(double speed, double distance, bool holdAngle) {
     right1->ConfigPeakOutputForward(speed,10);
     right1->ConfigPeakOutputReverse(-speed,10);
 
-    right1->Config_kF(0,1.0/1672.0,0); //set right PID-F values    //VALUE FOR TOUGHBOX MINI
+    right1->Config_kF(0,0,0); //set right PID-F values    //VALUE FOR TOUGHBOX MINI
     right1->Config_kP(0,5.0,0);
     right1->Config_kI(0,0.0,0);
     right1->Config_kD(0,0.0,0);
@@ -173,4 +175,7 @@ void Drive::RunPeriodic() {
   } else {
     SetSlowGear();
   }
+
+  SmartDashboard::PutNumber("Left Drive encoder pos", left1->GetSelectedSensorPosition(0));
+  SmartDashboard::PutNumber("Right Drive encoder pos", right1->GetSelectedSensorPosition(0));
 }
