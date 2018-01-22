@@ -39,8 +39,8 @@ public:
   void RobotInit() {
     io = IO::get_instance(); // Refer to IO
 
-	vision = new VisionSystem();
-	vision->start();
+  	vision = new VisionSystem();
+  	vision->start();
 
     drive = new Drivetrain<2>(io->left_motors, io->right_motors);
     belev = new BelevatorControl();
