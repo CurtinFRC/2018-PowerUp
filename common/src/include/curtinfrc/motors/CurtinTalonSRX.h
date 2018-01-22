@@ -13,6 +13,7 @@ extern "C" {
 namespace curtinfrc {
 
   class Pathfinder {
+  public:
     /**
      * Load a pathfinder trajectory from a .csv file.
      */
@@ -31,7 +32,7 @@ namespace curtinfrc {
   public:
     using ctre::phoenix::motorcontrol::can::TalonSRX::TalonSRX;
     using ctre::phoenix::motorcontrol::can::BaseMotorController::BaseMotorController;
-    
+
     CurtinTalonSRX() = delete;
     CurtinTalonSRX(int c) : BaseMotorController(c | 0x02040000), TalonSRX(c) {}
 
@@ -65,10 +66,10 @@ namespace curtinfrc {
     void selftest_onstop() override;
 
     // MOTION PROFILING //
-    
+
     void configure_pidf(double kp, double ki, double kd, double kf);
     void configure_encoder_edges_per_rev(unsigned int ticks_per_rev);     // Note: only effects motion profiling, not GetSelectedSensorPositions
-    
+
     /**
      * Configure wheel diameter for motion profiling. Must be in inches
      */
@@ -79,7 +80,7 @@ namespace curtinfrc {
      * generation rate.
      */
     void configure_mp_update_rate(unsigned int milliseconds);
-    
+
     /**
      * Load a Pathfinder Path partially.
      * \param \c segments The pathfinder segments
@@ -90,7 +91,7 @@ namespace curtinfrc {
     bool load_pathfinder(Segment *segments, int length);
 
     /**
-     * Reset the Motion Profile buffer (reset pathfinder load status). 
+     * Reset the Motion Profile buffer (reset pathfinder load status).
      * Call this instead of ClearMotionProfileTrajectories()
      */
     void reset_mp();
@@ -110,7 +111,7 @@ namespace curtinfrc {
      */
     void disable_mp();
 
-    /** 
+    /**
      * Process the Motion Profile
      * \return The motion profile status. Check .isLast() to check if path is finished
      */

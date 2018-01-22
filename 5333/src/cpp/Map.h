@@ -37,4 +37,13 @@ namespace Map { // Map ports
     static constexpr int intake_solenoids[2][2] = {{1, 2}, {2, 4}};
     static constexpr int claw_solenoids[1][2] = {{0, 0}};
   };
+
+  struct Robot { // Robot stats
+    static constexpr float max_v = 9.8;
+    static constexpr float max_a = 3;
+    static constexpr float max_j = 60;
+    static constexpr float wheel_diameter = 6; // Inches
+    static constexpr float track_width = 0.61; // Metres
+    static const int encoder_ticks_per_rot = 1000;
+  };
 }

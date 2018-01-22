@@ -7,6 +7,14 @@
 class AutoControl {
 public:
   int init();
+  void tick();
 
-  Waypoint points[nPOINTS];
+  int segment_length;
+  Segment segments_left[1024], segments_right[1024];
+
+private:
+  const double _kp = 1;
+  const double _ki = 0;
+  const double _kd = 0;
+  const double _kf = 0;
 };
