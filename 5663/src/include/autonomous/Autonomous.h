@@ -28,6 +28,7 @@ namespace autonomous {
       void S3R();
 
       std::string gameData;
+      std::function<void()> autoFunction;
       int AutoStage = 0;
   };
 }

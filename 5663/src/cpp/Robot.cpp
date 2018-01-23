@@ -75,21 +75,10 @@ public:
     drive->SetSlowGear();
     lift->SetLowPosition();
     auton->ChooseRoutine((int)AutoChooser->GetSelected(), (int)StartingPosition->GetSelected());
-    AutoStage = 0;
   }
 
   void AutonomousPeriodic() {
-
-    // switch(AutoStage) {
-    //   case 0:
-    //     if(drive->DriveDistance(0.1, 0.05, false)) AutoStage++; //Need to make robot drive backwards into wall for a short time here, this is really important! Else gears do not change properly :(
-    //     break;
-    //   case 1:
-         auton->RunPeriodic();
-         drive->RunPeriodic();
-    //     break;
-    // }
-
+    auton->RunPeriodic();
   }
 
   void TeleopInit() {

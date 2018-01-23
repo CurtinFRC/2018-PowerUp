@@ -22,30 +22,29 @@ void Autonomous::ChooseRoutine(int autoMode, int startingPosition) {
 
   switch (autoMode) {
     case 0:
-      Baseline();
+      autoFunction = [=](){this->Baseline();};
       break;
 
     case 1:
       if(gameData[0] == 'L') {
-        if(startingPosition == 1) S1L();
-        else if(startingPosition == 2) S2L();
-        else S3L();
+        if(startingPosition == 1) autoFunction = [=](){this->S1L();};
+        else if(startingPosition == 2) autoFunction = [=](){this->S2L();};
+        else autoFunction = [=](){this->S3L();};
       } else {
-        if(startingPosition == 1) S1R();
-        else if(startingPosition == 2) S2R();
-        else S3R();
+        if(startingPosition == 1) autoFunction = [=](){this->S1R();};
+        else if(startingPosition == 2) autoFunction = [=](){this->S2R();};
+        else autoFunction = [=](){this->S3R();};
       }
-
   }
 }
 
 void Autonomous::RunPeriodic() {
-  if(AutoStage == 0) Baseline();
-  else autoDrive->Stop();
+  autoFunction();
+  autoDrive->RunPeriodic();
 }
 
 void Autonomous::Baseline() {
-  if(autoDrive->DriveDistance(1.0, 0.2, false)) AutoStage++;
+  autoDrive->DriveDistance(1.0, 0.2, false);
 }
 
 // Routine: Initial (1) > Switch (left)
