@@ -19,16 +19,16 @@ namespace autonomous {
       void ChooseRoutine(int autoMode, int startingPosition);
       void RunPeriodic();
     private:
-      void Baseline();
-      void S1L();
-      void S2L();
-      void S3L();
-      void S1R();
-      void S2R();
-      void S3R();
+      bool Baseline();
+      bool S1L();
+      bool S2L();
+      bool S3L();
+      bool S1R();
+      bool S2R();
+      bool S3R();
 
       std::string gameData;
-      std::function<void()> autoFunction;
+      std::function<bool()> autoFunction;
       int AutoStage = 0;
   };
 }

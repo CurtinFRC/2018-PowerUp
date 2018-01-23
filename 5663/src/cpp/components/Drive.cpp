@@ -19,9 +19,14 @@ Drive::Drive(int l1, int l2, int l3, int r1, int r2, int r3) {
   right2 = new TalonSRX(r2);
   right3 = new TalonSRX(r3);
 
-  left1->SetSensorPhase(true);
+  left1->SetSensorPhase(true);   //Invert encoders
+  //right1->SetSensorPhase(true);
 
-  //left2->Set(ControlMode::Follow, l1);
+  left2->Set(ControlMode::Follower, l1);
+  left3->Set(ControlMode::Follower, l1);
+  right2->Set(ControlMode::Follower, r1);
+  right3->Set(ControlMode::Follower, r1);
+
   imu = new AHRS(I2C::Port::kMXP);
 
   out = new gyroPID();
@@ -39,11 +44,7 @@ Drive::Drive(int l1, int l2, int l3, int r1, int r2, int r3) {
 // Stop all Drive class motors
 void Drive::Stop() {
   left1->NeutralOutput();
-  left2->NeutralOutput();
-  left3->NeutralOutput();
   right1->NeutralOutput();
-  right2->NeutralOutput();
-  right3->NeutralOutput();
 }
 
 // Set speed of Drive class motors
@@ -55,11 +56,7 @@ void Drive::TankDrive(double left, double right, bool square) {
     right *= fabs(right); // square inputs
   }
   left1->Set(ControlMode::PercentOutput, left);
-  left2->Set(ControlMode::PercentOutput, left);
-  left3->Set(ControlMode::PercentOutput, left);
   right1->Set(ControlMode::PercentOutput, right);
-  right2->Set(ControlMode::PercentOutput, right);
-  right3->Set(ControlMode::PercentOutput, right);
 }
 
 // Start or continue a turn
@@ -89,12 +86,7 @@ bool Drive::DriveDistance(double speed, double distance, bool holdAngle) {
   if(driving) {
     //run driving code
     left1->Set(ControlMode::Position, leftFinalDistance); //drive code in this format
-    left2->Set(ControlMode::PercentOutput, left1->GetMotorOutputPercent());
-    left3->Set(ControlMode::PercentOutput, left1->GetMotorOutputPercent());
-
     right1->Set(ControlMode::Position, rightFinalDistance);
-    right2->Set(ControlMode::PercentOutput, right1->GetMotorOutputPercent());
-    right3->Set(ControlMode::PercentOutput, right1->GetMotorOutputPercent());
 
     if(abs(leftFinalDistance) + driveTolerance > abs(left1->GetSelectedSensorPosition(0)) &&  abs(leftFinalDistance) - driveTolerance < abs(left1->GetSelectedSensorPosition(0)) && left1->GetSelectedSensorPosition(0) * leftFinalDistance >= 0) {
       if(abs(rightFinalDistance) + driveTolerance > abs(right1->GetSelectedSensorPosition(0)) &&  abs(rightFinalDistance) - driveTolerance < abs(right1->GetSelectedSensorPosition(0)) && right1->GetSelectedSensorPosition(0) * rightFinalDistance >= 0) {

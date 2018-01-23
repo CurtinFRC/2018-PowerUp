@@ -35,11 +35,11 @@ namespace components {
 
     private:
       bool turning = false, driving = false; // State variables
-      double turnTolerance = 2.0, driveTolerance = 20.0; // Tolerance variables
+      double turnTolerance = 2.0, driveTolerance = 10.0; // Tolerance variables
       double kP = 0.025, kI = 0.0004, kD = 0.04, kM = 1440/0.4787787204;
       int slowGear = rightGear->kForward;
       int fastGear = rightGear->kReverse;
-      double deadzone = 0.02;
+      double deadzone = 0.015;
       int currentGear = 0;
       int leftFinalDistance, rightFinalDistance;
   };
