@@ -39,6 +39,8 @@ public:
   void RobotInit() {
     io = IO::get_instance(); // Refer to IO
 
+    auto_ = new AutoControl();
+
   	vision = new VisionSystem();
   	vision->start();
 

@@ -26,7 +26,7 @@ namespace Map { // Map ports
 
   struct Motors {
     static constexpr int left_motors[2] = {32, 34};
-    static constexpr int right_motors[2] = {35, 36};
+    static constexpr int right_motors[2] = {36, 35};
 
     static constexpr int belev_motors[1] = {37};
 
