@@ -14,7 +14,11 @@ void StrategyController::periodic() {
       active->start();
     }
     active->tick(now_ms - active->start_time);
+<<<<<<< HEAD
     if (active->done || (active->timeout > 0 && now_ms - active->start_time > active->timeout)) {
+=======
+    if (active->done || now_ms - active->start_time > active->timeout) {
+>>>>>>> 685b8a757b2f02ba790566a0e5a81b172dff633a
       active->stop();
       active = active->_next;
     }
