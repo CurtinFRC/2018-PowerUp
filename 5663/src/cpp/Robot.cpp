@@ -11,6 +11,7 @@
 #include "components/Lift.h"
 #include "components/Ramp.h"
 #include "components/Manipulator.h"
+#include "components/Climber.h"
 
 #include "autonomous/Autonomous.h"
 
@@ -32,6 +33,7 @@ class Robot : public IterativeRobot {
   Lift *lift;
   Ramp *ramp;
   Manipulator *man;
+  Climber *climber;
   Compressor *compressor;
   Autonomous *auton;
 public:
