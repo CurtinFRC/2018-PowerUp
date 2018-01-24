@@ -41,6 +41,7 @@ void Autonomous::ChooseRoutine(int autoMode, int startingPosition) {
 void Autonomous::RunPeriodic() {
   autoDrive->RunPeriodic();
   autoLift->RunPeriodic();
+
   switch(AutoStage) {
     case 0:
       if(autoFunction()) AutoStage++;
@@ -49,6 +50,7 @@ void Autonomous::RunPeriodic() {
       ChooseRoutine(5,5);
       break;
   }
+
 }
 
 bool Autonomous::Baseline() {
