@@ -8,7 +8,7 @@ using namespace std;
 
 #ifdef XBOX_CONTROL
 
-int init() { return 0; }
+int ControlMap::init() { return 0; }
 
 double ControlMap::left_drive_power() { return IO::get_instance()->get_left_Y(); }
 double ControlMap::right_drive_power() { return IO::get_instance()->get_right_Y(); }
@@ -25,7 +25,7 @@ bool ControlMap::claw_state() {
 }
 
 #elif JOY_CONTROL
-int init() { return 0; }
+int ControlMap::init() { return 0; }
 
 #if JOY_CONTROL == 1 // Tank drive joysticks
 

@@ -12,6 +12,7 @@ int AutoControl::init() {
   Pathfinder::pathfinder_load_file("/home/lvuser/paths/test_right.csv", &segments_right[0]);
 
   left_motor->reset_mp();
+  left_motor->SetIntegralAccumulator(0, 0, 0);
   left_motor->configure_pidf(_kp, _ki, _kd, _kf);
   left_motor->configure_encoder_edges_per_rev(Map::Robot::encoder_ticks_per_rot);
   left_motor->configure_wheel_diameter(Map::Robot::wheel_diameter);
@@ -19,6 +20,7 @@ int AutoControl::init() {
   left_motor->load_pathfinder(segments_left, segment_length);
 
   right_motor->reset_mp();
+  right_motor->SetIntegralAccumulator(0, 0, 0);
   right_motor->configure_pidf(_kp, _ki, _kd, _kf);
   right_motor->configure_encoder_edges_per_rev(Map::Robot::encoder_ticks_per_rot);
   right_motor->configure_wheel_diameter(Map::Robot::wheel_diameter);
