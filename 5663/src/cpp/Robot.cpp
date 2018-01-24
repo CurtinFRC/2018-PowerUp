@@ -6,6 +6,8 @@
 #include <SmartDashboard/SmartDashboard.h>
 #include <PowerDistributionPanel.h>
 #include <PIDOutput.h>
+#include <I2C.h>
+#include <pathfinder.h>
 
 #include "components/Drive.h"
 #include "components/Lift.h"
@@ -36,8 +38,11 @@ class Robot : public IterativeRobot {
   Climber *climber;
   Compressor *compressor;
   Autonomous *auton;
+  I2C *arduino;
+
 public:
   int AutoStage;
+  uint8_t message = 72;
 
   void RobotInit() {
     camera = CameraServer::GetInstance()->StartAutomaticCapture();
@@ -71,15 +76,23 @@ public:
     compressor->SetClosedLoopControl(true);
 
     auton = new Autonomous(*drive, *lift, *man, *ramp);
+
+    arduino = new I2C(arduino->kOnboard, 100);
+
+    arduino->WriteBulk(&message, 1);
   }
 
   void AutonomousInit() {
+
+
     drive->SetSlowGear();
     lift->SetLowPosition();
     auton->ChooseRoutine((int)AutoChooser->GetSelected(), (int)StartingPosition->GetSelected());
   }
 
   void AutonomousPeriodic() {
+    message = 72;
+    SmartDashboard::PutBoolean("transaction", arduino->Transaction(&message, 1, NULL, 0));
     auton->RunPeriodic();
   }
 
@@ -88,7 +101,8 @@ public:
   }
 
   void TeleopPeriodic() {
-
+    message = 76;
+   SmartDashboard::PutBoolean("transaction", arduino->Transaction(&message, 1, NULL, 0));
 //———[controller 1]—————————————————————————————————————————————————————————————
   //———[drivetrain]—————————————————————————————————————————————————————————————
     drive->TankDrive(xbox->GetY(xbox->kRightHand), xbox->GetY(xbox->kLeftHand), true);
@@ -122,6 +136,9 @@ public:
     if(xbox->GetBumper(xbox->kLeftHand) && xbox->GetBumper(xbox->kRightHand) && xbox2->GetBumper(xbox2->kLeftHand) && xbox2->GetBumper(xbox2->kRightHand)) {
       ramp->ConfirmIntentionalDeployment();
     }
+
+  //———[climber]————————————————————————————————————————————————————————————————
+
 
   //———[periodic]———————————————————————————————————————————————————————————————
     drive->RunPeriodic();
