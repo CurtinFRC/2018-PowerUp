@@ -42,8 +42,23 @@ namespace Map { // Map ports
     static constexpr float max_v = 9.8;
     static constexpr float max_a = 3;
     static constexpr float max_j = 60;
-    static constexpr float wheel_diameter = 6; // Inches
+    static constexpr float wheel_circ = 0.4788; // Metres
     static constexpr float track_width = 0.61; // Metres
     static const int encoder_ticks_per_rot = 1000;
+  };
+
+  struct PID {
+    struct Pathfinder {
+      static constexpr double kp = 0.08;
+      static constexpr double ki = 0; // 0.00005
+      static constexpr double kd = 0;
+      static constexpr double kf = 0;
+    };
+
+    struct Navx {
+      static constexpr double kp = 1;
+      static constexpr double ki = 0;
+      static constexpr double kd = 0;
+    };
   };
 }

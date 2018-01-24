@@ -2,6 +2,7 @@
 
 #include "WPILib.h"
 #include "curtinfrc/motors/CurtinTalonSRX.h"
+#include "AHRS.h"
 #include "Map.h"
 
 using namespace frc;
@@ -19,6 +20,8 @@ public:
 
   DoubleSolenoid *intake_solenoids[2];
   DoubleSolenoid *claw_solenoids[1];
+
+  AHRS *navx;
 
   #ifdef XBOX_CONTROL
 

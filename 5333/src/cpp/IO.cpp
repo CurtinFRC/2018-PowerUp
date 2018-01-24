@@ -17,6 +17,18 @@ int IO::init() { // Sets up IO
   intake_motors[0][0] = new CurtinTalonSRX(Map::Motors::intake_motors[0][0]);
   intake_motors[1][0] = new CurtinTalonSRX(Map::Motors::intake_motors[1][0]);
 
+
+  try {
+    navx = new AHRS(SPI::Port::kMXP);
+  } catch (std::exception& ex) {
+    std::string err_string = "Error instantiating navX MXP:  ";
+    err_string += ex.what();
+    DriverStation::ReportError(err_string.c_str());
+  }
+
+  navx_rot_rate = 0.0f;
+  navx->ZeroYaw();
+
   intake_solenoids[0] = new DoubleSolenoid(
     Map::Pneumatics::intake_solenoids[0][0],
     Map::Pneumatics::intake_solenoids[0][1],
