@@ -7,6 +7,9 @@
 class AutoControl {
 public:
   int init();
+  void tick();
 
-  Waypoint points[nPOINTS];
+  int segment_length;
+  Segment segments_left[1024], segments_right[1024];
+  EncoderFollower *leftfollower, *rightfollower;
 };

@@ -1,5 +1,6 @@
 #include "curtinfrc/math.h"
 #include "curtinfrc/drivetrain.h" // Shared drivetrain in commons
+#include "curtinfrc/vision/vision.h"
 #include "WPILib.h"
 // #include <pathfinder.h>
 
@@ -9,7 +10,7 @@
 #include "Claw.h"
 #include "Intake.h"
 #include "ControlMap.h"
-// #include "Auto.h"
+#include "Auto.h"
 
 #include <string>
 #include <SmartDashboard/SmartDashboard.h>
@@ -21,10 +22,11 @@ using namespace std;
 class Robot : public IterativeRobot {
 public:
   Drivetrain<2> *drive;
+  curtinfrc::VisionSystem *vision;
   double throttle;
   bool left_bumper_toggle, right_bumper_toggle;
 
-  // AutoControl *auto_;
+  AutoControl *auto_;
 
   BelevatorControl *belev;
   ClawControl *claw;
@@ -37,6 +39,11 @@ public:
   void RobotInit() {
     io = IO::get_instance(); // Refer to IO
 
+    auto_ = new AutoControl();
+
+  	vision = new VisionSystem();
+  	vision->start();
+
     drive = new Drivetrain<2>(io->left_motors, io->right_motors);
     belev = new BelevatorControl();
     intake = new IntakeControl();
@@ -46,26 +53,30 @@ public:
     left_bumper_toggle = right_bumper_toggle = false;
   }
 
-  void AutonomousInit() { }
+  void AutonomousInit() {
+    auto_->init();
+  }
   void AutonomousPeriodic() {
-    drive->set_left(0);
-    drive->set_right(0);
+    auto_->tick();
   }
 
   void TeleopInit() {
-    SmartDashboard::PutString("Test:", "A");
+    SmartDashboard::PutNumber("Throttle:", throttle);
+    ControlMap::init();
   }
   void TeleopPeriodic() {
     // Only move if joystick is not in deadzone
     if(abs(ControlMap::left_drive_power()) > Map::Controllers::deadzone) {
-      double output_left = math::square_keep_sign(ControlMap::left_drive_power());
+      // double output_left = math::square_keep_sign(ControlMap::left_drive_power());
+      double output_left = ControlMap::left_drive_power();
       drive->set_left(output_left * throttle);
     } else {
       drive->set_left(0);
     }
 
     if(abs(ControlMap::right_drive_power()) > Map::Controllers::deadzone) {
-      double output_right = math::square_keep_sign(ControlMap::right_drive_power());
+      // double output_right = math::square_keep_sign(ControlMap::right_drive_power());
+      double output_right = ControlMap::right_drive_power();
       drive->set_right(output_right * throttle);
     } else {
       drive->set_right(0);
@@ -80,15 +91,17 @@ public:
       left_bumper_toggle = ControlMap::throttle_decrement();
       if (left_bumper_toggle) { // Left bumper decreases throttle, while right increases throttle
         throttle -= 0.1;
-        throttle = max(throttle, 0.1);
+        throttle = round(max(throttle, 0.1) * 10) / 10;
         cout << "Throttle changed to " << throttle << endl;
+        SmartDashboard::PutNumber("Throttle:", throttle);
       }
     } else if (right_bumper_toggle != ControlMap::throttle_increment()) {
       right_bumper_toggle = ControlMap::throttle_increment();
       if (right_bumper_toggle) {
         throttle += 0.1;
-        throttle = min(throttle, 1.0);
+        throttle = round(min(throttle, 1.0) * 10) / 10;
         cout << "Throttle changed to " << throttle << endl;
+        SmartDashboard::PutNumber("Throttle:", throttle);
       }
     }
 
