@@ -1,0 +1,20 @@
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual C++ Express 2010
+
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "5663_frcUserProgramExe", "C:\Users\jakel\github\2018-PowerUp\5663\5663_frcUserProgramExe.vcxproj", "{6D6F1789-5526-3276-AB6B-EEC85FAB0C11}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "common_curtinFrcCommonLib", "C:\Users\jakel\github\2018-PowerUp\common\common_curtinFrcCommonLib.vcxproj", "{620584EF-1AD1-37F5-B136-AA6F6ED11FF0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		debug|Win32=debug|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6D6F1789-5526-3276-AB6B-EEC85FAB0C11}.debug|Win32.ActiveCfg = debug|Win32
+		{6D6F1789-5526-3276-AB6B-EEC85FAB0C11}.debug|Win32.Build.0 = debug|Win32
+		{620584EF-1AD1-37F5-B136-AA6F6ED11FF0}.debug|Win32.ActiveCfg = debug|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

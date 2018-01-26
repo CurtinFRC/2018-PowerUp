@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build" ToolsVersion="4.0">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="debug|Win32">
+      <Configuration>debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <Keyword>MakeFileProj</Keyword>
+    <ProjectGUID>{6D6F1789-5526-3276-AB6B-EEC85FAB0C11}</ProjectGUID>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props"/>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <OutDir>.vs\5663_frcUserProgramExe\$(Configuration)</OutDir>
+    <IntDir>.vs\5663_frcUserProgramExe\$(Configuration)</IntDir>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props"/>
+  <PropertyGroup Label="UserMacros"/>
+  <PropertyGroup Label="NMakeConfiguration" Condition="'$(Configuration)|$(Platform)'=='debug|Win32'">
+    <NMakeBuildCommandLine>..\gradlew.bat -p ".." :5663:installFrcUserProgramExecutable</NMakeBuildCommandLine>
+    <NMakeCleanCommandLine>..\gradlew.bat -p ".." :5663:clean</NMakeCleanCommandLine>
+    <NMakeReBuildCommandLine>..\gradlew.bat -p ".." :5663:clean :5663:installFrcUserProgramExecutable</NMakeReBuildCommandLine>
+    <NMakePreprocessorDefinitions></NMakePreprocessorDefinitions>
+    <NMakeIncludeSearchPath>src\include;build\tmp\expandedArchives\wpilibc-2018.1.1-headers.zip_0ba004690f48207547fbbd2a6f212388;build\tmp\expandedArchives\hal-2018.1.1-headers.zip_4b49b4176ae22cb58a5421914aabf320;build\tmp\expandedArchives\wpiutil-cpp-3.0.0-headers.zip_71db4973bf73247f06ec3fdb86e1126b;build\tmp\expandedArchives\ntcore-cpp-4.0.0-headers.zip_517391151665b6a51f10f788c06ee62d;build\tmp\expandedArchives\cscore-cpp-1.1.0-headers.zip_7179d2a404841338b55673d83c119071;build\tmp\expandedArchives\opencv-cpp-3.2.0-headers.zip_1b8591564854592a4aff6bd224b2b0a3;build\tmp\expandedArchives\ni-libraries-2018.1.1-headers.zip_6aedc4b55a982775a7b6e16df1020d5b;build\tmp\expandedArchives\CTRE-phoenix-cpp-5.2.1.1-headers.zip_ed51ae3396f2e2d306a9f6a233af2bce;build\tmp\expandedArchives\navx-cpp-3.0.346-headers.zip_bdc8378de58d7490d517245a513e81b3;build\tmp\expandedArchives\MatchData-2018.01.07-headers.zip_690b86dff7c45de52602c9654d059cf0;build\tmp\expandedArchives\Pathfinder-Core-1.8-headers.zip_e38bab7ade0d4894dc260340f35e3bb1;..\common\src\include</NMakeIncludeSearchPath>
+    <NMakeOutput>build\install\frcUserProgram\lib\frcUserProgram</NMakeOutput>
+  </PropertyGroup>
+  <ItemGroup Label="Sources">
+    <ClCompile Include="build.gradle"/>
+    <ClCompile Include="src\cpp\autonomous\Autonomous.cpp"/>
+    <ClCompile Include="src\cpp\components\Climber.cpp"/>
+    <ClCompile Include="src\cpp\components\Drive.cpp"/>
+    <ClCompile Include="src\cpp\components\Lift.cpp"/>
+    <ClCompile Include="src\cpp\components\Manipulator.cpp"/>
+    <ClCompile Include="src\cpp\components\Ramp.cpp"/>
+    <ClCompile Include="src\cpp\Robot.cpp"/>
+  </ItemGroup>
+  <ItemGroup Label="Headers">
+    <ClInclude Include="src\include\autonomous\Autonomous.h"/>
+    <ClInclude Include="src\include\components\Climber.h"/>
+    <ClInclude Include="src\include\components\Drive.h"/>
+    <ClInclude Include="src\include\components\Lift.h"/>
+    <ClInclude Include="src\include\components\Manipulator.h"/>
+    <ClInclude Include="src\include\components\Ramp.h"/>
+  </ItemGroup>
+  <ItemGroup Label="References"/>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets"/>
+</Project>
