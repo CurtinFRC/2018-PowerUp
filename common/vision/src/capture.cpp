@@ -3,7 +3,8 @@
 void capture::init()
 {
 	video_capture = new cv::VideoCapture(0);
-	if (!video_capture->isOpened()) {
+	if (!video_capture->isOpened()) 
+	{
 		std::cerr << "Could not open camera." << std::endl;
 		exit(-1);
 	}

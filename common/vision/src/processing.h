@@ -3,7 +3,8 @@
 #include <mutex>
 #include <vector>
 
-class processing {
+class processing 
+{
 	public:
 		void process_frame(cv::Mat* frame);
 		cv::Mat* get_thresholded();

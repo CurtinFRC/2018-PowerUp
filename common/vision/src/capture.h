@@ -4,7 +4,8 @@
 
 const int CAMERA_WIDTH = 640, CAMERA_HEIGHT = 480;
 
-class capture {
+class capture 
+{
 	public:
 		void init();
 		void run();

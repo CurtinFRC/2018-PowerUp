@@ -62,7 +62,8 @@ void processing::process_frame(cv::Mat* frame)
 	//filter contours
 	filtered_contours_mtx.lock();
 	filtered_contours.clear();
-	for (int i = 0; i < contours.size(); i++) {
+	for (int i = 0; i < contours.size(); i++) 
+	{
 		double area = cv::contourArea(contours[i], false);
 		if (area >= 2500)
 		{
@@ -73,7 +74,8 @@ void processing::process_frame(cv::Mat* frame)
 	//find bounding boxes
 	bounding_boxes_mtx.lock();
 	bounding_boxes.clear();
-	for (auto contour : filtered_contours) {
+	for (auto contour : filtered_contours)
+	{
 		bounding_boxes.push_back(bounding_box(contour));
 	}
 	filtered_contours_mtx.unlock();
