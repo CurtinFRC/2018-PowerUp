@@ -11,5 +11,6 @@ public:
 
   int segment_length;
   Segment segments_left[1024], segments_right[1024];
-  EncoderFollower *leftfollower, *rightfollower;
+  EncoderFollower leftfollower, rightfollower;
+  EncoderConfig config;
 };

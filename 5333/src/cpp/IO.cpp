@@ -26,7 +26,6 @@ int IO::init() { // Sets up IO
     DriverStation::ReportError(err_string.c_str());
   }
 
-  navx_rot_rate = 0.0f;
   navx->ZeroYaw();
 
   intake_solenoids[0] = new DoubleSolenoid(
