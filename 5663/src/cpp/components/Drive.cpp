@@ -22,6 +22,13 @@ Drive::Drive(int l1, int l2, int l3, int r1, int r2, int r3) {
   left1->SetSensorPhase(true);   //Invert encoders
   //right1->SetSensorPhase(true);
 
+  left1->SetInverted(false);	//Invert motors
+  left2->SetInverted(false);
+  left3->SetInverted(false);
+  right1->SetInverted(false);
+  right2->SetInverted(false);
+  right3->SetInverted(false);
+
   left2->Set(ControlMode::Follower, l1);
   left3->Set(ControlMode::Follower, l1);
   right2->Set(ControlMode::Follower, r1);
