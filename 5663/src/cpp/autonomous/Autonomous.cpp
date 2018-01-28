@@ -5,9 +5,10 @@ using namespace components;
 
 // Constructor for Autonomous class
 Autonomous::Autonomous(Drive drive, Lift lift, Manipulator man, Ramp ramp) {
-  autoLift = new Lift(lift);
-  autoDrive = new Drive(drive);
-  autoMan = new Manipulator(man);
+  Lift autoLift = lift;
+  Drive autoDrive = drive;
+  Manipulator autoMan = man;
+  //stratCon = new StrategyController();
 }
 
 // Choose the best autonomous routine
@@ -23,9 +24,11 @@ void Autonomous::ChooseRoutine(int autoMode, int startingPosition) {
   switch (autoMode) {
     case 0:
       autoFunction = [=](){return this->Baseline();};
+      SmartDashboard::PutString("Auto Mode:", "baseline");
       break;
 
     case 1:
+      SmartDashboard::PutString("Auto Mode:", "next stage");
       if(gameData[0] == 'L') {
         if(startingPosition == 1) autoFunction = [=](){return this->S1L();};
         else if(startingPosition == 2) autoFunction = [=](){return this->S2L();};
@@ -39,27 +42,27 @@ void Autonomous::ChooseRoutine(int autoMode, int startingPosition) {
 }
 
 void Autonomous::RunPeriodic() {
-  autoDrive->RunPeriodic();
-  autoLift->RunPeriodic();
+  autoDrive->DriveDistance(0.2, 1, false);
+  //autoDrive->RunPeriodic();
+  //autoLift->RunPeriodic();
 
-  switch(AutoStage) {
-    case 0:
-      if(autoFunction()) AutoStage++;
-      break;
-    case 1:
-      ChooseRoutine(5,5);
-      break;
-  }
-
+  // switch(AutoStage) {
+  //   case 0:
+  //     if(autoFunction()) AutoStage++;
+  //     break;
+  //   case 1:
+  //     //ChooseRoutine(5,5);
+  //     break;
+  // }
 }
 
 bool Autonomous::Baseline() {
-  autoDrive->DriveDistance(1.0, 0.2, false);
+  autoDrive->DriveDistance(0.2, 1, false);
 }
 
 // Routine: Initial (1) > Switch (left)
 bool Autonomous::S1L() {
-  //1-LS
+
 }
 
 // Routine: Initial (2) > Switch (left)

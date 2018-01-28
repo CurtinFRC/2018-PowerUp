@@ -19,15 +19,12 @@ Drive::Drive(int l1, int l2, int l3, int r1, int r2, int r3) {
   right2 = new TalonSRX(r2);
   right3 = new TalonSRX(r3);
 
-  left1->SetSensorPhase(true);   //Invert encoders
-  //right1->SetSensorPhase(true);
+  left1->SetSensorPhase(false);   //Invert encoders
+  right1->SetSensorPhase(true);
 
-  left1->SetInverted(false);	//Invert motors
-  left2->SetInverted(false);
-  left3->SetInverted(false);
-  right1->SetInverted(false);
-  right2->SetInverted(false);
-  right3->SetInverted(false);
+  left1->SetInverted(true);	//Invert motors
+  left2->SetInverted(true);
+  left3->SetInverted(true);
 
   left2->Set(ControlMode::Follower, l1);
   left3->Set(ControlMode::Follower, l1);
@@ -44,8 +41,7 @@ Drive::Drive(int l1, int l2, int l3, int r1, int r2, int r3) {
   turn->SetAbsoluteTolerance(turnTolerance);
   turn->SetContinuous(true);
 
-  leftGear = new DoubleSolenoid(0,4,5);
-  rightGear = new DoubleSolenoid(0,2,3);
+  gearMode = new DoubleSolenoid(0,0,1);
 }
 
 // Stop all Drive class motors
@@ -56,6 +52,8 @@ void Drive::Stop() {
 
 // Set speed of Drive class motors
 void Drive::TankDrive(double left, double right, bool square) {
+  SmartDashboard::PutNumber("Left speed", left);
+  SmartDashboard::PutNumber("Right speed", right);
   if(-deadzone < left && left < deadzone) left = 0;
   if(-deadzone < right && right < deadzone) right = 0;
   if(square) {
@@ -99,7 +97,7 @@ bool Drive::DriveDistance(double speed, double distance, bool holdAngle) {
       if(abs(rightFinalDistance) + driveTolerance > abs(right1->GetSelectedSensorPosition(0)) &&  abs(rightFinalDistance) - driveTolerance < abs(right1->GetSelectedSensorPosition(0)) && right1->GetSelectedSensorPosition(0) * rightFinalDistance >= 0) {
         Stop();
         driving = false;
-        return true;
+        return false;
       }
     }
   } else { // Run setup
@@ -136,26 +134,22 @@ bool Drive::DriveDistance(double speed, double distance, bool holdAngle) {
 
 // Set gear to slow gear
 void Drive::SetSlowGear() {
-  if(slowGear == rightGear->kForward) {
-    rightGear->Set(rightGear->kForward);
-    leftGear->Set(rightGear->kForward);
+  if(slowGear == gearMode->kForward) {
+    gearMode->Set(gearMode->kForward);
   } else {
-    rightGear->Set(rightGear->kReverse);
-    leftGear->Set(rightGear->kReverse);
+    gearMode->Set(gearMode->kReverse);
   }
-  currentGear = 0;
+  currentGear = false;
 }
 
 // Set gear to fast gear
 void Drive::SetFastGear() {
-  if(fastGear == rightGear->kForward) {
-    rightGear->Set(rightGear->kForward);
-    leftGear->Set(rightGear->kForward);
+  if(fastGear == gearMode->kForward) {
+    gearMode->Set(gearMode->kForward);
   } else {
-    rightGear->Set(rightGear->kReverse);
-    leftGear->Set(rightGear->kReverse);
+    gearMode->Set(gearMode->kReverse);
   }
-  currentGear = 1;
+  currentGear = true;
 }
 
 // Toggle between slow and fast gear

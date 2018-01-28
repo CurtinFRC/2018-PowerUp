@@ -67,8 +67,8 @@ public:
     ControlModeChooser->AddDefault("Dual",(int*) 0);
     ControlModeChooser->AddObject("Single (Debug)",(int*) 1);
 
-    drive = new Drive(1, 2, 5, 8, 7, 6);
-    lift = new Lift(3, 4);
+    drive = new Drive(1, 2, 3, 4, 5, 6);
+    lift = new Lift(8, 7);
     ramp = new Ramp(2, 3);
     man = new Manipulator(9, 0, 1);
 
@@ -83,8 +83,6 @@ public:
   }
 
   void AutonomousInit() {
-
-
     drive->SetSlowGear();
     lift->SetLowPosition();
     auton->ChooseRoutine((int)AutoChooser->GetSelected(), (int)StartingPosition->GetSelected());
@@ -105,7 +103,7 @@ public:
    SmartDashboard::PutBoolean("transaction", arduino->Transaction(&message, 1, NULL, 0));
 //———[controller 1]—————————————————————————————————————————————————————————————
   //———[drivetrain]—————————————————————————————————————————————————————————————
-    drive->TankDrive(xbox->GetY(xbox->kRightHand), xbox->GetY(xbox->kLeftHand), true);
+    drive->TankDrive(-xbox->GetY(xbox->kLeftHand), -xbox->GetY(xbox->kRightHand), true);
     if(xbox->GetYButtonPressed()) {
       drive->ToggleGear();
     }

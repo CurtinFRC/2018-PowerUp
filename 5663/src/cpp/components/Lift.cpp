@@ -6,20 +6,19 @@ using namespace components;
 Lift::Lift(int m1, int m2) {
   motor1 = new TalonSRX(m1);
   motor2 = new TalonSRX(m2);
-
   motor2->Set(ControlMode::Follower, m1);
 
   motor1->ConfigNominalOutputForward(0, 0);
 	motor1->ConfigNominalOutputReverse(0, 0);
 	motor1->ConfigPeakOutputForward(1, 0);
 	motor1->ConfigPeakOutputReverse(-1, 0);
-  motor1->Config_kF(0, 1023.0/750.0, 10);
-  motor1->Config_kP(0, 50, 10);
+  motor1->Config_kF(0, 1023.0/topspeed, 10);
+  motor1->Config_kP(0, 0.2, 10);
   motor1->Config_kI(0, 0, 10);
-  motor1->Config_kD(0, 500, 10);
-  motor1->ConfigMotionAcceleration(750, 10);
-  motor1->ConfigMotionCruiseVelocity(750, 10);
-  motor1->SetSensorPhase(true);
+  motor1->Config_kD(0, 0, 10);
+  motor1->ConfigMotionAcceleration(topspeed, 10);
+  motor1->ConfigMotionCruiseVelocity(topspeed, 10);
+  motor1->SetSensorPhase(false);
 }
 
 // Move lift to high position (for scale)
@@ -48,20 +47,19 @@ void Lift::SetLowPosition() {
 
 // Set speed of Lift class motors
 void Lift::SetSpeed(double speed) {
-  if(-deadzone < speed && speed < deadzone) {
-    speed = 0;
-    if(manualMode) {
-      motor1->Set(ControlMode::Velocity, 0);
-    }
-  } else {
-    manualMode = true;
-    speed *= fabs(speed);
-    //motor1->Set(ControlMode::Velocity, speed*270); //Need to test later
-    motor1->Set(ControlMode::PercentOutput, speed);
+   if(-deadzone < speed && speed < deadzone) {
+     speed = 0;
+     if(manualMode) {
+       motor1->Set(ControlMode::Velocity, 0);
+     }
+   } else {
+     manualMode = true;
+     speed *= fabs(speed);
+    motor1->Set(ControlMode::Velocity, speed*topspeed); //Need to test later
+    //motor1->Set(ControlMode::PercentOutput, speed);
     pos = 3;
    }
-   SmartDashboard::PutNumber("motor manual speed", speed);
-}
+ }
 
 // Reset Lift class motor encoder
 void Lift::ResetEncoder() {

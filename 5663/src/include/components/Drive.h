@@ -19,7 +19,7 @@ namespace components {
     AHRS *imu;
     PIDController *turn;
     gyroPID *out;
-    DoubleSolenoid *rightGear, *leftGear; //Solenoids for gears
+    DoubleSolenoid *gearMode; //Solenoids for gears
 
     public:
       Drive(int l1, int l2, int l3, int r1, int r2, int r3); // Constructor
@@ -36,11 +36,11 @@ namespace components {
     private:
       bool turning = false, driving = false; // State variables
       double turnTolerance = 2.0, driveTolerance = 10.0; // Tolerance variables
-      double kP = 0.025, kI = 0.0004, kD = 0.04, kM = 1440/0.4787787204;
-      int slowGear = rightGear->kForward;
-      int fastGear = rightGear->kReverse;
+      double kP = 0.025, kI = 0.0004, kD = 0.04, kM = (80*26.041666667)/0.4787787204;
+      int slowGear = gearMode->kForward;
+      int fastGear = gearMode->kReverse;
       double deadzone = 0.015;
-      int currentGear = 0;
+      bool currentGear = false;
       int leftFinalDistance, rightFinalDistance;
   };
 }
