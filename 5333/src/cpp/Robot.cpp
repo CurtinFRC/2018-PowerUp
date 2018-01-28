@@ -1,5 +1,6 @@
 #include "curtinfrc/math.h"
 #include "curtinfrc/drivetrain.h" // Shared drivetrain in commons
+#include "curtinfrc/strategy/mp_strategy.h"
 #include "curtinfrc/vision/vision.h"
 #include "WPILib.h"
 // #include <pathfinder.h>
@@ -111,8 +112,18 @@ public:
     // 14 changes to 5 cylinders reduce upstream from 120 to 60
   }
 
-  void TestInit() { }
-  void TestPeriodic() { }
+  void TestInit() {
+    auto io = IO::get_instance();
+    auto strat = std::make_shared<curtinfrc::MotionProfileTunerStrategy>(
+      io->left_motors[0], io->right_motors[0],
+      io->navx, 1000, 6
+    );
+    drive->strategy_controller().set_active(strat);
+  }
+
+  void TestPeriodic() {
+    drive->strategy_controller().periodic();
+  }
 };
 
 START_ROBOT_CLASS(Robot)
