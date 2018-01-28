@@ -1,5 +1,5 @@
 CC=g++ --std=c++17 -pthread 
-C_FLAGS=`pkg-config --cflags opencv`
+C_FLAGS=`pkg-config --cflags opencv` -g
 L_FLAGS=`pkg-config --libs opencv`
 OBJS=obj/main.o obj/capture.o obj/processing.o obj/display.o
 OBJ_NAME=vision
