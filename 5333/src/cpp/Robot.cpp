@@ -52,34 +52,8 @@ public:
     throttle = 0.6;
     left_bumper_toggle = right_bumper_toggle = false;
   }
-<<<<<<< HEAD
-  
-  void AutonomousInit() {
-    cout << "Switched to Autonomous Mode" << endl;
-    // Set lead motors to position mode
-    io->left_motors[0]->SetControlMode(CurtinTalonSRX::ControlMode::Position);
-    io->right_motors[0]->SetControlMode(CurtinTalonSRX::ControlMode::Position);
-    int state = 0; // For case switching in periodic
-  }
-  void AutonomousPeriodic() {
-    switch(state)
-    case 0:
-      drive->set_left(1000);
-      drive->set_right(1000);
-      break;
-    case 1:
-      drive->set_left(0);
-      drive->set_right(0);
-      break;
-  }
 
-  void TeleopInit() {
-    cout << "Switched to Teleop Mode" << endl;
-    // Set lead motors to speed mode
-    io->left_motors[0]->SetControlMode(CurtinTalonSRX::ControlMode::PercentOutput);
-    io->left_motors[0]->SetControlMode(CurtinTalonSRX::ControlMode::PercentOutput);
 =======
-
   void AutonomousInit() {
     auto_->init();
   }
@@ -90,7 +64,6 @@ public:
   void TeleopInit() {
     SmartDashboard::PutNumber("Throttle:", throttle);
     ControlMap::init();
->>>>>>> a882dcf241a1cb757698c18e41e475cbb7db2419
   }
   void TeleopPeriodic() {
     // Only move if joystick is not in deadzone
