@@ -1,0 +1,50 @@
+apply plugin: "jaci.openrio.gradle.GradleRIO"
+apply plugin: "cpp"
+
+// Vision System is compiled in a different way.
+// Due to the size of OpenCV, and the lack of RPi cross toolchains
+// that don't suck, we instead copy over the source files and build
+// the binary on the RPi instead.
+
+deploy {
+    targets {
+        target('rpi5333') {
+            addresses << 'pi_5333'
+            user = "pi"
+            password = "raspberry"
+            directory = '/home/pi'
+            failOnMissing = false
+        }
+        target('rpi5663') {
+            addresses << 'pi_5663'
+            user = "pi"
+            password = "raspberry"
+            directory = '/home/pi'
+            failOnMissing = false
+        }
+    }
+    artifacts {
+        fileArtifact('writeSetupOpencv') {
+            targets << 'rpi5333' << 'rpi5663'
+            directory = 'setup'
+            file = file('setupOpencv.sh')
+            postdeploy << { 
+                execute "chmod +x setupOpencv.sh"
+                println "========================"
+                println "SSH into the Pi and run `cd /home/pi/setup; ./setupOpencv.sh` to install OpenCV"
+                println "It will take a while (almost an hour)"
+                println "========================"
+            }
+        }
+
+        fileCollectionArtifact('commonVisionCode') {
+            targets << 'rpi5333' << 'rpi5663'
+            directory = 'vision'
+            files = fileTree(dir: 'src', include: '*.*')
+            postdeploy << { 
+                execute "chmod +x build.sh"
+                execute "./build.sh"
+            }
+        }
+    }
+}

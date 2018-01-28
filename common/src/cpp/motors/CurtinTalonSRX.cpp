@@ -1,6 +1,7 @@
 #include "curtinfrc/motors/CurtinTalonSRX.h"
 
 #include <iostream>
+#include <cstdio>
 #include <cmath>
 
 using namespace curtinfrc;
@@ -72,4 +73,85 @@ TestState CurtinTalonSRX::selftest_run(double elapsed_ms) {
 void CurtinTalonSRX::selftest_onstop() {
   _st_stage = -1;
   StopMotor();
+}
+
+void CurtinTalonSRX::configure_pidf(double kp, double ki, double kd, double kf) {
+  TalonSRX::Config_kP(0, kp, 0);
+  TalonSRX::Config_kI(0, ki, 0);
+  TalonSRX::Config_kD(0, kd, 0);
+  TalonSRX::Config_kF(0, kf, 0);
+}
+
+void CurtinTalonSRX::configure_encoder_edges_per_rev(unsigned int tpr) {
+  ticks_per_rev = tpr;
+}
+
+void CurtinTalonSRX::configure_wheel_diameter(double diameter) {
+  wheel_diameter = diameter * 0.0254; // convert inches to metres
+}
+
+void CurtinTalonSRX::configure_mp_update_rate(unsigned int milliseconds) {
+  TalonSRX::ConfigMotionProfileTrajectoryPeriod(milliseconds, 0);
+  TalonSRX::ChangeMotionControlFramePeriod(milliseconds / 2);
+}
+
+bool CurtinTalonSRX::load_pathfinder(Segment *segments, int length) {
+  if (_mp_load_offset == 0) {
+    TalonSRX::ClearMotionProfileTrajectories();
+    SetControlMode(CurtinTalonSRX::ControlMode::MotionProfile);
+  }
+
+  double rev_per_m = 1 / (PI * wheel_diameter);
+  for (int i = _mp_load_offset; i < length; i++) {
+    if (TalonSRX::IsMotionProfileTopLevelBufferFull()) {
+      _mp_load_offset = i;
+      return false;
+    }
+
+    Segment *s = &segments[i];
+    double rpm = (s->velocity / (wheel_diameter / 2 * 0.10472));
+    double pos = s->position * rev_per_m * ticks_per_rev;
+    double vel = (rpm / 60.0) * ticks_per_rev * 10;
+    ctre::phoenix::motion::TrajectoryPoint tp = {
+      pos,
+      vel,
+      0,    // heading (degrees). Only needed if using Pidgeon IMU
+      0, 0, // slot select
+      i == (length - 1),  // last point?
+      i == 0,             // zero sensor?
+      ctre::phoenix::motion::TrajectoryDuration_0ms
+    };
+
+    // Fails if the buffer becomes full
+    if (TalonSRX::PushMotionProfileTrajectory(tp) != ctre::phoenix::ErrorCode::OKAY) {
+      _mp_load_offset = i + 1;
+      return false;
+    }
+  }
+  _mp_load_offset = length - 1;
+  return true;
+}
+
+void CurtinTalonSRX::reset_mp() {
+  _mp_load_offset = 0;
+  TalonSRX::ClearMotionProfileTrajectories();
+}
+
+void CurtinTalonSRX::enable_mp() {
+  Set(ctre::phoenix::motion::SetValueMotionProfile::Enable);
+}
+
+void CurtinTalonSRX::hold_mp() {
+  Set(ctre::phoenix::motion::SetValueMotionProfile::Hold);
+}
+
+void CurtinTalonSRX::disable_mp() {
+  Set(ctre::phoenix::motion::SetValueMotionProfile::Disable);
+}
+
+CurtinTalonSRX::MotionProfileStatus CurtinTalonSRX::process_mp() {
+  TalonSRX::ProcessMotionProfileBuffer();
+  CurtinTalonSRX::MotionProfileStatus status;
+  GetMotionProfileStatus(status);
+  return status;
 }

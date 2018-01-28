@@ -12,6 +12,11 @@ deploy {
             targets << "roborio5333"
             component = 'frcUserProgram'
         }
+        fileCollectionArtifact('paths') {
+            files = project(':common').fileTree(dir: 'src/paths', include: '*.csv')
+            directory = '/home/lvuser/paths'
+            targets << "roborio5333"
+        }
     }
 }
 
@@ -32,6 +37,7 @@ model {
                 lib library: "wpilib"
                 lib library: "ctre"
                 lib library: "navx"
+                lib library: "pathfinder"
                 lib library: "openrio.powerup.matchData"
                 lib project: ":common", library: "curtinFrcCommon", linkage: "static"
             }

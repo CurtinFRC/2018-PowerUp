@@ -5,86 +5,145 @@
 #include <string>
 #include <SmartDashboard/SmartDashboard.h>
 #include <PowerDistributionPanel.h>
-#include "ctre/Phoenix.h"
 #include <PIDOutput.h>
+#include <I2C.h>
+#include <pathfinder.h>
+
+#include "components/Drive.h"
+#include "components/Lift.h"
+#include "components/Ramp.h"
+#include "components/Manipulator.h"
+#include "components/Climber.h"
+
+#include "autonomous/Autonomous.h"
 
 using namespace frc;
 using namespace curtinfrc;
 using namespace std;
+using namespace components;
+using namespace cs;
+using namespace autonomous;
 
 class Robot : public IterativeRobot {
-  XboxController *xbox;
+  UsbCamera camera;
+  XboxController *xbox, *xbox2;
   PowerDistributionPanel *pdp;
   SendableChooser<int*> *AutoChooser; // Choose auto mode
-  TalonSRX *left1, *left2, *left3,
-    *right1, *right2, *right3;
-  DoubleSolenoid *rightGear, *leftGear; // Solenoids for pneumatics, I'm just using them for ball shifters atm;
-  AHRS *ahrs;
-  PIDController *turn;
-public:
-  // Configuration settings: (maybe make a sperate file for these?)
-  double deadzone = 0.04; //Stop the robot being a sneaky snail
-  // Regular variables
-  string gameData;
-  int Auto, gearMode;
-  void RobotInit() {
-    xbox = new XboxController(0);
-    pdp = new PowerDistributionPanel(0);
-    AutoChooser = new SendableChooser<int*>;
-    left1 = new TalonSRX(1); left2 = new TalonSRX(2); left3 = new TalonSRX(3);
-    right1 = new TalonSRX(4); right2 = new TalonSRX(4); right3 = new TalonSRX(5);
-    leftGear = new DoubleSolenoid(0,0,1); rightGear = new DoubleSolenoid(0,2,3);
-    AutoChooser->AddDefault("Cross Baseline",(int*) 0);
-    AutoChooser->AddObject("Auto 1",(int*) 1);
-    AutoChooser->AddObject("Auto 2",(int*) 2);
-  }
+  SendableChooser<int*> *StartingPosition; // Choose starting position
+  SendableChooser<int*> *ControlModeChooser; // Choose control mode
+  Drive *drive;
+  Lift *lift;
+  Ramp *ramp;
+  Manipulator *man;
+  Climber *climber;
+  Compressor *compressor;
+  Autonomous *auton;
+  I2C *arduino;
 
-  void Drive(double l, double r) {  //probably a wpi class to do this for us but I couldnt find one so.
-    if(-deadzone < l && l < deadzone) l == 0;
-    if(-deadzone < r && r < deadzone) r == 0;
-    l *= abs(l);
-    r *= abs(r); // square inputs
-     left1->Set(ControlMode::PercentOutput,l); left2->Set(ControlMode::PercentOutput,l); left3->Set(ControlMode::PercentOutput,l);
-     right1->Set(ControlMode::PercentOutput,l); right2->Set(ControlMode::PercentOutput,l); right2->Set(ControlMode::PercentOutput,l);
+public:
+  int AutoStage;
+  uint8_t message = 72;
+
+  void RobotInit() {
+    camera = CameraServer::GetInstance()->StartAutomaticCapture();
+    camera.SetResolution(640, 480);
+
+    xbox = new XboxController(0);
+    xbox2 = new XboxController(1);
+
+    pdp = new PowerDistributionPanel(0);
+
+    AutoChooser = new SendableChooser<int*>;
+    AutoChooser->AddDefault("Cross Baseline",(int*) 0);
+    AutoChooser->AddObject("Single Switch",(int*) 1);
+    AutoChooser->AddObject("Single Scale",(int*) 2);
+
+    StartingPosition = new SendableChooser<int*>;
+    StartingPosition->AddObject("Left (1)", (int*) 1);
+    StartingPosition->AddDefault("Middle (2)", (int*) 2);
+    StartingPosition->AddObject("Right (3)", (int*) 3);
+
+    ControlModeChooser = new SendableChooser<int*>;
+    ControlModeChooser->AddDefault("Dual",(int*) 0);
+    ControlModeChooser->AddObject("Single (Debug)",(int*) 1);
+
+    drive = new Drive(1, 2, 5, 8, 7, 6);
+    lift = new Lift(3, 4);
+    ramp = new Ramp(2, 3);
+    man = new Manipulator(9, 0, 1);
+
+    compressor = new Compressor(0);
+    compressor->SetClosedLoopControl(true);
+
+    auton = new Autonomous(*drive, *lift, *man, *ramp);
+
+    arduino = new I2C(arduino->kOnboard, 100);
+
+    arduino->WriteBulk(&message, 1);
   }
 
   void AutonomousInit() {
-    gameData = DriverStation::GetInstance().GetGameSpecificMessage(); //Get specific match data
-    SmartDashboard::PutString("Alliance Switch:", &gameData[0]);
-    SmartDashboard::PutString("Scale:", &gameData[1]);
-    SmartDashboard::PutString("Enemy Switch:", &gameData[2]);  //Put data on shuffleboard
-    Auto = (int) AutoChooser->GetSelected(); //What auto mode you wanna do
+
+
+    drive->SetSlowGear();
+    lift->SetLowPosition();
+    auton->ChooseRoutine((int)AutoChooser->GetSelected(), (int)StartingPosition->GetSelected());
   }
+
   void AutonomousPeriodic() {
-    // gameData will be an array with 3 characters, eg. "LRL"
-    // check https://wpilib.screenstepslive.com/s/currentCS/m/getting_started/l/826278-2018-game-data-details
+    message = 72;
+    SmartDashboard::PutBoolean("transaction", arduino->Transaction(&message, 1, NULL, 0));
+    auton->RunPeriodic();
   }
 
   void TeleopInit() {
-    rightGear->Set(rightGear->kForward);
-    leftGear->Set(leftGear->kForward); //Set gear to default
-    gearMode = rightGear->kForward;
+    drive->SetFastGear();
   }
+
   void TeleopPeriodic() {
-    Drive(xbox->GetY(xbox->kLeftHand),xbox->GetY(xbox->kRightHand));
-    if(xbox->GetBumperPressed(xbox->kLeftHand) == true) {
-      if(rightGear->Get() == rightGear->kForward) gearMode = rightGear->kReverse;
-      else gearMode = rightGear->kForward;
+    message = 76;
+   SmartDashboard::PutBoolean("transaction", arduino->Transaction(&message, 1, NULL, 0));
+//———[controller 1]—————————————————————————————————————————————————————————————
+  //———[drivetrain]—————————————————————————————————————————————————————————————
+    drive->TankDrive(xbox->GetY(xbox->kRightHand), xbox->GetY(xbox->kLeftHand), true);
+    if(xbox->GetYButtonPressed()) {
+      drive->ToggleGear();
     }
-    if(gearMode == rightGear->kForward) {
-      rightGear->Set(rightGear->kForward);
-      leftGear->Set(rightGear->kForward);
+
+//———[controller 2]—————————————————————————————————————————————————————————————
+  //———[lift]———————————————————————————————————————————————————————————————————
+    if(xbox2->GetAButton()) {
+      lift->SetLowPosition();
+    } else if(xbox2->GetBButton()) {
+      lift->SetMidPosition();
+    } else if(xbox2->GetYButton()) {
+      lift->SetHighPosition();
+    } else if(xbox2->GetXButton()) {
+      lift->ResetEncoder();
+    }
+    lift->SetSpeed(xbox2->GetY(xbox2->kRightHand));
+
+  //———[manipulator]————————————————————————————————————————————————————————————
+    if(xbox2->GetBumper(xbox2->kLeftHand)) {
+      man->Release();
     } else {
-      rightGear->Set(rightGear->kReverse);
-      leftGear->Set(rightGear->kReverse);
+      man->Restrain();
     }
-  }
 
-  void TestInit() {
+    man->SetIntakeSpeed(xbox2->GetY(xbox2->kLeftHand));
 
-  }
+  //———[ramp]———————————————————————————————————————————————————————————————————
+    if(xbox->GetBumper(xbox->kLeftHand) && xbox->GetBumper(xbox->kRightHand) && xbox2->GetBumper(xbox2->kLeftHand) && xbox2->GetBumper(xbox2->kRightHand)) {
+      ramp->ConfirmIntentionalDeployment();
+    }
 
-  void TestPeriodic() {
+  //———[climber]————————————————————————————————————————————————————————————————
+
+
+  //———[periodic]———————————————————————————————————————————————————————————————
+    drive->RunPeriodic();
+    lift->RunPeriodic();
+    man->RunPeriodic();
   }
 };
 
