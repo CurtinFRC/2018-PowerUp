@@ -53,7 +53,6 @@ public:
     left_bumper_toggle = right_bumper_toggle = false;
   }
 
-=======
   void AutonomousInit() {
     auto_->init();
   }
