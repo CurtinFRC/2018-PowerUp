@@ -11,10 +11,12 @@
 #include "Intake.h"
 #include "ControlMap.h"
 #include "Auto.h"
+#include "Logger.h"
 
 #include <string>
 #include <SmartDashboard/SmartDashboard.h>
 #include <iostream>
+#include <stdint.h>
 
 using namespace frc; // WPILib classes/functions
 using namespace std;
@@ -25,12 +27,19 @@ public:
   curtinfrc::VisionSystem *vision;
   double throttle;
   bool left_bumper_toggle, right_bumper_toggle;
+  uint64_t time_fpga; // divide it to milliseconds, then cast as double
 
   AutoControl *auto_;
 
   BelevatorControl *belev;
   ClawControl *claw;
   IntakeControl *intake;
+
+  LogControl *log_drive;
+  LogControl *log_belev;
+  LogControl *log_claw;
+  LogControl *log_intake;
+  // Add logs for auto state?
 
   IO *io;
 
@@ -40,6 +49,10 @@ public:
     io = IO::get_instance(); // Refer to IO
 
     auto_ = new AutoControl();
+    log_drive = new LogControl("drive");
+    log_belev = new LogControl("belev");
+    log_claw = new LogControl("claw");
+    log_intake = new LogControl("intake");
 
   	vision = new VisionSystem();
   	vision->start();
@@ -58,6 +71,8 @@ public:
   }
   void AutonomousPeriodic() {
     auto_->tick();
+    time_fpga = ::frc::RobotController::GetFPGATime(); // Pass timestamp to each
+    // log_drive->log_write(states, time_fpga);
   }
 
   void TeleopInit() {
