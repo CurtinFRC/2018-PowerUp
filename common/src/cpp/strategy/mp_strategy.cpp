@@ -4,11 +4,13 @@
 using namespace curtinfrc;
 
 void MotionProfileStrategy::start() {
+  double start_time = (static_cast<double>(RobotController::GetFPGATime()) / 1.0e6);
   _notifier = new frc::Notifier([=]() {
+    double time = (static_cast<double>(RobotController::GetFPGATime()) / 1.0e6) - start_time;
     if (_cfg.mode == MotionProfileMode::TALON_MP)
-      tick_talonmp();
+      tick_talonmp(time);
     else
-      tick_pathfinder();
+      tick_pathfinder(time);
   });
 
   if (_cfg.mode == MotionProfileMode::TALON_MP) {
@@ -37,28 +39,53 @@ void MotionProfileStrategy::tick(double time) {
   // Not important
 }
 
-void MotionProfileStrategy::tick_talonmp() {
+void MotionProfileStrategy::tick_talonmp(double time) {
    // soon
   done = true;
 }
 
-void MotionProfileStrategy::tick_pathfinder() {
+void MotionProfileStrategy::tick_pathfinder(double time) {
   double l = pathfinder_follow_encoder(_ecfg_l, &_followl, _segments_left, _segments_length, _escl->GetSelectedSensorPosition(0));
   double r = pathfinder_follow_encoder(_ecfg_r, &_followr, _segments_right, _segments_length, _escr->GetSelectedSensorPosition(0));
+  MPLogPoint *lp_left = &_lp_left[_followl.segment], *lp_right = &_lp_right[_followr.segment];
+  Segment *s_left = &_segments_left[_followl.segment], *s_right = &_segments_right[_followr.segment];
 
   double gyro = fmod(_ahrs->GetAngle(), 360);
   double heading = fmod(r2d(_followl.heading), 360);
 
   double angle_error = fmod(heading - gyro, 360);
   angle_error = angle_error > 180 ? -angle_error + 180 : angle_error;
-  double turn = 1.2 * (-1.0 / 80.0) * angle_error;
+  double turn = -_cfg.kt * angle_error;
 
   std::cout << _ahrs->GetAngle() << ", " << r2d(_followl.heading) << ", " << angle_error << std::endl;
 
   _escl->Set(l + turn);
   _escr->Set(r - turn);
 
+  // Logging Stuff
+  lp_left->time = time;
+  lp_left->output = l; lp_right->output = r;
+  lp_left->output_real = l + turn; lp_right->output_real = r - turn;
+  
+  lp_left->pos_real = s_left->position - _followl.last_error;
+  lp_left->pos_target = s_left->position;
+  lp_left->vel_real = (_escl->GetSelectedSensorVelocity(0) * 10) / _cfg.enc_ticks_per_rev * PI * _cfg.wheel_diameter * 0.0254;
+  lp_left->vel_target = s_left->velocity;
+
+  lp_right->pos_real = s_right->position - _followr.last_error;
+  lp_right->pos_target = s_right->position;
+  lp_right->vel_real = (_escr->GetSelectedSensorVelocity(0) * 10) / _cfg.enc_ticks_per_rev * PI * _cfg.wheel_diameter * 0.0254;
+  lp_right->vel_target = s_right->velocity;
+
+  lp_left->angle_real = lp_right->angle_real = gyro;
+  lp_left->angle_target = lp_right->angle_target = heading;
+
   if (_followl.finished || _followr.finished) done = true;
+}
+
+static void _write_single_logpoint(std::ofstream &outfile, MPLogPoint &point) {
+  outfile << point.time << "," << point.output << "," << point.output_real << "," << point.pos_real << "," << point.pos_target << ",";
+  outfile << point.vel_real << "," << point.vel_target << "," << point.angle_real << "," << point.angle_target << "\n";
 }
 
 void MotionProfileStrategy::stop() {
@@ -67,6 +94,15 @@ void MotionProfileStrategy::stop() {
   _escr->SetControlMode(CurtinTalonSRX::ControlMode::PercentOutput);
   _escl->Set(0);
   _escr->Set(0);
+
+  _outfile_left << "time,output,output_real,pos_real,pos_target,vel_real,vel_target,angle_real,angle_target\n";
+  _outfile_right << "time,output,output_real,pos_real,pos_target,vel_real,vel_target,angle_real,angle_target\n";
+  for (int i = 0; i < _segments_length; i++) {
+    _write_single_logpoint(_outfile_left, _lp_left[i]);
+    _write_single_logpoint(_outfile_right, _lp_right[i]);
+  }
+  _outfile_left.close();
+  _outfile_right.close();
 }
 
 // TUNING //

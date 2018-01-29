@@ -57,8 +57,9 @@ public:
     // Note: wheelbase width: 0.72
     MotionProfileConfig cfg = {
       1440, 6,                                  // enc_ticks, wheel_diam
-      1 / 0.2, 0.2,                             // kp (1 / full_speed_threshold_distance), kd
-      3.34 / 12.0, 0.911 / 12,                  // kv, ka
+      1 / 0.2, 0,                             // kp (1 / full_speed_threshold_distance), kd
+      3.34 / 12.0, 0.911 / 12.0,                  // kv, ka
+      0.8 * (1.0/80.0),
       curtinfrc::MotionProfileMode::PATHFINDER
     };
     auto strat = std::make_shared<curtinfrc::MotionProfileStrategy>(
