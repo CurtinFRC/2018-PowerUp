@@ -49,8 +49,11 @@ void MotionProfileStrategy::tick_pathfinder() {
   double gyro = fmod(_ahrs->GetAngle(), 360);
   double heading = fmod(r2d(_followl.heading), 360);
 
-  double angle_error = fmod(heading - gyro, 360) - 180;
-  double turn = 0.8 * (-1.0 / 80.0) * angle_error;
+  double angle_error = fmod(heading - gyro, 360);
+  angle_error = angle_error > 180 ? -angle_error + 180 : angle_error;
+  double turn = 1.2 * (-1.0 / 80.0) * angle_error;
+
+  std::cout << _ahrs->GetAngle() << ", " << r2d(_followl.heading) << ", " << angle_error << std::endl;
 
   _escl->Set(l + turn);
   _escr->Set(r - turn);
