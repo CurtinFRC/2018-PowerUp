@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <vector>
 
 namespace curtinfrc {
 
@@ -17,6 +18,7 @@ namespace curtinfrc {
 
     /**
      * Called at the same rate as the robot base class
+     * \param \c time Time since start (milliseconds)
      */
     virtual void tick(double time) = 0;
 
@@ -24,6 +26,7 @@ namespace curtinfrc {
      * Called upon the Strategy being 'done'
      */
     virtual void stop() {}
+
     /**
      * Set the strategy to execute after this one. Permitted to be nullptr
      */

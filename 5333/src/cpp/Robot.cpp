@@ -1,6 +1,6 @@
 #include "curtinfrc/math.h"
 #include "curtinfrc/drivetrain.h" // Shared drivetrain in commons
-#include "curtinfrc/vision/vision.h"
+#include "curtinfrc/strategy/mp_strategy.h"
 #include "WPILib.h"
 // #include <pathfinder.h>
 
@@ -19,10 +19,9 @@
 using namespace frc; // WPILib classes/functions
 using namespace std;
 
-class Robot : public IterativeRobot {
+class Robot : public TimedRobot {
 public:
   Drivetrain<2> *drive;
-  curtinfrc::VisionSystem *vision;
   double throttle;
   bool left_bumper_toggle, right_bumper_toggle;
 
@@ -41,9 +40,6 @@ public:
 
     auto_ = new AutoControl();
 
-  	vision = new VisionSystem();
-  	vision->start();
-
     drive = new Drivetrain<2>(io->left_motors, io->right_motors);
     belev = new BelevatorControl();
     intake = new IntakeControl();
@@ -54,10 +50,10 @@ public:
   }
 
   void AutonomousInit() {
-    auto_->init();
+
   }
   void AutonomousPeriodic() {
-    auto_->tick();
+
   }
 
   void TeleopInit() {
@@ -111,8 +107,18 @@ public:
     // 14 changes to 5 cylinders reduce upstream from 120 to 60
   }
 
-  void TestInit() { }
-  void TestPeriodic() { }
+  void TestInit() {
+    auto io = IO::get_instance();
+    auto strat = std::make_shared<curtinfrc::MotionProfileTunerStrategy>(
+      io->left_motors[0], io->right_motors[0],
+      io->navx, 1000, 6
+    );
+    drive->strategy_controller().set_active(strat);
+  }
+
+  void TestPeriodic() {
+    drive->strategy_controller().periodic();
+  }
 };
 
 START_ROBOT_CLASS(Robot)
