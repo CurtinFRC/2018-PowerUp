@@ -184,7 +184,7 @@ double ControlMap::left_drive_power() {
   if (IO::get_instance()->get_xbox_A()) {
     mode = "BRAKE";
     left_power = 0;
-  } else if (IO::get_instance()->get_left_xbox_stick() || IO::get_instance()->get_right_xbox_stick()) {
+  } else if (IO::get_instance()->get_left_xbox_stick() || IO::get_instance()->get_right_xbox_stick() || IO::get_instance()->get_left_xbox_trigger() || IO::get_instance()->get_right_xbox_trigger()) {
     mode = "Driving Overridden";
     left_power = IO::get_instance()->get_left_xbox_Y();
   } else {
@@ -226,7 +226,7 @@ double ControlMap::right_drive_power() {
   if (IO::get_instance()->get_xbox_A()) {
     mode = "BRAKE";
     right_power = 0;
-  } else if (IO::get_instance()->get_left_xbox_stick() || IO::get_instance()->get_right_xbox_stick()) {
+  } else if (IO::get_instance()->get_left_xbox_stick() || IO::get_instance()->get_right_xbox_stick() || IO::get_instance()->get_left_xbox_trigger() || IO::get_instance()->get_right_xbox_trigger()) {
     mode = "Driving Overridden";
     right_power = IO::get_instance()->get_right_xbox_Y();
   } else {

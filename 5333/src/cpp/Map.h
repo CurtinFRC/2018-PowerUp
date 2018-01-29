@@ -18,6 +18,7 @@ namespace Map { // Map ports
     static constexpr int joy[2] = {0, 1};
     static const int xbox = 2;
     static constexpr double deadzone = 0.08;
+    static constexpr double xbox_trigger_deadzone = 0.2;
 
     #endif
   };

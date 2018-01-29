@@ -69,10 +69,12 @@ public:
 
   XboxController *xbox;
 
+  bool get_left_xbox_trigger();
   bool get_left_xbox_bumper();
   double get_left_xbox_Y();
   bool get_left_xbox_stick();
 
+  bool get_right_xbox_trigger();
   bool get_right_xbox_bumper();
   double get_right_xbox_Y();
   bool get_right_xbox_stick();

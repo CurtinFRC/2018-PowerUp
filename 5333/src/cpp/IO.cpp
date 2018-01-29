@@ -103,10 +103,12 @@ bool IO::get_right_button(int nButton) { return right_joy->GetRawButton(nButton)
 
 #elif DRIVER_TRAINING
 
+bool IO::get_left_xbox_trigger() { return xbox->GetTriggerAxis(XboxController::JoystickHand::kLeftHand) > Map::Controllers::xbox_trigger_deadzone; }
 bool IO::get_left_xbox_bumper() { return xbox->GetBumper(XboxController::JoystickHand::kLeftHand); }
 double IO::get_left_xbox_Y() { return -xbox->GetY(XboxController::JoystickHand::kLeftHand); }
 bool IO::get_left_xbox_stick() { return xbox->GetStickButton(XboxController::JoystickHand::kLeftHand); }
 
+bool IO::get_right_xbox_trigger() { return xbox->GetTriggerAxis(XboxController::JoystickHand::kRightHand) > Map::Controllers::xbox_trigger_deadzone; }
 bool IO::get_right_xbox_bumper() { return xbox->GetBumper(XboxController::JoystickHand::kRightHand); }
 double IO::get_right_xbox_Y() { return -xbox->GetY(XboxController::JoystickHand::kRightHand); }
 bool IO::get_right_xbox_stick() { return xbox->GetStickButton(XboxController::JoystickHand::kRightHand); }
