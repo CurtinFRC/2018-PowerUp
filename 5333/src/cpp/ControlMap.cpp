@@ -41,7 +41,7 @@ bool ControlMap::throttle_increment() { return IO::get_instance()->get_right_tri
 
 double ControlMap::left_drive_power() {
   double f_speed = IO::get_instance()->get_right_Y();
-  double r_speed = -IO::get_instance()->get_right_X();
+  double r_speed = IO::get_instance()->get_right_X();
 
   if (f_speed >= 0.0) {
     return r_speed >= 0.0 ? copysign(max(abs(f_speed), abs(r_speed)), f_speed) : f_speed + r_speed;
@@ -52,7 +52,7 @@ double ControlMap::left_drive_power() {
 
 double ControlMap::right_drive_power() {
   double f_speed = IO::get_instance()->get_right_Y();
-  double r_speed = -IO::get_instance()->get_right_X();
+  double r_speed = IO::get_instance()->get_right_X();
 
   if (f_speed >= 0.0) {
     return r_speed >= 0.0 ? f_speed - r_speed : copysign(max(abs(f_speed), abs(r_speed)), f_speed);
@@ -91,7 +91,7 @@ double ControlMap::left_drive_power() {
     return IO::get_instance()->get_left_Y();
   } else if (IO::get_instance()->get_left_trigger()) { // Else single drive
     double f_speed = IO::get_instance()->get_left_Y();
-    double r_speed = -IO::get_instance()->get_left_X();
+    double r_speed = IO::get_instance()->get_left_X();
 
     if (f_speed >= 0.0) {
       return r_speed >= 0.0 ? copysign(max(abs(f_speed), abs(r_speed)), f_speed) : f_speed + r_speed;
@@ -100,7 +100,7 @@ double ControlMap::left_drive_power() {
     }
   } else if (IO::get_instance()->get_right_trigger()) {
     double f_speed = IO::get_instance()->get_right_Y();
-    double r_speed = -IO::get_instance()->get_right_X();
+    double r_speed = IO::get_instance()->get_right_X();
 
     if (f_speed >= 0.0) {
       return r_speed >= 0.0 ? copysign(max(abs(f_speed), abs(r_speed)), f_speed) : f_speed + r_speed;
@@ -117,7 +117,7 @@ double ControlMap::right_drive_power() {
     return IO::get_instance()->get_right_Y();
   } else if (IO::get_instance()->get_left_trigger()) {
     double f_speed = IO::get_instance()->get_left_Y();
-    double r_speed = -IO::get_instance()->get_left_X();
+    double r_speed = IO::get_instance()->get_left_X();
 
     if (f_speed >= 0.0) {
       return r_speed >= 0.0 ? f_speed - r_speed : copysign(max(abs(f_speed), abs(r_speed)), f_speed);
@@ -126,7 +126,7 @@ double ControlMap::right_drive_power() {
     }
   } else if (IO::get_instance()->get_right_trigger()) {
     double f_speed = IO::get_instance()->get_right_Y();
-    double r_speed = -IO::get_instance()->get_right_X();
+    double r_speed = IO::get_instance()->get_right_X();
 
     if (f_speed >= 0.0) {
       return r_speed >= 0.0 ? f_speed - r_speed : copysign(max(abs(f_speed), abs(r_speed)), f_speed);
@@ -192,7 +192,7 @@ double ControlMap::left_drive_power() {
       left_power = IO::get_instance()->get_left_Y();
     } else if (IO::get_instance()->get_left_trigger()) {
       double f_speed = IO::get_instance()->get_left_Y();
-      double r_speed = -IO::get_instance()->get_left_twist();
+      double r_speed = IO::get_instance()->get_left_twist();
       if (abs(IO::get_instance()->get_left_X()) > 0.3) r_speed -= IO::get_instance()->get_left_X();
       r_speed = min(r_speed, 1.0);
 
@@ -203,7 +203,7 @@ double ControlMap::left_drive_power() {
       }
     } else if (IO::get_instance()->get_right_trigger()) {
       double f_speed = IO::get_instance()->get_right_Y();
-      double r_speed = -IO::get_instance()->get_right_twist();
+      double r_speed = IO::get_instance()->get_right_twist();
       if (abs(IO::get_instance()->get_right_X()) > 0.3) r_speed -= IO::get_instance()->get_right_X();
       r_speed = min(r_speed, 1.0);
 
@@ -234,7 +234,7 @@ double ControlMap::right_drive_power() {
       right_power = IO::get_instance()->get_right_Y();
     } else if (IO::get_instance()->get_left_trigger()) {
       double f_speed = IO::get_instance()->get_left_Y();
-      double r_speed = -IO::get_instance()->get_left_twist();
+      double r_speed = IO::get_instance()->get_left_twist();
       if (abs(IO::get_instance()->get_left_X()) > 0.3) r_speed -= IO::get_instance()->get_left_X();
       r_speed = min(r_speed, 1.0);
 
@@ -245,7 +245,7 @@ double ControlMap::right_drive_power() {
       }
     } else if (IO::get_instance()->get_right_trigger()) {
       double f_speed = IO::get_instance()->get_right_Y();
-      double r_speed = -IO::get_instance()->get_right_twist();
+      double r_speed = IO::get_instance()->get_right_twist();
       if (abs(IO::get_instance()->get_right_X()) > 0.3) r_speed -= IO::get_instance()->get_right_X();
       r_speed = min(r_speed, 1.0);
 

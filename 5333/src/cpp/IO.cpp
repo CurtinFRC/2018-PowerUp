@@ -68,13 +68,13 @@ int IO::init() { // Sets up IO
 double IO::get_left_trigger() { return xbox->GetTriggerAxis(XboxController::JoystickHand::kLeftHand); }
 bool IO::get_left_bumper() { return xbox->GetBumper(XboxController::JoystickHand::kLeftHand); }
 double IO::get_left_X() { return xbox->GetX(XboxController::JoystickHand::kLeftHand); }
-double IO::get_left_Y() { return xbox->GetY(XboxController::JoystickHand::kLeftHand); }
+double IO::get_left_Y() { return -xbox->GetY(XboxController::JoystickHand::kLeftHand); }
 bool IO::get_left_stick() { return xbox->GetStickButton(XboxController::JoystickHand::kLeftHand); }
 
 double IO::get_right_trigger() { return xbox->GetTriggerAxis(XboxController::JoystickHand::kRightHand); }
 bool IO::get_right_bumper() { return xbox->GetBumper(XboxController::JoystickHand::kRightHand); }
 double IO::get_right_X() { return xbox->GetX(XboxController::JoystickHand::kRightHand); }
-double IO::get_right_Y() { return xbox->GetY(XboxController::JoystickHand::kRightHand); }
+double IO::get_right_Y() { return -xbox->GetY(XboxController::JoystickHand::kRightHand); }
 bool IO::get_right_stick() { return xbox->GetStickButton(XboxController::JoystickHand::kRightHand); }
 
 bool IO::get_A() { return xbox->GetAButton(); }
@@ -86,7 +86,7 @@ bool IO::get_start() { return xbox->GetStartButton(); }
 
 #elif JOY_CONTROL
 
-double IO::get_left_Y() { return left_joy->GetY(); }
+double IO::get_left_Y() { return -left_joy->GetY(); }
 double IO::get_left_X() { return left_joy->GetX(); }
 double IO::get_left_twist() { return left_joy->GetZ(); }
 
@@ -94,7 +94,7 @@ bool IO::get_left_trigger() { return left_joy->GetTrigger(); }
 bool IO::get_left_button(int nButton) { return left_joy->GetRawButton(nButton); }
 
 
-double IO::get_right_Y() { return right_joy->GetY(); }
+double IO::get_right_Y() { return -right_joy->GetY(); }
 double IO::get_right_X() { return right_joy->GetX(); }
 double IO::get_right_twist() { return right_joy->GetZ(); }
 
@@ -104,18 +104,18 @@ bool IO::get_right_button(int nButton) { return right_joy->GetRawButton(nButton)
 #elif DRIVER_TRAINING
 
 bool IO::get_left_xbox_bumper() { return xbox->GetBumper(XboxController::JoystickHand::kLeftHand); }
-double IO::get_left_xbox_Y() { return xbox->GetY(XboxController::JoystickHand::kLeftHand); }
+double IO::get_left_xbox_Y() { return -xbox->GetY(XboxController::JoystickHand::kLeftHand); }
 bool IO::get_left_xbox_stick() { return xbox->GetStickButton(XboxController::JoystickHand::kLeftHand); }
 
 bool IO::get_right_xbox_bumper() { return xbox->GetBumper(XboxController::JoystickHand::kRightHand); }
-double IO::get_right_xbox_Y() { return xbox->GetY(XboxController::JoystickHand::kRightHand); }
+double IO::get_right_xbox_Y() { return -xbox->GetY(XboxController::JoystickHand::kRightHand); }
 bool IO::get_right_xbox_stick() { return xbox->GetStickButton(XboxController::JoystickHand::kRightHand); }
 
 bool IO::get_xbox_A() { return xbox->GetAButton(); }
 
 
 
-double IO::get_left_Y() { return left_joy->GetY(); }
+double IO::get_left_Y() { return -left_joy->GetY(); }
 double IO::get_left_X() { return left_joy->GetX(); }
 double IO::get_left_twist() { return left_joy->GetZ(); }
 
@@ -123,7 +123,7 @@ bool IO::get_left_trigger() { return left_joy->GetTrigger(); }
 bool IO::get_left_button(int nButton) { return left_joy->GetRawButton(nButton); }
 
 
-double IO::get_right_Y() { return right_joy->GetY(); }
+double IO::get_right_Y() { return -right_joy->GetY(); }
 double IO::get_right_X() { return right_joy->GetX(); }
 double IO::get_right_twist() { return right_joy->GetZ(); }
 
