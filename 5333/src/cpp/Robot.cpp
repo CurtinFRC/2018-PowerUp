@@ -1,7 +1,6 @@
 #include "curtinfrc/math.h"
 #include "curtinfrc/drivetrain.h" // Shared drivetrain in commons
 #include "curtinfrc/strategy/mp_strategy.h"
-#include "curtinfrc/vision/vision.h"
 #include "WPILib.h"
 // #include <pathfinder.h>
 
@@ -20,10 +19,9 @@
 using namespace frc; // WPILib classes/functions
 using namespace std;
 
-class Robot : public IterativeRobot {
+class Robot : public TimedRobot {
 public:
   Drivetrain<2> *drive;
-  curtinfrc::VisionSystem *vision;
   double throttle;
   bool left_bumper_toggle, right_bumper_toggle;
 
@@ -42,9 +40,6 @@ public:
 
     auto_ = new AutoControl();
 
-  	vision = new VisionSystem();
-  	vision->start();
-
     drive = new Drivetrain<2>(io->left_motors, io->right_motors);
     belev = new BelevatorControl();
     intake = new IntakeControl();
@@ -55,10 +50,10 @@ public:
   }
 
   void AutonomousInit() {
-    auto_->init();
+
   }
   void AutonomousPeriodic() {
-    auto_->tick();
+
   }
 
   void TeleopInit() {

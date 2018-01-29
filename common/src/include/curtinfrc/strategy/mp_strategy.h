@@ -4,6 +4,7 @@
 #include "AHRS.h"
 #include "curtinfrc/strategy/strategy.h"
 
+#include "WPILib.h"
 #include <fstream>
 
 namespace curtinfrc {
@@ -59,7 +60,8 @@ namespace curtinfrc {
       CurtinTalonSRX *esc_left, CurtinTalonSRX *esc_right,
       AHRS *ahrs, double enc_ticks_per_rev, double wheel_diameter
     ) : _escl(esc_left), _escr(esc_right), _ahrs(ahrs), _tpr(enc_ticks_per_rev), _wd(wheel_diameter * 0.0254) {
-      _outfile = std::ofstream("/home/lvuser/mp_tuner.csv");
+      _outfile.open("/home/lvuser/mp_tuner.csv");
+      _outfile_accel.open("/home/lvuser/mp_tuner_accel.csv");
     }
 
     void start() override;
@@ -71,8 +73,8 @@ namespace curtinfrc {
     AHRS *_ahrs;
     double _tpr, _wd;
 
-    std::ofstream _outfile;
-    double _ahrs_initial, _ahrs_rate, _throttle, _trackwidth;
+    std::ofstream _outfile, _outfile_accel;
+    double _ahrs_initial, _throttle, _trackwidth, _last_time, _set_time, _last_vel;
     int _state;
   };
 

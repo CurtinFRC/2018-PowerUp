@@ -34,7 +34,7 @@ namespace Map { // Map ports
   };
 
   struct Pneumatics {
-    static constexpr int intake_solenoids[2][2] = {{1, 2}, {2, 4}};
+    static constexpr int intake_solenoids[2][2] = {{0, 2}, {0, 4}};
     static constexpr int claw_solenoids[1][2] = {{0, 0}};
   };
 

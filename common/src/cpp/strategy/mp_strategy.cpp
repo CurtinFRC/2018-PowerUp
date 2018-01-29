@@ -69,12 +69,14 @@ void MotionProfileStrategy::stop() {
 // TUNING //
 
 void MotionProfileTunerStrategy::start() {
+  std::cout << "Tuner Strategy Started" << std::endl;
   _escl->SetControlMode(CurtinTalonSRX::ControlMode::PercentOutput);
   _escr->SetControlMode(CurtinTalonSRX::ControlMode::PercentOutput);
   _ahrs_initial = _ahrs->GetAngle();
   _state = 0;
   _throttle = 0;
-  _outfile << "time,voltage,rate,linear_vel\n";
+  _outfile << "time,voltage,distance,linear_vel\n";
+  _outfile_accel << "time,voltage_applied,linear_vel,accel\n";
 }
 
 void MotionProfileTunerStrategy::tick(double time) {
@@ -84,10 +86,10 @@ void MotionProfileTunerStrategy::tick(double time) {
     _escr->SetSelectedSensorPosition(0, 0, 0);
     _state = 1;
   } else if (_state == 1) {
+    std::cout << rots << std::endl;
     // Taking Data. Rotate ~10 times, get encoder distance, solve for circle diameter.
     _escl->Set(1);
     _escr->Set(-1);
-    _ahrs_rate = _ahrs->GetRate();
     if (rots > 10)
       _state = 2;
   } else if (_state == 2) {
@@ -97,34 +99,62 @@ void MotionProfileTunerStrategy::tick(double time) {
 
     double dist_native = (fabs(_escl->GetSelectedSensorPosition(0)) + fabs(_escr->GetSelectedSensorPosition(0))) / 2.0;
     double dist = (dist_native / _tpr) * PI * _wd;
+    _set_time = time;
 
     _trackwidth = dist / (rots * PI);
-    double angular_vel = d2r(_ahrs_rate);
-    double linear_vel = angular_vel * _trackwidth * 0.5;
 
     std::cout << "EMPIRICAL TRACKWIDTH: " << _trackwidth << " METRES" << std::endl;
-    std::cout << "EMPIRICAL FINAL VELOCITY: " << linear_vel << " METRES/SEC" << std::endl;
-    std::cout << "AHRS RATE: " << _ahrs_rate << " DEG/SEC" << std::endl;
     _state = 3;
   } else if (_state == 3) {
-    // Voltage Ramp (takes ~ 5 seconds)
-    _throttle += 0.01;
+    // Voltage Ramp
     _escl->Set(_throttle);
     _escr->Set(-_throttle);
 
+    if (time - _set_time > 2000) _state = 4;
+  }
+  else if (_state == 4) {
+    // Voltage Measurement
     double voltage = _escl->GetMotorOutputVoltage();
-    _ahrs_rate = _ahrs->GetRate();
-    double linear_vel = d2r(_ahrs_rate) * _trackwidth * 0.5;
+    double dist_native = (fabs(_escl->GetSelectedSensorPosition(0)) + fabs(_escr->GetSelectedSensorPosition(0))) / 2.0;
+    double dist = (dist_native / _tpr) * PI * _wd;
+    double vel = ((fabs(_escl->GetSelectedSensorVelocity(0)) + fabs(_escr->GetSelectedSensorVelocity(0))) / 2.0 * 10) / _tpr * PI * _wd;  // m/s
 
-    _outfile << time << "," << voltage << "," << _ahrs_rate << "," << linear_vel << "\n";
-    if (_throttle >= 1.0) done = true;
+    _outfile << time << "," << voltage << "," << dist << "," << vel << "\n";
+    _throttle += 0.025;
+    _state = 3;
+    _set_time = time;
+    if (_throttle > 1.0) {
+      _state = 5;
+    }
+  } else if (_state == 5) {
+    // Acceleration Measurement
+    if (time - _set_time < 1000) {
+      _escl->Set(0);
+      _escr->Set(0);
+    } else if (time - _set_time < 5000) {
+      _escl->Set(0.6);
+      _escr->Set(-0.6);
+
+      double voltage = _escl->GetMotorOutputVoltage();
+      double dt = (time - _last_time) / 1000.0;
+      double vel = ((fabs(_escl->GetSelectedSensorVelocity(0)) + fabs(_escr->GetSelectedSensorVelocity(0))) / 2.0 * 10) / _tpr * PI * _wd;  // m/s
+      double accel = (vel - _last_vel) / (dt);
+      _last_vel = vel;
+
+      _outfile_accel << time << "," << voltage << "," << vel << "," << accel << "\n";
+    } else {
+      done = true;
+    }
   } else {
     done = true;
   }
+  _last_time = time;
 }
 
 void MotionProfileTunerStrategy::stop() {
+  std::cout << "Tuner Strategy Stopped" << std::endl;
   _escl->Set(0);
   _escr->Set(0);
   _outfile.close();
+  _outfile_accel.close();
 }
