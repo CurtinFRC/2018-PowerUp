@@ -14,7 +14,7 @@ void StrategyController::periodic() {
       active->start();
     }
     active->tick(now_ms - active->start_time);
-    if (active->done || (active->timeout > 0 && now_ms - active->start_time > active->timeout)) {
+    if (active->done || (active->timeout > 0 && (now_ms - active->start_time) > active->timeout)) {
       active->stop();
       active = active->_next;
     }
@@ -22,6 +22,9 @@ void StrategyController::periodic() {
 }
 
 void StrategyController::set_active(std::shared_ptr<Strategy> strat) {
+  if (active != nullptr) {
+    active->stop();
+  }
   active = strat;
 }
 
