@@ -7,12 +7,14 @@ static IO *io;
 int IO::init() { // Sets up IO
   // Assign ports to the pointers, as instance to be called from other classes
   left_motors[0] = new CurtinTalonSRX(Map::Motors::left_motors[0]);
-  left_motors[0]->SetInverted(true); // Inverts left
+  left_motors[0]->SetInverted(false);
   left_motors[1] = new CurtinTalonSRX(Map::Motors::left_motors[1]);
-  left_motors[1]->SetInverted(true);
+  left_motors[1]->SetInverted(false);
 
   right_motors[0] = new CurtinTalonSRX(Map::Motors::right_motors[0]);
+  right_motors[0]->SetInverted(true);
   right_motors[1] = new CurtinTalonSRX(Map::Motors::right_motors[1]);
+  right_motors[1]->SetInverted(true);
 
   belev_motors[0] = new CurtinTalonSRX(Map::Motors::belev_motors[0]);
   intake_motors[0][0] = new CurtinTalonSRX(Map::Motors::intake_motors[0][0]);
@@ -118,10 +120,7 @@ bool IO::get_xbox_A() { return xbox->GetAButton(); }
 
 
 
-double IO::get_left_Y() {
-  SmartDashboard::PutNumber("Left Y:", left_joy->GetY());
-  return -left_joy->GetY();
-}
+double IO::get_left_Y() { return -left_joy->GetY(); }
 double IO::get_left_X() { return left_joy->GetX(); }
 double IO::get_left_twist() {
   SmartDashboard::PutNumber("Left Z:", -left_joy->GetZ());
