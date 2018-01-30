@@ -15,6 +15,7 @@
 #include <string>
 #include <SmartDashboard/SmartDashboard.h>
 #include <iostream>
+#include <cmath>
 
 using namespace frc; // WPILib classes/functions
 using namespace std;
@@ -50,19 +51,37 @@ public:
   }
 
   void AutonomousInit() {
-
+    std::cout << "Auto Init" << std::endl;
+    auto io = IO::get_instance();
+    io->navx->ZeroYaw();
+    // Note: wheelbase width: 0.72
+    MotionProfileConfig cfg = {
+      1440, 6,                                  // enc_ticks, wheel_diam
+      1 / 0.2, 0,                             // kp (1 / full_speed_threshold_distance), kd
+      3.34 / 12.0, 0.911 / 12.0,                  // kv, ka
+      0.8 * (1.0/80.0),
+      curtinfrc::MotionProfileMode::PATHFINDER
+    };
+    auto strat = std::make_shared<curtinfrc::MotionProfileStrategy>(
+      io->left_motors[0], io->right_motors[0],
+      io->navx, 
+      "/home/lvuser/paths/test_left.csv", "/home/lvuser/paths/test_right.csv",
+      cfg
+    );
+    drive->strategy_controller().set_active(strat);
   }
   void AutonomousPeriodic() {
-
+    drive->strategy_controller().periodic();
   }
 
   void TeleopInit() {
     SmartDashboard::PutNumber("Throttle:", throttle);
     ControlMap::init();
+    drive->strategy_controller().set_active(nullptr);
   }
   void TeleopPeriodic() {
     // Only move if joystick is not in deadzone
-    if(abs(ControlMap::left_drive_power()) > Map::Controllers::deadzone) {
+    if(fabs(ControlMap::left_drive_power()) > Map::Controllers::deadzone) {
       // double output_left = math::square_keep_sign(ControlMap::left_drive_power());
       double output_left = ControlMap::left_drive_power();
       drive->set_left(output_left * throttle);
@@ -70,7 +89,7 @@ public:
       drive->set_left(0);
     }
 
-    if(abs(ControlMap::right_drive_power()) > Map::Controllers::deadzone) {
+    if(fabs(ControlMap::right_drive_power()) > Map::Controllers::deadzone) {
       // double output_right = math::square_keep_sign(ControlMap::right_drive_power());
       double output_right = ControlMap::right_drive_power();
       drive->set_right(output_right * throttle);
@@ -111,7 +130,7 @@ public:
     auto io = IO::get_instance();
     auto strat = std::make_shared<curtinfrc::MotionProfileTunerStrategy>(
       io->left_motors[0], io->right_motors[0],
-      io->navx, 1000, 6
+      io->navx, 1440, 6
     );
     drive->strategy_controller().set_active(strat);
   }

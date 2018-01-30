@@ -14,8 +14,15 @@ namespace curtinfrc {
   };
 
   struct MotionProfileConfig {
-    double enc_ticks_per_rev, wheel_diameter, kp, kd, kv, ka;  // note: ka unused on MotionProfileMode::TALON_MP
+    double enc_ticks_per_rev, wheel_diameter, kp, kd, kv, ka, kt;  // note: ka unused on MotionProfileMode::TALON_MP
     MotionProfileMode mode;
+  };
+
+  struct MPLogPoint {
+    double time, output, output_real; // output: PDVA, output_real: output + turn factor (gyro)
+    double pos_real, pos_target;
+    double vel_real, vel_target;
+    double angle_real, angle_target;
   };
 
   class MotionProfileStrategy : public Strategy {
@@ -30,23 +37,30 @@ namespace curtinfrc {
       _segments_length = Pathfinder::pathfinder_load_file(file_left, &_segments_left[0]);
       Pathfinder::pathfinder_load_file(file_right, &_segments_right[0]);
       _followl = _followr = { 0, 0, 0, 0, 0 };
+
+      // TODO: Change these
+      _outfile_left.open("/home/lvuser/mp_left.csv");
+      _outfile_right.open("/home/lvuser/mp_right.csv");
     }
 
     void start() override;
     void tick(double time) override;
-    void tick_talonmp();
-    void tick_pathfinder();
+    void tick_talonmp(double time);
+    void tick_pathfinder(double time);
     void stop() override;
 
   private:
     CurtinTalonSRX *_escl, *_escr;
     AHRS *_ahrs;
     Segment _segments_left[8192], _segments_right[8192];
+    MPLogPoint _lp_left[8192], _lp_right[8192];
     int _segments_length;
     MotionProfileConfig _cfg;
 
     EncoderFollower _followl, _followr;
     EncoderConfig _ecfg_l, _ecfg_r;
+
+    std::ofstream _outfile_left, _outfile_right;
 
     frc::Notifier *_notifier;
   };
