@@ -19,7 +19,7 @@ int IO::init() { // Sets up IO
 
 
   try {
-    navx = new AHRS(SPI::Port::kMXP);
+    navx = new AHRS(I2C::Port::kOnboard);
   } catch (std::exception& ex) {
     std::string err_string = "Error instantiating navX MXP:  ";
     err_string += ex.what();

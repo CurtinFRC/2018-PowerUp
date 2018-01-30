@@ -1,6 +1,7 @@
 #pragma once
 
 #include "curtinfrc/motors/CurtinTalonSRX.h"
+#include "curtinfrc/strategy/strategy.h"
 
 namespace curtinfrc {
   template <unsigned int N_MOTORS>
@@ -30,7 +31,12 @@ namespace curtinfrc {
       right[0]->Set(value);
     }
 
+    StrategyController &strategy_controller() {
+      return strat_controller;
+    }
+
   private:
     CurtinTalonSRX *left[N_MOTORS], *right[N_MOTORS];
+    StrategyController strat_controller;
   };
 }
