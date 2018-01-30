@@ -1,6 +1,8 @@
 #include "ControlMap.h"
 #include "Map.h"
 #include "IO.h"
+
+#include <iostream>
 #include <string>
 
 using namespace std;
@@ -192,30 +194,27 @@ double ControlMap::left_drive_power() {
       left_power = IO::get_instance()->get_left_Y();
     } else if (IO::get_instance()->get_left_trigger()) {
       double f_speed = IO::get_instance()->get_left_Y();
-      double r_speed = IO::get_instance()->get_left_twist();
-      if (abs(IO::get_instance()->get_left_X()) > 0.3) r_speed -= IO::get_instance()->get_left_X();
-      r_speed = min(r_speed, 1.0);
+      double r_speed = (IO::get_instance()->get_left_X() * 0.5) + (IO::get_instance()->get_left_X() * IO::get_instance()->get_left_twist() * IO::get_instance()->get_left_twist() * (1 - 0.5));
 
       if (f_speed >= 0.0) {
-        left_power = r_speed >= 0.0 ? copysign(max(abs(f_speed), abs(r_speed)), f_speed) : f_speed + r_speed;
+        left_power = r_speed >= 0.0 ? f_speed - r_speed : max(f_speed, -r_speed);
       } else {
-        left_power = r_speed >= 0.0 ? f_speed + r_speed : copysign(max(abs(f_speed), abs(r_speed)), f_speed);
+        left_power = r_speed >= 0.0 ? -max(-f_speed, r_speed) : f_speed - r_speed;
       }
     } else if (IO::get_instance()->get_right_trigger()) {
       double f_speed = IO::get_instance()->get_right_Y();
-      double r_speed = IO::get_instance()->get_right_twist();
-      if (abs(IO::get_instance()->get_right_X()) > 0.3) r_speed -= IO::get_instance()->get_right_X();
-      r_speed = min(r_speed, 1.0);
+      double r_speed = (IO::get_instance()->get_right_X() * 0.5) + (IO::get_instance()->get_right_X() * IO::get_instance()->get_right_twist() * IO::get_instance()->get_right_twist() * (1 - 0.5));
 
       if (f_speed >= 0.0) {
-        left_power = r_speed >= 0.0 ? copysign(max(abs(f_speed), abs(r_speed)), f_speed) : f_speed + r_speed;
+        left_power = r_speed >= 0.0 ? f_speed - r_speed : max(f_speed, -r_speed);
       } else {
-        left_power = r_speed >= 0.0 ? f_speed + r_speed : copysign(max(abs(f_speed), abs(r_speed)), f_speed);
+        left_power = r_speed >= 0.0 ? -max(-f_speed, r_speed) : f_speed - r_speed;
       }
     }
   }
 
   SmartDashboard::PutString("Mode:", mode);
+  SmartDashboard::PutNumber("Left Power:", left_power);
   return left_power;
 }
 
@@ -234,30 +233,27 @@ double ControlMap::right_drive_power() {
       right_power = IO::get_instance()->get_right_Y();
     } else if (IO::get_instance()->get_left_trigger()) {
       double f_speed = IO::get_instance()->get_left_Y();
-      double r_speed = IO::get_instance()->get_left_twist();
-      if (abs(IO::get_instance()->get_left_X()) > 0.3) r_speed -= IO::get_instance()->get_left_X();
-      r_speed = min(r_speed, 1.0);
+      double r_speed = (IO::get_instance()->get_left_X() * 0.5) + (IO::get_instance()->get_left_X() * IO::get_instance()->get_left_twist() * IO::get_instance()->get_left_twist() * (1 - 0.5));
 
-      if (f_speed >= 0.0) {
-        right_power = r_speed >= 0.0 ? f_speed - r_speed : copysign(max(abs(f_speed), abs(r_speed)), f_speed);
+      if (f_speed > 0.0) {
+        right_power = r_speed > 0.0 ? max(f_speed, r_speed) : f_speed + r_speed;
       } else {
-        right_power = r_speed >= 0.0 ? copysign(max(abs(f_speed), abs(r_speed)), f_speed) : f_speed - r_speed;
+        right_power = r_speed > 0.0 ? f_speed + r_speed : -max(-f_speed, -r_speed);
       }
     } else if (IO::get_instance()->get_right_trigger()) {
       double f_speed = IO::get_instance()->get_right_Y();
-      double r_speed = IO::get_instance()->get_right_twist();
-      if (abs(IO::get_instance()->get_right_X()) > 0.3) r_speed -= IO::get_instance()->get_right_X();
-      r_speed = min(r_speed, 1.0);
+      double r_speed = (IO::get_instance()->get_right_X() * 0.5) + (IO::get_instance()->get_right_X() * IO::get_instance()->get_right_twist() * IO::get_instance()->get_right_twist() * (1 - 0.5));
 
-      if (f_speed >= 0.0) {
-        right_power = r_speed >= 0.0 ? f_speed - r_speed : copysign(max(abs(f_speed), abs(r_speed)), f_speed);
+      if (f_speed > 0.0) {
+        right_power = r_speed > 0.0 ? max(f_speed, r_speed) : f_speed + r_speed;
       } else {
-        right_power = r_speed >= 0.0 ? copysign(max(abs(f_speed), abs(r_speed)), f_speed) : f_speed - r_speed;
+        right_power = r_speed > 0.0 ? f_speed + r_speed : -max(-f_speed, -r_speed);
       }
     }
   }
 
   SmartDashboard::PutString("Mode:", mode);
+  SmartDashboard::PutNumber("Right Power:", right_power);
   return right_power;
 }
 

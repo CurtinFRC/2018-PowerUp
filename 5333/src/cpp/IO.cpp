@@ -1,5 +1,6 @@
 #include "IO.h"
 #include "Map.h"
+#include "SmartDashboard/SmartDashboard.h"
 
 static IO *io;
 
@@ -117,9 +118,15 @@ bool IO::get_xbox_A() { return xbox->GetAButton(); }
 
 
 
-double IO::get_left_Y() { return -left_joy->GetY(); }
+double IO::get_left_Y() {
+  SmartDashboard::PutNumber("Left Y:", left_joy->GetY());
+  return -left_joy->GetY();
+}
 double IO::get_left_X() { return left_joy->GetX(); }
-double IO::get_left_twist() { return left_joy->GetZ(); }
+double IO::get_left_twist() {
+  SmartDashboard::PutNumber("Left Z:", -left_joy->GetZ());
+  return -left_joy->GetZ();
+}
 
 bool IO::get_left_trigger() { return left_joy->GetTrigger(); }
 bool IO::get_left_button(int nButton) { return left_joy->GetRawButton(nButton); }
@@ -127,7 +134,7 @@ bool IO::get_left_button(int nButton) { return left_joy->GetRawButton(nButton); 
 
 double IO::get_right_Y() { return -right_joy->GetY(); }
 double IO::get_right_X() { return right_joy->GetX(); }
-double IO::get_right_twist() { return right_joy->GetZ(); }
+double IO::get_right_twist() { return -right_joy->GetZ(); }
 
 bool IO::get_right_trigger() { return right_joy->GetTrigger(); }
 bool IO::get_right_button(int nButton) { return right_joy->GetRawButton(nButton); }
