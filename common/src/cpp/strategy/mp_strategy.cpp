@@ -50,14 +50,14 @@ void MotionProfileStrategy::tick_pathfinder(double time) {
   MPLogPoint *lp_left = &_lp_left[_followl.segment], *lp_right = &_lp_right[_followr.segment];
   Segment *s_left = &_segments_left[_followl.segment], *s_right = &_segments_right[_followr.segment];
 
-  double gyro = fmod(_ahrs->GetAngle(), 360);
+  double gyro = fmod(-_ahrs->GetAngle(), 360);
   double heading = fmod(r2d(_followl.heading), 360);
 
   double angle_error = fmod(heading - gyro, 360);
   angle_error = angle_error > 180 ? -angle_error + 180 : angle_error;
   double turn = -_cfg.kt * angle_error;
 
-  std::cout << _ahrs->GetAngle() << ", " << r2d(_followl.heading) << ", " << angle_error << std::endl;
+  std::cout << -_ahrs->GetAngle() << ", " << r2d(_followl.heading) << ", " << angle_error << std::endl;
 
   _escl->Set(l + turn);
   _escr->Set(r - turn);

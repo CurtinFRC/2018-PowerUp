@@ -66,7 +66,7 @@ public:
     auto strat = std::make_shared<curtinfrc::MotionProfileStrategy>(
       io->left_motors[0], io->right_motors[0],
       io->navx, 
-      "/home/lvuser/paths/test_straight_left.csv", "/home/lvuser/paths/test_straight_right.csv",
+      "/home/lvuser/paths/test_left.csv", "/home/lvuser/paths/test_right.csv",
       cfg
     );
     drive->strategy_controller().set_active(strat);
