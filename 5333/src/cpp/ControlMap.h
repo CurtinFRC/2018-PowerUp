@@ -6,6 +6,8 @@ namespace ControlMap {
   double left_drive_power();
   double right_drive_power();
 
+  bool drive_reverse();
+
   bool throttle_decrement();
   bool throttle_increment();
 

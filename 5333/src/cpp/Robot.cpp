@@ -58,14 +58,13 @@ public:
     MotionProfileConfig cfg = {
       1440, 6,                                // enc_ticks, wheel_diam
       12.0 / 0.2, 0,                             // kp (1 / full_speed_threshold_distance), kd
-      //3.34 / 12.0, 0.911 / 12.0,                  // kv, ka
       3.34, 0.76,                 // kv, ka
       3 * (1.0/80.0),
       curtinfrc::MotionProfileMode::PATHFINDER
     };
     auto strat = std::make_shared<curtinfrc::MotionProfileStrategy>(
       io->left_motors[0], io->right_motors[0],
-      io->navx, 
+      io->navx,
       "/home/lvuser/paths/test_left.csv", "/home/lvuser/paths/test_right.csv",
       cfg
     );
@@ -84,16 +83,16 @@ public:
     // Only move if joystick is not in deadzone
     if(fabs(ControlMap::left_drive_power()) > Map::Controllers::deadzone) {
       // double output_left = math::square_keep_sign(ControlMap::left_drive_power());
-      double output_left = ControlMap::left_drive_power();
-      drive->set_left(output_left * throttle);
+      double output_left = ControlMap::drive_reverse() ? ControlMap::right_drive_power() : ControlMap::left_drive_power();
+      drive->set_left(output_left * throttle * (ControlMap::drive_reverse() ? -1 : 1));
     } else {
       drive->set_left(0);
     }
 
     if(fabs(ControlMap::right_drive_power()) > Map::Controllers::deadzone) {
       // double output_right = math::square_keep_sign(ControlMap::right_drive_power());
-      double output_right = ControlMap::right_drive_power();
-      drive->set_right(output_right * throttle);
+      double output_right = ControlMap::drive_reverse() ? ControlMap::left_drive_power() : ControlMap::right_drive_power();
+      drive->set_right(output_right * throttle * (ControlMap::drive_reverse() ? -1 : 1));
     } else {
       drive->set_right(0);
     }

@@ -55,10 +55,12 @@ void MotionProfileStrategy::tick_pathfinder(double time) {
   Segment *s_left = &_segments_left[_followl.segment], *s_right = &_segments_right[_followr.segment];
 
   double gyro = fmod(-_ahrs->GetAngle(), 360);
+  gyro = gyro > 180 ? gyro - 360 : gyro;
   double heading = fmod(r2d(_followl.heading), 360);
+  heading = heading > 180 ? heading - 360 : heading;
 
   double angle_error = fmod(heading - gyro, 360);
-  angle_error = angle_error > 180 ? -angle_error + 180 : angle_error;
+  angle_error = angle_error > 180 ? angle_error - 360 : angle_error;
   double turn = _cfg.kt * angle_error;
 
   double l_throttle = (l / _escl->GetBusVoltage());
@@ -71,7 +73,7 @@ void MotionProfileStrategy::tick_pathfinder(double time) {
   lp_left->output = l_throttle; lp_right->output = r_throttle;
   lp_left->output_real = l_throttle + turn; lp_right->output_real = r_throttle - turn;
   lp_left->voltage = l; lp_right->voltage = r;
-  
+
   lp_left->pos_real = s_left->position - _followl.last_error;
   lp_left->pos_target = s_left->position;
   lp_left->vel_real = (_escl->GetSelectedSensorVelocity(0) * 10) / _cfg.enc_ticks_per_rev * PI * _cfg.wheel_diameter * 0.0254;
