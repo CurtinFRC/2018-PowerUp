@@ -27,6 +27,9 @@ void MotionProfileStrategy::start() {
       _cfg.enc_ticks_per_rev, _cfg.wheel_diameter * 0.0254 * PI, _cfg.kp, 0, _cfg.kd, _cfg.kv, _cfg.ka
     };
 
+    _escl->SetControlFramePeriod(ctre::phoenix::motorcontrol::ControlFrame::Control_4_Advanced, 5);
+    _escr->SetControlFramePeriod(ctre::phoenix::motorcontrol::ControlFrame::Control_4_Advanced, 5);
+
     _escl->SetControlMode(CurtinTalonSRX::ControlMode::PercentOutput);
     _escr->SetControlMode(CurtinTalonSRX::ControlMode::PercentOutput);
   }
@@ -45,6 +48,7 @@ void MotionProfileStrategy::tick_talonmp(double time) {
 }
 
 void MotionProfileStrategy::tick_pathfinder(double time) {
+  // Note: Voltage Units
   double l = pathfinder_follow_encoder(_ecfg_l, &_followl, _segments_left, _segments_length, _escl->GetSelectedSensorPosition(0));
   double r = pathfinder_follow_encoder(_ecfg_r, &_followr, _segments_right, _segments_length, _escr->GetSelectedSensorPosition(0));
   MPLogPoint *lp_left = &_lp_left[_followl.segment], *lp_right = &_lp_right[_followr.segment];
@@ -55,17 +59,18 @@ void MotionProfileStrategy::tick_pathfinder(double time) {
 
   double angle_error = fmod(heading - gyro, 360);
   angle_error = angle_error > 180 ? -angle_error + 180 : angle_error;
-  double turn = -_cfg.kt * angle_error;
+  double turn = _cfg.kt * angle_error;
 
-  std::cout << -_ahrs->GetAngle() << ", " << r2d(_followl.heading) << ", " << angle_error << std::endl;
-
-  _escl->Set(l + turn);
-  _escr->Set(r - turn);
+  double l_throttle = (l / _escl->GetBusVoltage());
+  double r_throttle = (r / _escr->GetBusVoltage());
+  _escl->Set(l_throttle - turn);
+  _escr->Set(r_throttle + turn);
 
   // Logging Stuff
   lp_left->time = time;
-  lp_left->output = l; lp_right->output = r;
-  lp_left->output_real = l + turn; lp_right->output_real = r - turn;
+  lp_left->output = l_throttle; lp_right->output = r_throttle;
+  lp_left->output_real = l_throttle + turn; lp_right->output_real = r_throttle - turn;
+  lp_left->voltage = l; lp_right->voltage = r;
   
   lp_left->pos_real = s_left->position - _followl.last_error;
   lp_left->pos_target = s_left->position;
@@ -80,11 +85,11 @@ void MotionProfileStrategy::tick_pathfinder(double time) {
   lp_left->angle_real = lp_right->angle_real = gyro;
   lp_left->angle_target = lp_right->angle_target = heading;
 
-  if (_followl.finished || _followr.finished) done = true;
+  if (_followl.finished && _followr.finished) done = true;
 }
 
 static void _write_single_logpoint(std::ofstream &outfile, MPLogPoint &point) {
-  outfile << point.time << "," << point.output << "," << point.output_real << "," << point.pos_real << "," << point.pos_target << ",";
+  outfile << point.time << "," << point.output << "," << point.output_real << "," << point.voltage << "," << point.pos_real << "," << point.pos_target << ",";
   outfile << point.vel_real << "," << point.vel_target << "," << point.angle_real << "," << point.angle_target << "\n";
 }
 
@@ -95,8 +100,8 @@ void MotionProfileStrategy::stop() {
   _escl->Set(0);
   _escr->Set(0);
 
-  _outfile_left << "time,output,output_real,pos_real,pos_target,vel_real,vel_target,angle_real,angle_target\n";
-  _outfile_right << "time,output,output_real,pos_real,pos_target,vel_real,vel_target,angle_real,angle_target\n";
+  _outfile_left << "time,output,output_real,voltage,pos_real,pos_target,vel_real,vel_target,angle_real,angle_target\n";
+  _outfile_right << "time,output,output_real,voltage,pos_real,pos_target,vel_real,vel_target,angle_real,angle_target\n";
   for (int i = 0; i < _segments_length; i++) {
     _write_single_logpoint(_outfile_left, _lp_left[i]);
     _write_single_logpoint(_outfile_right, _lp_right[i]);

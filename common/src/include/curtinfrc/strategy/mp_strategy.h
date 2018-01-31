@@ -19,7 +19,7 @@ namespace curtinfrc {
   };
 
   struct MPLogPoint {
-    double time, output, output_real; // output: PDVA, output_real: output + turn factor (gyro)
+    double time, output, output_real, voltage; // output: PDVA, output_real: output + turn factor (gyro)
     double pos_real, pos_target;
     double vel_real, vel_target;
     double angle_real, angle_target;
