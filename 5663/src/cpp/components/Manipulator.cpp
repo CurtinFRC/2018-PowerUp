@@ -1,10 +1,10 @@
 #include "components/Manipulator.h"
-
+#include <Spark.h>
 using namespace components;
 
 // Constructor for Manipulator class
 Manipulator::Manipulator(int intakePort, int restrainerFwd, int restrainerRev) {
-  intake = new TalonSRX(intakePort);
+  intake = new Spark(intakePort);
   restrainer = new DoubleSolenoid(0, restrainerFwd, restrainerRev);
 }
 
@@ -30,6 +30,6 @@ void Manipulator::Release() {
 }
 
 void Manipulator::RunPeriodic() {
-  intake->Set(ControlMode::PercentOutput, intakeSpeed);
+  intake->Set(intakeSpeed);
   SmartDashboard::PutNumber("intakeSpeed", intakeSpeed);
 }

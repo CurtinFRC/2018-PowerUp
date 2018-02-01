@@ -2,10 +2,11 @@
 
 #include "WPILib.h"
 #include <ctre/Phoenix.h>
+#include <Spark.h>
 
 namespace components {
   class Manipulator {
-    TalonSRX *intake;
+    Spark *intake;
     DoubleSolenoid *restrainer;
 
     public:
