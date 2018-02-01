@@ -84,6 +84,7 @@ public:
 
   void AutonomousInit() {
     drive->SetSlowGear();
+    drive->Stop();
     lift->SetLowPosition();
     auton->ChooseRoutine((int)AutoChooser->GetSelected(), (int)StartingPosition->GetSelected());
   }
@@ -96,6 +97,7 @@ public:
 
   void TeleopInit() {
     drive->SetFastGear();
+    drive->Stop();
   }
 
   void TeleopPeriodic() {
