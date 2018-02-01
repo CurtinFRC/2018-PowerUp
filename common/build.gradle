@@ -5,6 +5,9 @@ model {
     components {
         curtinFrcCommon(NativeLibrarySpec) {
             targetPlatform 'roborio'
+            binaries.all {
+                if (it instanceof SharedLibraryBinarySpec) it.buildable = false   // This library should be static only
+            }
             sources.cpp {
                 source {
                     srcDir 'src/cpp'
