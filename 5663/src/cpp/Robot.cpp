@@ -69,7 +69,7 @@ public:
 
     drive = new Drive(1, 2, 3, 4, 5, 6);
     lift = new Lift(8, 7);
-    ramp = new Ramp(2, 3);
+    ramp = new Ramp(4, 5);
     man = new Manipulator(0, 2, 3);
 
     compressor = new Compressor(0);
