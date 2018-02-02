@@ -26,9 +26,8 @@ bool ControlMap::claw_state() {
 }
 
 #elif JOY_CONTROL
+
 int ControlMap::init() { return 0; }
-
-
 
 #elif DRIVER_TRAINING
 
@@ -153,7 +152,7 @@ bool ControlMap::drive_reverse() {
 double ControlMap::belevator_motor_power() { return IO::get_instance()->get_right_twist(); }
 
 bool ControlMap::claw_state() {
-  return IO::get_instance()->get_left_twist() > 0.2; // Deadzone
+  return IO::get_instance()->get_left_button(11);
 }
 
 #endif

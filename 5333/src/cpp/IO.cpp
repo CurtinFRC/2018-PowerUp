@@ -31,20 +31,19 @@ int IO::init() { // Sets up IO
 
   navx->ZeroYaw();
 
-  intake_solenoids[0] = new DoubleSolenoid(
-    Map::Pneumatics::intake_solenoids[0][0],
-    Map::Pneumatics::intake_solenoids[0][1],
-    Map::Pneumatics::intake_solenoids[0][1] + 1
-  );
-  intake_solenoids[1] = new DoubleSolenoid(
-    Map::Pneumatics::intake_solenoids[1][0],
-    Map::Pneumatics::intake_solenoids[1][1],
-    Map::Pneumatics::intake_solenoids[1][1] + 1
-  );
-  claw_solenoids[0] = new DoubleSolenoid(
+  short int n = 0;
+  for (auto solenoid : intake_solenoids) {
+    solenoid = new DoubleSolenoid(0, Map::Pneumatics::intake_solenoids[n][0], Map::Pneumatics::intake_solenoids[n][1]);
+    n++;
+  }
+
+  brake_solenoids[0] = new DoubleSolenoid(0,
     Map::Pneumatics::claw_solenoids[0][0],
-    Map::Pneumatics::claw_solenoids[0][1],
-    Map::Pneumatics::claw_solenoids[0][1] + 1
+    Map::Pneumatics::claw_solenoids[0][1]
+  );
+  shifter_solenoids[0] = new DoubleSolenoid(0,
+    Map::Pneumatics::claw_solenoids[0][0],
+    Map::Pneumatics::claw_solenoids[0][1]
   );
 
   #ifdef XBOX_CONTROL

@@ -26,26 +26,27 @@ namespace Map { // Map ports
   struct Sensors { };
 
   struct Motors {
-    static constexpr int left_motors[2] = {36, 35};
-    static constexpr int right_motors[2] = {32, 34};
+    static constexpr int left_motors[2]       = {36, 35};
+    static constexpr int right_motors[2]      = {32, 34};
 
-    static constexpr int belev_motors[1] = {37};
+    static constexpr int belev_motors[1]      = {37};
 
-    static constexpr int intake_motors[2][1] = {{38}, {39}};
+    static constexpr int intake_motors[2][1]  = {{38}, {39}};
   };
 
   struct Pneumatics {
-    static constexpr int intake_solenoids[2][2] = {{0, 2}, {0, 4}};
-    static constexpr int claw_solenoids[1][2] = {{0, 0}};
+    static constexpr int intake_solenoids[1][2]    = {{2, 5}};
+    static constexpr int brake_solenoids[1][2]     = {{1, 6}};
+    static constexpr int shifter_solenoids[1][2]   = {{0, 7}};
   };
 
   struct Robot { // Robot stats
-    static constexpr float max_v = 9.8;
-    static constexpr float max_a = 3;
-    static constexpr float max_j = 60;
-    static constexpr float wheel_circ = 0.4788; // Metres
-    static constexpr float track_width = 0.61; // Metres
-    static const int encoder_ticks_per_rot = 1000;
+    static constexpr float max_v             = 9.8;
+    static constexpr float max_a             = 3;
+    static constexpr float max_j             = 60;
+    static constexpr float wheel_circ        = 0.4788; // Metres
+    static constexpr float track_width       = 0.61; // Metres
+    static const int encoder_ticks_per_rot   = 1000;
   };
 
   struct PID {
