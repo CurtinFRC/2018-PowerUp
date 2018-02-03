@@ -6,15 +6,18 @@ using namespace curtinfrc;
 
 // Constructor for Autonomous class
 Autonomous::Autonomous(Drive *drive, Lift lift, Manipulator man, Ramp ramp) {
+  autoDrive = drive;
   Lift autoLift = lift;
   Manipulator autoMan = man;
-  baseline = new BaselineStrategy(drive);
-  stratCon = new StrategyController();
+  //baseline = new BaselineStrategy(drive);
+  //stratCon = new StrategyController();
 }
 
 // Choose the best autonomous routine
 void Autonomous::ChooseRoutine(int autoMode, int startingPosition) {
-  AutoStage = 0;
+  SmartDashboard::PutString("Auto Mode:", "null");
+  SmartDashboard::PutBoolean("ran baseline", false);
+  autoState = 0;
   gameData = DriverStation::GetInstance().GetGameSpecificMessage(); //Get specific match data
   // gameData will be an array with 3 characters, eg. "LRL"
   // check https://wpilib.screenstepslive.com/s/currentCS/m/getting_started/l/826278-2018-game-data-details
@@ -47,12 +50,14 @@ void Autonomous::RunPeriodic() {
 }
 
 bool Autonomous::Baseline() {
-  switch (autoState) {
-    case 0:
-      if(autoDrive->DriveDistance(0.2, -0.05, false)) autoState++;
+  SmartDashboard::PutBoolean("ran baseline", true);
+  SmartDashboard::PutNumber("Auto State:", autoState);
+   switch (autoState) {
+     case 0:
+      if(autoDrive->DriveDistance(0.2, 0.05)) autoState++;
       break;
-    case 1:
-      if(autoDrive->DriveDistance(0.2, 0.5, false)) autoState++;
+     case 1:
+      if(autoDrive->DriveDistance(0.2, 0.5)) autoState++;
       break;
     default:
       autoDrive->Stop();

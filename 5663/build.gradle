@@ -11,6 +11,7 @@ deploy {
         artifact("robotCode", jaci.openrio.gradle.frc.FRCNativeArtifact) {
             targets << "roborio5663"
             component = 'frcUserProgram'
+          //  debug = true
         }
         fileCollectionArtifact('paths') {
             files = project(':common').fileTree(dir: 'src/paths', include: '*.csv')
@@ -32,6 +33,10 @@ model {
                 exportedHeaders {
                     srcDir 'src/include'
                     include '**/*.hpp', '**/*.h'
+                }
+
+                binaries.all {
+                  cppCompiler.args "-g"
                 }
 
                 lib library: "wpilib"

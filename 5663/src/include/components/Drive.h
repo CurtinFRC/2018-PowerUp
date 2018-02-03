@@ -15,7 +15,6 @@ class gyroPID : public PIDOutput {
 
 namespace components {
   class Drive {
-    TalonSRX *left1, *left2, *left3, *right1, *right2, *right3;
     AHRS *imu;
     PIDController *turn;
     gyroPID *out;
@@ -23,7 +22,6 @@ namespace components {
 
     public:
       Drive(int l1, int l2, int l3, int r1, int r2, int r3); // Constructor
-      Drive& operator=(const Drive&); //Copy Constructor
       void TankDrive(double left, double right, bool square=false);
       void Stop();
       bool TurnAngle(double speed, double angle);
@@ -34,14 +32,16 @@ namespace components {
       void RunPeriodic();
 
     private:
+      TalonSRX *left1, *left2, *left3, *right1, *right2, *right3;
+
       bool turning = false, driving = false; // State variables
-      double turnTolerance = 2.0, driveTolerance = 10.0; // Tolerance variables
+      double turnTolerance = 2.0, driveTolerance = 40; // Tolerance variables
       double kP = 0.025, kI = 0.0004, kD = 0.04, kM = (80*26.041666667)/0.4787787204;
       int slowGear = gearMode->kForward;
       int fastGear = gearMode->kReverse;
       double deadzone = 0.015;
       bool currentGear = false;
-      int leftFinalDistance, rightFinalDistance;
+      int leftFinalDistance= 0, rightFinalDistance = 0;
   };
 }
 

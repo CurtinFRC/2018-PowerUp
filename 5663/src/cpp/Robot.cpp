@@ -67,7 +67,7 @@ public:
     ControlModeChooser->AddDefault("Dual",(int*) 0);
     ControlModeChooser->AddObject("Single (Debug)",(int*) 1);
 
-    drive = new Drive(1, 2, 3, 4, 5, 6);
+    drive = new Drive(1, 2, 3, 6, 5, 4);
     lift = new Lift(8, 7);
     ramp = new Ramp(4, 5);
     man = new Manipulator(0, 2, 3);

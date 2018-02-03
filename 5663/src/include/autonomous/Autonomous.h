@@ -10,7 +10,7 @@
 #include "curtinfrc/strategy/strategy.h"
 
 using namespace components;
-using namespace curtinfrc;
+//using namespace curtinfrc;
 using namespace autonomous;
 
 namespace autonomous {
@@ -25,8 +25,8 @@ namespace autonomous {
       Lift *autoLift;
       Drive *autoDrive;
       Manipulator *autoMan;
-      BaselineStrategy *baseline;
-      StrategyController *stratCon;
+      //BaselineStrategy *baseline;
+      //StrategyController *stratCon;
       bool Baseline();
       bool S1L();
       bool S2L();
@@ -37,7 +37,6 @@ namespace autonomous {
 
       std::string gameData;
       std::function<bool()> autoFunction;
-      int AutoStage = 0;
-      int autoState;
+      int autoState = 0;
   };
 }

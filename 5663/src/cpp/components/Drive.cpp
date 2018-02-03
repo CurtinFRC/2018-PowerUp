@@ -42,6 +42,7 @@ Drive::Drive(int l1, int l2, int l3, int r1, int r2, int r3) {
   turn->SetContinuous(true);
 
   gearMode = new DoubleSolenoid(0,0,1);
+  SmartDashboard::PutNumber("drive count", 0);
 }
 
 // Stop all Drive class motors
@@ -52,14 +53,14 @@ void Drive::Stop() {
 
 // Set speed of Drive class motors
 void Drive::TankDrive(double left, double right, bool square) {
-  SmartDashboard::PutNumber("Left speed", left);
-  SmartDashboard::PutNumber("Right speed", right);
   if(-deadzone < left && left < deadzone) left = 0;
   if(-deadzone < right && right < deadzone) right = 0;
   if(square) {
     left *= fabs(left);
     right *= fabs(right); // square inputs
   }
+  SmartDashboard::PutNumber("Left speed", left);
+  SmartDashboard::PutNumber("Right speed", right);
   left1->Set(ControlMode::PercentOutput, left);
   right1->Set(ControlMode::PercentOutput, right);
 }
@@ -90,39 +91,49 @@ bool Drive::TurnAngle(double speed, double angle) {
 bool Drive::DriveDistance(double speed, double distance, bool holdAngle) {
   if(driving) {
     //run driving code
-    left1->Set(ControlMode::Position, leftFinalDistance); //drive code in this format
-    right1->Set(ControlMode::Position, rightFinalDistance);
-
+    left1->Set(ControlMode::MotionMagic, leftFinalDistance); //drive code in this format
+    right1->Set(ControlMode::MotionMagic, rightFinalDistance);
+    SmartDashboard::PutNumber("drive count", 2);
+    SmartDashboard::PutNumber("Left speed", left1->GetMotorOutputPercent());
+    SmartDashboard::PutNumber("Right speed", right1->GetMotorOutputPercent());
+    SmartDashboard::PutNumber("Left Drive encoder pos", left1->GetSelectedSensorPosition(0));
+    SmartDashboard::PutNumber("Right Drive encoder pos", right1->GetSelectedSensorPosition(0));
     if(abs(leftFinalDistance) + driveTolerance > abs(left1->GetSelectedSensorPosition(0)) &&  abs(leftFinalDistance) - driveTolerance < abs(left1->GetSelectedSensorPosition(0)) && left1->GetSelectedSensorPosition(0) * leftFinalDistance >= 0) {
       if(abs(rightFinalDistance) + driveTolerance > abs(right1->GetSelectedSensorPosition(0)) &&  abs(rightFinalDistance) - driveTolerance < abs(right1->GetSelectedSensorPosition(0)) && right1->GetSelectedSensorPosition(0) * rightFinalDistance >= 0) {
         Stop();
         driving = false;
-        return false;
+        return true;
       }
     }
   } else { // Run setup
+    SmartDashboard::PutNumber("drive count", 1);
     int encoderCount = kM * distance;
     leftFinalDistance = left1->GetSelectedSensorPosition(0) + encoderCount;
     rightFinalDistance = right1->GetSelectedSensorPosition(0) + encoderCount;
-
+    left1->SetSelectedSensorPosition(0,0,0);
+    right1->SetSelectedSensorPosition(0,0,0);
     //setup PID and start driving...
-    left1->ConfigNominalOutputForward(0,10); //configuring the left encoder PID
-    left1->ConfigNominalOutputReverse(0,10);
-    left1->ConfigPeakOutputForward(speed,10);
-    left1->ConfigPeakOutputReverse(-speed,10);
+    left1->ConfigNominalOutputForward(0,0); //configuring the left encoder PID
+    left1->ConfigNominalOutputReverse(0,0);
+    left1->ConfigPeakOutputForward(1,10);
+    left1->ConfigPeakOutputReverse(-1,10);
+    left1->ConfigMotionCruiseVelocity(600, 0);
+    left1->ConfigMotionAcceleration(600, 0);
 
-    left1->Config_kF(0,05536513205,0); //set left PID-F values    //VALUE FOR TOUGHBOX MINI
-    left1->Config_kP(0,5.0,0);
+    left1->Config_kF(0,1.705,0); //set left PID-F values    //VALUE FOR TOUGHBOX MINI
+    left1->Config_kP(0,0.1,0);
     left1->Config_kI(0,0.0,0);
     left1->Config_kD(0,0.0,0);
 
-    right1->ConfigNominalOutputForward(0,10); //configuring the right encoder PID
-    right1->ConfigNominalOutputReverse(0,10);
-    right1->ConfigPeakOutputForward(speed,10);
-    right1->ConfigPeakOutputReverse(-speed,10);
+    right1->ConfigNominalOutputForward(0,0); //configuring the right encoder PID
+    right1->ConfigNominalOutputReverse(0,0);
+    right1->ConfigPeakOutputForward(1,10);
+    right1->ConfigPeakOutputReverse(-1,10);
+    right1->ConfigMotionCruiseVelocity(600, 0); //max = 710
+    right1->ConfigMotionAcceleration(600, 0);
 
-    right1->Config_kF(0,05536513205,0); //set right PID-F values    //VALUE FOR TOUGHBOX MINI
-    right1->Config_kP(0,5.0,0);
+    right1->Config_kF(0,1.705,0); //set right PID-F values    //VALUE FOR TOUGHBOX MINI 0.05536513205
+    right1->Config_kP(0,0.1,0);
     right1->Config_kI(0,0.0,0);
     right1->Config_kD(0,0.0,0);
 
@@ -171,4 +182,6 @@ void Drive::RunPeriodic() {
 
   SmartDashboard::PutNumber("Left Drive encoder pos", left1->GetSelectedSensorPosition(0));
   SmartDashboard::PutNumber("Right Drive encoder pos", right1->GetSelectedSensorPosition(0));
+  SmartDashboard::PutNumber("Left Drive velocity", left1->GetSelectedSensorVelocity(0));
+  SmartDashboard::PutNumber("Right Drive velocity", right1->GetSelectedSensorVelocity(0));
 }
