@@ -2,13 +2,14 @@
 
 using namespace autonomous;
 using namespace components;
+using namespace curtinfrc;
 
 // Constructor for Autonomous class
-Autonomous::Autonomous(Drive drive, Lift lift, Manipulator man, Ramp ramp) {
+Autonomous::Autonomous(Drive *drive, Lift lift, Manipulator man, Ramp ramp) {
   Lift autoLift = lift;
-  Drive autoDrive = drive;
   Manipulator autoMan = man;
-  //stratCon = new StrategyController();
+  baseline = new BaselineStrategy(drive);
+  stratCon = new StrategyController();
 }
 
 // Choose the best autonomous routine
@@ -42,22 +43,21 @@ void Autonomous::ChooseRoutine(int autoMode, int startingPosition) {
 }
 
 void Autonomous::RunPeriodic() {
-  autoDrive->DriveDistance(0.2, 1, false);
-  //autoDrive->RunPeriodic();
-  //autoLift->RunPeriodic();
-
-  // switch(AutoStage) {
-  //   case 0:
-  //     if(autoFunction()) AutoStage++;
-  //     break;
-  //   case 1:
-  //     //ChooseRoutine(5,5);
-  //     break;
-  // }
+  autoFunction();
 }
 
 bool Autonomous::Baseline() {
-  autoDrive->DriveDistance(0.2, 1, false);
+  switch (autoState) {
+    case 0:
+      if(autoDrive->DriveDistance(0.2, -0.05, false)) autoState++;
+      break;
+    case 1:
+      if(autoDrive->DriveDistance(0.2, 0.5, false)) autoState++;
+      break;
+    default:
+      autoDrive->Stop();
+      break;
+  }
 }
 
 // Routine: Initial (1) > Switch (left)

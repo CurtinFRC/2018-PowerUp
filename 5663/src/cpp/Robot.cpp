@@ -75,7 +75,7 @@ public:
     compressor = new Compressor(0);
     compressor->SetClosedLoopControl(true);
 
-    auton = new Autonomous(*drive, *lift, *man, *ramp);
+    auton = new Autonomous(drive, *lift, *man, *ramp);
 
     arduino = new I2C(arduino->kOnboard, 100);
 
