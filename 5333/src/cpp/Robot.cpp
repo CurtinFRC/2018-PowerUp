@@ -1,7 +1,6 @@
 // Shared headers
 #include "curtinfrc/math.h"
 #include "curtinfrc/drivetrain.h" // Shared drivetrain
-#include "curtinfrc/logger.h" // To log activity
 #include "curtinfrc/vision/vision.h"
 #include "WPILib.h"
 // #include <pathfinder.h>
@@ -30,20 +29,12 @@ public:
   curtinfrc::VisionSystem *vision;
   double throttle;
   bool left_bumper_toggle, right_bumper_toggle;
-  uint64_t time_fpga; // divide it to milliseconds, then cast as double
-  vector<string> drive_states(2);
 
   AutoControl *auto_;
 
   BelevatorControl *belev;
   ClawControl *claw;
   IntakeControl *intake;
-
-  LogControl *log_drive;
-  LogControl *log_belev;
-  LogControl *log_claw;
-  LogControl *log_intake;
-  // Add logs for auto state?
 
   IO *io;
 
@@ -59,26 +50,11 @@ public:
 
     drive = new Drivetrain<2>(io->left_motors, io->right_motors);
     belev = new BelevatorControl();
-    intake = new IntakeControl();
     claw = new ClawControl();
+    intake = new IntakeControl();
 
     throttle = 0.6;
     left_bumper_toggle = right_bumper_toggle = false;
-
-    // Create instances of Logger and pass header names
-    string drive_header[2] = {"left_speed","right_speed"};
-    Logger("log_drive", drive_header[]);
-    string belev_header[1] = {"belev_motor"};
-    Logger("log_belev", belev_header[]);
-    string claw_header[2] = {"left_piston","right_piston"};
-    Logger("log_claw", claw_header[]);
-    string intake_header[2] = {"left_wheel","right_wheel"}; // Might both be set speeds with low torque
-    Logger("log_intake", intake_header[]);
-
-    string drive_states[2];
-    string belev_states[1];
-    string claw_states[2];
-    string intake_states[2];
   }
 
   void AutonomousInit() {
@@ -87,11 +63,10 @@ public:
   void AutonomousPeriodic() {
     auto_->tick();
 
-    time_fpga = ::frc::RobotController::GetFPGATime(); // Pass timestamp to each
-    log_drive->log_write(time_fpga, drive_states);
-    log_belev->log_write(time_fpga, belev_states);
-    log_claw->log_write(time_fpga, claw_states);
-    log_intake->log_write(time_fpga, intake_states);
+    drive->log_write(); // Make this bit call only on mutates later *
+    belev->log_write();
+    claw->log_write();
+    intake->log_write();
   }
 
   void TeleopInit() {
@@ -143,9 +118,6 @@ public:
       ControlMap::claw_state() ? DoubleSolenoid::Value::kForward : DoubleSolenoid::Value::kReverse
     ); // Note: The claw solenoid is reversed
     // 14 changes to 5 cylinders reduce upstream from 120 to 60
-
-    // Send to logger
-    time_fpga = ::frc::RobotController::GetFPGATime();
   }
 
   void TestInit() { }
