@@ -48,37 +48,43 @@ int center_y(std::vector<cv::Point> contour)
 
 void processing::process_frame(cv::Mat* frame)
 {
+	//all_mtx.lock();
 	//HSV threshold
-	cv::Mat frame_hsv;
-	cvtColor(*frame, frame_hsv, cv::COLOR_BGR2HSV);
-	thresholded_mtx.lock();
-	cv::inRange(frame_hsv, cv::Scalar(15, 67, 34), cv::Scalar(46, 205, 255), thresholded);
+	//cvtColor(*frame, *frame, cv::COLOR_BGR2HSV);
+	//thresholded_mtx.lock();
+//	cv::inRange(*frame, cv::Scalar(15, 67, 34), cv::Scalar(46, 205, 255), thresholded);
 
 	//find contours
 	std::vector< std::vector<cv::Point> > contours;
-	cv::findContours(thresholded, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
-	thresholded_mtx.unlock();
+//	cv::findContours(thresholded, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
+	//thresholded_mtx.unlock();
 
 	//filter contours
-	filtered_contours_mtx.lock();
-	filtered_contours.clear();
-	for (int i = 0; i < contours.size(); i++) {
-		double area = cv::contourArea(contours[i], false);
-		if (area >= 2500)
-		{
-			filtered_contours.push_back(contours[i]);
-		}
-	}
+	//filtered_contours_mtx.lock();
+//	filtered_contours.clear();
+//	for (int i = 0; i < contours.size(); i++) {
+//		double area = cv::contourArea(contours[i], false);
+//		if (area >= 2500)
+//		{
+//			filtered_contours.push_back(contours[i]);
+//		}
+//	}
 
 	//find bounding boxes
-	bounding_boxes_mtx.lock();
-	bounding_boxes.clear();
-	for (auto contour : filtered_contours) {
-		bounding_boxes.push_back(bounding_box(contour));
-	}
-	filtered_contours_mtx.unlock();
-	bounding_boxes_mtx.unlock();
-	cv::waitKey(10);
+	//bounding_boxes_mtx.lock();
+//	bounding_boxes.clear();
+//	for (auto contour : filtered_contours) {
+//		bounding_boxes.push_back(bounding_box(contour));
+//	}
+//	filtered_contours_mtx.unlock();
+
+	//bounding boxxes to centre_xs
+	//centre_xs_mtx.lock();
+	//centre_xs.clear();
+	//std::transform(bounding_boxes.begin(), bounding_boxes.end(), std::back_inserter(centre_xs), center_x);
+	//bounding_boxes_mtx.unlock();
+	//centre_xs_mtx.unlock();
+	//all_mtx.unlock();
 }
 
 cv::Mat* processing::get_thresholded()
@@ -103,4 +109,12 @@ std::vector<int>* processing::get_centre_xs()
 {
 	std::lock_guard<std::mutex> lock_guard(centre_xs_mtx);
 	return &centre_xs;
+}
+
+std::unique_lock<std::mutex>* processing::cv_wait()
+{
+	u_lock = new std::unique_lock<std::mutex>(all_mtx);
+	processed_cv.wait(*u_lock);
+
+	return u_lock;
 }

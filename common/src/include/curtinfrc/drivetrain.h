@@ -1,6 +1,7 @@
 #pragma once
 
 #include "curtinfrc/motors/CurtinTalonSRX.h"
+#include "curtinfrc/strategy/strategy.h"
 #include "curtinfrc/logger.h"
 
 #include <RobotController.h>
@@ -38,8 +39,13 @@ namespace curtinfrc {
       log.write(::frc::RobotController::GetFPGATime(), 2, left[0]->GetSelectedSensorPosition(0), right[0]->GetSelectedSensorPosition(0));
     }
 
+    StrategyController &strategy_controller() {
+      return strat_controller;
+    }
+
   private:
     CurtinTalonSRX *left[N_MOTORS], *right[N_MOTORS];
-    curtinfrc::Logger log;
+    Logger log;
+    StrategyController strat_controller;
   };
 }
