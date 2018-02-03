@@ -1,42 +1,36 @@
 #pragma once
 
-#include "curtinfrc/motors/CurtinTalonSRX.h"
+#include "curtinfrc/motors/EncoderProvider.h"
 #include "curtinfrc/strategy/strategy.h"
 #include "curtinfrc/logger.h"
 
 #include <RobotController.h>
+#include <SpeedController.h>
 
 namespace curtinfrc {
-  template <unsigned int N_MOTORS>
+
   class Drivetrain {
   public:
-    // Initialise
-    Drivetrain(CurtinTalonSRX *l[N_MOTORS], CurtinTalonSRX *r[N_MOTORS])
-    : log("log_drive", "left_speed,right_speed") {
-      for(int i = 0; i < N_MOTORS; i++) { // Set array to be zero based
-        left[i] = l[i];
-        right[i] = r[i];
-      }
-      if(N_MOTORS > 1) {
-        for(int i = 1; i < N_MOTORS; i++) { // Set other motors to follow
-          left[i]->SetControlMode(CurtinTalonSRX::ControlMode::Follower);
-          left[i]->Set(left[0]->GetDeviceID());
-          right[i]->SetControlMode(CurtinTalonSRX::ControlMode::Follower);
-          right[i]->Set(right[0]->GetDeviceID());
-        }
-      }
-    }
+    Drivetrain(EncoderProvider *enc_left, EncoderProvider *enc_right, SpeedController *left, SpeedController *right)
+      : log("log_drive", "enc_left,enc_right,val_left,val_right"),
+        _left_enc(enc_left), _right_enc(enc_right),
+        _left(left), _right(right) { }
 
     void set_left(double value) {
-      left[0]->Set(value);
+      _left->Set(value);
     }
 
     void set_right(double value) {
-      right[0]->Set(value);
+      _right->Set(value);
+    }
+
+    void set_both(double value) {
+      set_left(value);
+      set_right(value);
     }
 
     void log_write() {
-      log.write(::frc::RobotController::GetFPGATime(), 2, left[0]->GetSelectedSensorPosition(0), right[0]->GetSelectedSensorPosition(0));
+      log.write(::frc::RobotController::GetFPGATime(), 4, _left_enc->GetEncoder(), _right_enc->GetEncoder(), _left->Get(), _right->Get());
     }
 
     StrategyController &strategy_controller() {
@@ -44,7 +38,8 @@ namespace curtinfrc {
     }
 
   private:
-    CurtinTalonSRX *left[N_MOTORS], *right[N_MOTORS];
+    SpeedController *_left, *_right;
+    EncoderProvider *_left_enc, *_right_enc;
     Logger log;
     StrategyController strat_controller;
   };

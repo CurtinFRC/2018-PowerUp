@@ -9,11 +9,13 @@ int IO::init() { // Sets up IO
   left_motors[0]->SetInverted(false);
   left_motors[1] = new CurtinTalonSRX(Map::Motors::left_motors[1]);
   left_motors[1]->SetInverted(false);
+  left_motors[1]->SetDual(CurtinTalonSRX::ControlMode::Follower, left_motors[0]->GetDeviceID());
 
   right_motors[0] = new CurtinTalonSRX(Map::Motors::right_motors[0]);
   right_motors[0]->SetInverted(true);
   right_motors[1] = new CurtinTalonSRX(Map::Motors::right_motors[1]);
   right_motors[1]->SetInverted(true);
+  right_motors[1]->SetDual(CurtinTalonSRX::ControlMode::Follower, right_motors[0]->GetDeviceID());
 
   belev_motors[0] = new CurtinTalonSRX(Map::Motors::belev_motors[0]);
   intake_motors[0][0] = new CurtinTalonSRX(Map::Motors::intake_motors[0][0]);
