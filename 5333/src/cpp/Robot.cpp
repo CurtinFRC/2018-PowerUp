@@ -1,9 +1,11 @@
+// Shared headers
 #include "curtinfrc/math.h"
-#include "curtinfrc/drivetrain.h" // Shared drivetrain in commons
-#include "curtinfrc/strategy/mp_strategy.h"
+#include "curtinfrc/drivetrain.h" // Shared drivetrain
+#include "curtinfrc/vision/vision.h"
 #include "WPILib.h"
 // #include <pathfinder.h>
 
+// Robot part classes
 #include "IO.h"
 #include "Belev.h"
 #include "Map.h"
@@ -12,9 +14,11 @@
 #include "ControlMap.h"
 #include "Auto.h"
 
+// Other required libraries
 #include <string>
 #include <SmartDashboard/SmartDashboard.h>
 #include <iostream>
+#include <stdint.h>
 #include <cmath>
 
 using namespace frc; // WPILib classes/functions
@@ -43,8 +47,8 @@ public:
 
     drive = new Drivetrain<2>(io->left_motors, io->right_motors);
     belev = new BelevatorControl();
-    intake = new IntakeControl();
     claw = new ClawControl();
+    intake = new IntakeControl();
 
     throttle = 0.6;
     left_bumper_toggle = right_bumper_toggle = false;
@@ -73,6 +77,10 @@ public:
   }
   void AutonomousPeriodic() {
     drive->strategy_controller().periodic();
+    drive->log_write(); // Make this bit call only on mutates later *
+    belev->log_write();
+    claw->log_write();
+    intake->log_write();
   }
 
   void TeleopInit() {
