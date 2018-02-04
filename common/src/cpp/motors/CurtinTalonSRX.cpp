@@ -15,6 +15,11 @@ void CurtinTalonSRX::Set(double speed) {
   _val = speed;
 }
 
+void CurtinTalonSRX::SetDual(ControlMode mode, double speed) {
+  TalonSRX::Set(mode, speed);
+  _val = speed;
+}
+
 double CurtinTalonSRX::Get() const {
   return _val;
 }
@@ -37,6 +42,10 @@ void CurtinTalonSRX::StopMotor() {
 
 void CurtinTalonSRX::PIDWrite(double val) {
   Set(val);
+}
+
+uint64_t CurtinTalonSRX::GetEncoder() {
+  return TalonSRX::GetSelectedSensorPosition(0);
 }
 
 void CurtinTalonSRX::selftest_onstart() {
