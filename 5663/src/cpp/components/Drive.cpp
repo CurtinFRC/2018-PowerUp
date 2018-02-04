@@ -88,25 +88,10 @@ bool Drive::TurnAngle(double speed, double angle) {
 }
 
 // Start or continue a forward drive and stop at the given distance
-bool Drive::DriveDistance(double speed, double distance, bool holdAngle) {
-  if(driving) {
-    //run driving code
-    left1->Set(ControlMode::MotionMagic, leftFinalDistance); //drive code in this format
-    right1->Set(ControlMode::MotionMagic, rightFinalDistance);
-    SmartDashboard::PutNumber("drive count", 2);
-    SmartDashboard::PutNumber("Left speed", left1->GetMotorOutputPercent());
-    SmartDashboard::PutNumber("Right speed", right1->GetMotorOutputPercent());
-    SmartDashboard::PutNumber("Left Drive encoder pos", left1->GetSelectedSensorPosition(0));
-    SmartDashboard::PutNumber("Right Drive encoder pos", right1->GetSelectedSensorPosition(0));
-    if(abs(leftFinalDistance) + driveTolerance > abs(left1->GetSelectedSensorPosition(0)) &&  abs(leftFinalDistance) - driveTolerance < abs(left1->GetSelectedSensorPosition(0)) && left1->GetSelectedSensorPosition(0) * leftFinalDistance >= 0) {
-      if(abs(rightFinalDistance) + driveTolerance > abs(right1->GetSelectedSensorPosition(0)) &&  abs(rightFinalDistance) - driveTolerance < abs(right1->GetSelectedSensorPosition(0)) && right1->GetSelectedSensorPosition(0) * rightFinalDistance >= 0) {
-        Stop();
-        driving = false;
-        return true;
-      }
-    }
-  } else { // Run setup
+bool Drive::DriveDistance(double speed, double distance, double timeout) {
+  if(!driving) { // Run setup
     SmartDashboard::PutNumber("drive count", 1);
+	  starting_time = 0; //current time
     int encoderCount = kM * distance;
     leftFinalDistance = left1->GetSelectedSensorPosition(0) + encoderCount;
     rightFinalDistance = right1->GetSelectedSensorPosition(0) + encoderCount;
@@ -120,7 +105,7 @@ bool Drive::DriveDistance(double speed, double distance, bool holdAngle) {
     left1->ConfigMotionCruiseVelocity(600, 0);
     left1->ConfigMotionAcceleration(600, 0);
 
-    left1->Config_kF(0,1.705,0); //set left PID-F values    //VALUE FOR TOUGHBOX MINI
+    left1->Config_kF(0,1.705,0); //set left PID-F values
     left1->Config_kP(0,0.1,0);
     left1->Config_kI(0,0.0,0);
     left1->Config_kD(0,0.0,0);
@@ -138,8 +123,26 @@ bool Drive::DriveDistance(double speed, double distance, bool holdAngle) {
     right1->Config_kD(0,0.0,0);
 
     driving = true;
-  }
-
+  } else {
+    //run driving code
+    left1->Set(ControlMode::MotionMagic, leftFinalDistance); //drive code in this format
+    right1->Set(ControlMode::MotionMagic, rightFinalDistance);
+    SmartDashboard::PutNumber("drive count", 2);
+    SmartDashboard::PutNumber("Left speed", left1->GetMotorOutputPercent());
+    SmartDashboard::PutNumber("Right speed", right1->GetMotorOutputPercent());
+    SmartDashboard::PutNumber("Left Drive encoder pos", left1->GetSelectedSensorPosition(0));
+    SmartDashboard::PutNumber("Right Drive encoder pos", right1->GetSelectedSensorPosition(0));
+    if(abs(leftFinalDistance) + driveTolerance > abs(left1->GetSelectedSensorPosition(0)) &&  abs(leftFinalDistance) - driveTolerance < abs(left1->GetSelectedSensorPosition(0)) && left1->GetSelectedSensorPosition(0) * leftFinalDistance >= 0) {
+      if(abs(rightFinalDistance) + driveTolerance > abs(right1->GetSelectedSensorPosition(0)) &&  abs(rightFinalDistance) - driveTolerance < abs(right1->GetSelectedSensorPosition(0)) && right1->GetSelectedSensorPosition(0) * rightFinalDistance >= 0) {
+        Stop();
+        driving = false;
+        return true;
+      }
+    }
+	if (timeout != -1 && starting_time + timeout < 0 /*current time*/) {
+		return true;
+	}
+}
   return false;
 }
 
