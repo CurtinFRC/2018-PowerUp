@@ -1,9 +1,8 @@
 // Shared headers
 #include "curtinfrc/math.h"
-#include "curtinfrc/drivetrain.h" // Shared drivetrain
+#include "curtinfrc/drivetrain.h"
 #include "curtinfrc/strategy/mp_strategy.h"
 #include "WPILib.h"
-// #include <pathfinder.h>
 
 // Robot part classes
 #include "IO.h"
@@ -11,7 +10,6 @@
 #include "Map.h"
 #include "Intake.h"
 #include "ControlMap.h"
-#include "Auto.h"
 #include "DriveStarategy.h"
 
 // Other required libraries
@@ -41,7 +39,6 @@ public:
 
     drive = new Drivetrain(io->left_motors[0], io->right_motors[0], io->left_motors[0], io->right_motors[0]);
     belev = new BelevatorControl();
-    claw = new ClawControl();
     intake = new IntakeControl();
     // winch = new WinchControl();
   }
@@ -75,8 +72,8 @@ public:
     drive->strategy_controller().periodic();
     drive->log_write(); // Make this bit call only on mutates later *
     belev->log_write();
-    claw->log_write();
     intake->log_write();
+    //winch->log_write();
   }
 
   void TeleopInit() {

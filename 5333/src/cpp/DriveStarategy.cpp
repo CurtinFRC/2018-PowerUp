@@ -8,7 +8,7 @@
 
 using namespace std;
 
-DriveStarategy::DriveStarategy(Drivetrain<2> *_drive, double _throttle) {
+DriveStarategy::DriveStarategy(Drivetrain *_drive, double _throttle) {
   drive = _drive;
   throttle = _throttle;
 

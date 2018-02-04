@@ -7,7 +7,7 @@ using namespace curtinfrc;
 
 class DriveStarategy : public Strategy {
 public:
-  DriveStarategy(Drivetrain<2> *_drive, double _throttle = 0.6f);
+  DriveStarategy(Drivetrain *_drive, double _throttle = 0.6f);
   void start() override;
   void tick(double time) override;
   void stop() override;
@@ -15,5 +15,5 @@ public:
 private:
   double throttle;
   bool left_bumper_toggle, right_bumper_toggle;
-  Drivetrain<2> *drive;
+  Drivetrain *drive;
 };
