@@ -18,8 +18,9 @@ public:
   CurtinTalonSRX *belev_motors[1];
   CurtinTalonSRX *intake_motors[2][1];
 
-  DoubleSolenoid *intake_solenoids[2];
-  DoubleSolenoid *claw_solenoids[1];
+  DoubleSolenoid *shifter_solenoids[1];
+  DoubleSolenoid *brake_solenoids[1];
+  DoubleSolenoid *intake_solenoids[1];
 
   AHRS *navx;
 

@@ -27,7 +27,7 @@ public:
   AutoControl *auto_;
 
   BelevatorControl *belev;
-  ClawControl *claw;
+  // WinchControl *winch;
   IntakeControl *intake;
 
   IO *io;
@@ -42,7 +42,7 @@ public:
     drive = new Drivetrain<2>(io->left_motors, io->right_motors);
     belev = new BelevatorControl();
     intake = new IntakeControl();
-    claw = new ClawControl();
+    // winch = new WinchControl();
   }
 
   void AutonomousInit() {

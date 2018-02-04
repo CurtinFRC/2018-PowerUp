@@ -37,14 +37,17 @@ int IO::init() { // Sets up IO
     n++;
   }
 
-  brake_solenoids[0] = new DoubleSolenoid(0,
-    Map::Pneumatics::claw_solenoids[0][0],
-    Map::Pneumatics::claw_solenoids[0][1]
-  );
-  shifter_solenoids[0] = new DoubleSolenoid(0,
-    Map::Pneumatics::claw_solenoids[0][0],
-    Map::Pneumatics::claw_solenoids[0][1]
-  );
+  n = 0;
+  for (auto solenoid : brake_solenoids) {
+    solenoid = new DoubleSolenoid(0, Map::Pneumatics::brake_solenoids[n][0], Map::Pneumatics::brake_solenoids[n][1]);
+    n++;
+  }
+
+  n = 0;
+  for (auto solenoid : shifter_solenoids) {
+    solenoid = new DoubleSolenoid(0, Map::Pneumatics::shifter_solenoids[n][0], Map::Pneumatics::shifter_solenoids[n][1]);
+    n++;
+  }
 
   #ifdef XBOX_CONTROL
   xbox = new XboxController(Map::Controllers::xbox);
