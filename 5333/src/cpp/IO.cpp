@@ -5,6 +5,8 @@
 static IO *io;
 
 int IO::init() { // Sets up IO
+  int n = 0;
+
   // Assign ports to the pointers, as instance to be called from other classes
   left_motors[0] = new CurtinTalonSRX(Map::Motors::left_motors[0]);
   left_motors[0]->SetInverted(false);
@@ -18,9 +20,29 @@ int IO::init() { // Sets up IO
   right_motors[1]->SetInverted(true);
   right_motors[1]->SetDual(CurtinTalonSRX::ControlMode::Follower, right_motors[0]->GetDeviceID());
 
-  belev_motors[0] = new CurtinTalonSRX(Map::Motors::belev_motors[0]);
-  intake_motors[0][0] = new CurtinTalonSRX(Map::Motors::intake_motors[0][0]);
-  intake_motors[1][0] = new CurtinTalonSRX(Map::Motors::intake_motors[1][0]);
+  n = 0;
+  for (auto motor : belev_motors) {
+    motor = new CurtinTalonSRX(Map::Motors::belev_motors[n]);
+    n++;
+  }
+
+  n = 0;
+  for (auto motor : intake_motors_left) {
+    motor = new CurtinTalonSRX(Map::Motors::intake_motors_left[n]);
+    n++;
+  }
+
+  n = 0;
+  for (auto motor : intake_motors_right) {
+    motor = new CurtinTalonSRX(Map::Motors::intake_motors_right[n]);
+    n++;
+  }
+
+  n = 0;
+  for (auto motor : winch_motors) {
+    motor = new CurtinTalonSRX(Map::Motors::winch_motors[n]);
+    n++;
+  }
 
 
   try {
@@ -33,7 +55,7 @@ int IO::init() { // Sets up IO
 
   navx->ZeroYaw();
 
-  short int n = 0;
+  n = 0;
   for (auto solenoid : intake_solenoids) {
     solenoid = new DoubleSolenoid(0, Map::Pneumatics::intake_solenoids[n][0], Map::Pneumatics::intake_solenoids[n][1]);
     n++;

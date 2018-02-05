@@ -9,6 +9,7 @@
 #include "Belev.h"
 #include "Map.h"
 #include "Intake.h"
+#include "Winch.h"
 #include "ControlMap.h"
 #include "DriveStarategy.h"
 
@@ -27,7 +28,7 @@ public:
   Drivetrain *drive;
 
   BelevatorControl *belev;
-  // WinchControl *winch;
+  WinchControl *winch;
   IntakeControl *intake;
 
   IO *io;
@@ -40,7 +41,7 @@ public:
     drive = new Drivetrain(io->left_motors[0], io->right_motors[0], io->left_motors[0], io->right_motors[0]);
     belev = new BelevatorControl();
     intake = new IntakeControl();
-    // winch = new WinchControl();
+    winch = new WinchControl();
   }
 
   void AutonomousInit() {
@@ -88,7 +89,9 @@ public:
 
     belev->send_to_robot(ControlMap::belevator_motor_power());
 
-    intake->send_to_robot(ControlMap::claw_state());
+    intake->send_to_robot(ControlMap::intake_claw_state());
+
+    winch->send_to_robot(ControlMap::winch_power());
     // 14 changes to 5 cylinders reduce upstream from 120 to 60
   }
 
