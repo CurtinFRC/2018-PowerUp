@@ -112,15 +112,15 @@ public:
 
 //———[controller 2]—————————————————————————————————————————————————————————————
   //———[lift]———————————————————————————————————————————————————————————————————
-    if(xbox2->GetAButton()) {
-      lift->SetLowPosition();
-    } else if(xbox2->GetBButton()) {
-      lift->SetMidPosition();
-    } else if(xbox2->GetYButton()) {
-      lift->SetHighPosition();
-    } else if(xbox2->GetXButton()) {
-      lift->ResetEncoder();
-    }
+    // if(xbox2->GetAButton()) {
+    //   lift->SetLowPosition();
+    // } else if(xbox2->GetBButton()) {
+    //   lift->SetMidPosition();
+    // } else if(xbox2->GetYButton()) {
+    //   lift->SetHighPosition();
+    // } else if(xbox2->GetXButton()) {
+    //   lift->ResetEncoder();
+    // }
     lift->SetSpeed(xbox2->GetY(xbox2->kRightHand));
 
   //———[manipulator]————————————————————————————————————————————————————————————
@@ -130,7 +130,7 @@ public:
       man->Restrain();
     }
 
-    man->SetIntakeSpeed(xbox2->GetY(xbox2->kLeftHand));
+    man->SetIntakeSpeed(-xbox2->GetY(xbox2->kLeftHand));
 
   //———[ramp]———————————————————————————————————————————————————————————————————
     if(xbox->GetBumper(xbox->kLeftHand) && xbox->GetBumper(xbox->kRightHand) && xbox2->GetBumper(xbox2->kLeftHand) && xbox2->GetBumper(xbox2->kRightHand)) {

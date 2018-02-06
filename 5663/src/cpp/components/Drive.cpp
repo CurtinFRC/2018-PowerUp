@@ -139,9 +139,9 @@ bool Drive::DriveDistance(double speed, double distance, double timeout) {
         return true;
       }
     }
-	if (timeout != -1 && starting_time + timeout < 0 /*current time*/) {
-		return true;
-	}
+	// if (timeout != -1 && starting_time + timeout < 0 /*current time*/) {
+	// 	return true;
+	// }
 }
   return false;
 }
@@ -178,8 +178,10 @@ void Drive::ToggleGear() {
 // Run periodic tasks
 void Drive::RunPeriodic() {
   if(currentGear) {
+    SmartDashboard::PutString("Gear Mode", "Fast");
     SetFastGear();
   } else {
+    SmartDashboard::PutString("Gear Mode", "Slow");
     SetSlowGear();
   }
 
