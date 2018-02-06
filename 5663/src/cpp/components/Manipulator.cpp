@@ -23,6 +23,7 @@ void Manipulator::Restrain() {
 
 // Retract actuator to open restrainer and release power cube
 void Manipulator::Release() {
+  intakeSpeed = -1;
   restrainer->Set(restrainer->kReverse);
   SmartDashboard::PutNumber("arm", restrainer->Get());
 }

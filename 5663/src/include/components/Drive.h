@@ -3,6 +3,7 @@
 #include <ctre/Phoenix.h>
 #include <AHRS.h>
 #include <PIDOutput.h>
+#include <Timer.h>
 
 class gyroPID : public PIDOutput {
   private:
@@ -19,7 +20,7 @@ namespace components {
     PIDController *turn;
     gyroPID *out;
     DoubleSolenoid *gearMode; //Solenoids for gears
-
+    Timer *timer;
     public:
       Drive(int l1, int l2, int l3, int r1, int r2, int r3); // Constructor
       void TankDrive(double left, double right, bool square=false);
@@ -30,11 +31,11 @@ namespace components {
       void SetFastGear();
       void ToggleGear();
       void RunPeriodic();
-
+      bool turning = false;
     private:
       TalonSRX *left1, *left2, *left3, *right1, *right2, *right3;
 
-      bool turning = false, driving = false; // State variables
+      bool driving = false; // State variables
       double turnTolerance = 2.0, driveTolerance = 40; // Tolerance variables
       double kP = 0.025, kI = 0.0004, kD = 0.04, kM = (80*26.041666667)/0.4787787204; // need to check kM
       int slowGear = gearMode->kReverse;

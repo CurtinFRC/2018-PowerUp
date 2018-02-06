@@ -102,13 +102,21 @@ public:
 
   void TeleopPeriodic() {
     message = 76;
-   SmartDashboard::PutBoolean("transaction", arduino->Transaction(&message, 1, NULL, 0));
+    SmartDashboard::PutBoolean("transaction", arduino->Transaction(&message, 1, NULL, 0));
 //———[controller 1]—————————————————————————————————————————————————————————————
   //———[drivetrain]—————————————————————————————————————————————————————————————
-    drive->TankDrive(-xbox->GetY(xbox->kLeftHand), -xbox->GetY(xbox->kRightHand), true);
-    if(xbox->GetYButtonPressed()) {
+    if(xbox->GetAButton()) {
+      drive->TurnAngle(0.5, 180);
+    } else {
+      drive->TankDrive(-xbox->GetY(xbox->kLeftHand), -xbox->GetY(xbox->kRightHand), true);
+    }
+    if(xbox->GetYButtonPressed() || xbox->GetBumperPressed(xbox->kRightHand)) {
       drive->ToggleGear();
     }
+    if(xbox->GetAButtonReleased()) {
+      drive->turning = false;
+    }
+
 
 //———[controller 2]—————————————————————————————————————————————————————————————
   //———[lift]———————————————————————————————————————————————————————————————————
@@ -128,9 +136,8 @@ public:
       man->Release();
     } else {
       man->Restrain();
+      man->SetIntakeSpeed(-xbox2->GetY(xbox2->kLeftHand));
     }
-
-    man->SetIntakeSpeed(-xbox2->GetY(xbox2->kLeftHand));
 
   //———[ramp]———————————————————————————————————————————————————————————————————
     if(xbox->GetBumper(xbox->kLeftHand) && xbox->GetBumper(xbox->kRightHand) && xbox2->GetBumper(xbox2->kLeftHand) && xbox2->GetBumper(xbox2->kRightHand)) {

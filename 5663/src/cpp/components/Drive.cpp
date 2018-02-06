@@ -43,6 +43,7 @@ Drive::Drive(int l1, int l2, int l3, int r1, int r2, int r3) {
 
   gearMode = new DoubleSolenoid(0,0,1);
   SmartDashboard::PutNumber("drive count", 0);
+  timer = new Timer();
 }
 
 // Stop all Drive class motors
@@ -91,7 +92,7 @@ bool Drive::TurnAngle(double speed, double angle) {
 bool Drive::DriveDistance(double speed, double distance, double timeout) {
   if(!driving) { // Run setup
     SmartDashboard::PutNumber("drive count", 1);
-	  starting_time = 0; //current time
+	  timer->Start(); //current time
     int encoderCount = kM * distance;
     leftFinalDistance = left1->GetSelectedSensorPosition(0) + encoderCount;
     rightFinalDistance = right1->GetSelectedSensorPosition(0) + encoderCount;
@@ -136,12 +137,14 @@ bool Drive::DriveDistance(double speed, double distance, double timeout) {
       if(abs(rightFinalDistance) + driveTolerance > abs(right1->GetSelectedSensorPosition(0)) &&  abs(rightFinalDistance) - driveTolerance < abs(right1->GetSelectedSensorPosition(0)) && right1->GetSelectedSensorPosition(0) * rightFinalDistance >= 0) {
         Stop();
         driving = false;
+        timer->Stop();
         return true;
       }
     }
-	// if (timeout != -1 && starting_time + timeout < 0 /*current time*/) {
-	// 	return true;
-	// }
+	  if(timer->HasPeriodPassed(timeout) && timeout != 0) {
+      timer->Stop();
+	 	  return true;
+    }
 }
   return false;
 }
@@ -183,6 +186,9 @@ void Drive::RunPeriodic() {
   } else {
     SmartDashboard::PutString("Gear Mode", "Slow");
     SetSlowGear();
+  }
+  if(!turning) {
+    turn->Disable();
   }
 
   SmartDashboard::PutNumber("Left Drive encoder pos", left1->GetSelectedSensorPosition(0));
