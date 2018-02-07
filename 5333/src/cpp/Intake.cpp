@@ -18,5 +18,5 @@ void IntakeControl::send_to_robot(double power) {
 
 void IntakeControl::log_write() {
   auto io = IO::get_instance();
-  log.write(::frc::RobotController::GetFPGATime(), 2, io->intake_motors_left[0]->GetSelectedSensorPosition(0), io->intake_motors_right[0]->GetSelectedSensorPosition(0), io->intake_solenoids[0]->Get(), io->intake_solenoids[1]->Get());
+  log.write(::frc::RobotController::GetFPGATime(), 4, io->intake_motors_left[0]->GetSelectedSensorPosition(0), io->intake_motors_right[0]->GetSelectedSensorPosition(0), io->intake_solenoids[0]->Get(), io->intake_solenoids[1]->Get());
 }
