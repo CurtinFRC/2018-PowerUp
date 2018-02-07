@@ -20,6 +20,6 @@ namespace components {
     private:
       bool manualMode = false;
       int pos;
-      double deadzone = 0.1, topspeed = 12000;
+      double deadzone = 0.1, topspeed = 1800;
   };
 }

@@ -16,15 +16,16 @@ Lift::Lift(int m1, int m2) {
   motor1->Config_kP(0, 0.2, 10);
   motor1->Config_kI(0, 0, 10);
   motor1->Config_kD(0, 0, 10);
-  motor1->ConfigMotionAcceleration(topspeed, 10);
-  motor1->ConfigMotionCruiseVelocity(topspeed, 10);
+  motor1->ConfigMotionAcceleration(topspeed*0.9, 10);
+  motor1->ConfigMotionCruiseVelocity(topspeed*0.9, 10);
   motor1->SetSensorPhase(false);
+  motor1->SetSelectedSensorPosition(0, 0, 10);
 }
 
 // Move lift to high position (for scale)
 void Lift::SetHighPosition() {
   motor1->Set(ControlMode::PercentOutput, 0);
-  motor1->Set(ControlMode::MotionMagic, 19880);
+  motor1->Set(ControlMode::MotionMagic, 24000);
   pos = 2;
   manualMode = false;
 }
@@ -32,7 +33,7 @@ void Lift::SetHighPosition() {
 // Move lift to mid position (for switch)
 void Lift::SetMidPosition() {
   motor1->Set(ControlMode::PercentOutput, 0);
-  motor1->Set(ControlMode::MotionMagic, 1988);
+  motor1->Set(ControlMode::MotionMagic, 7000);
   pos = 1;
   manualMode = false;
 }
@@ -40,7 +41,7 @@ void Lift::SetMidPosition() {
 // Move lift to low position
 void Lift::SetLowPosition() {
   motor1->Set(ControlMode::PercentOutput, 0);
-  motor1->Set(ControlMode::MotionMagic, 497);
+  motor1->Set(ControlMode::MotionMagic, 0);
   pos = 0;
   manualMode = false;
 }
@@ -50,14 +51,14 @@ void Lift::SetSpeed(double speed) {
    if(-deadzone < speed && speed < deadzone) {
      speed = 0;
      if(manualMode) {
-       motor1->Set(ControlMode::Velocity, 0);
+       motor1->Set(ControlMode::PercentOutput, 0);
      }
    } else {
      manualMode = true;
      speed *= fabs(speed);
-    motor1->Set(ControlMode::Velocity, speed*topspeed); //Need to test later
-    //motor1->Set(ControlMode::PercentOutput, speed);
-    pos = 3;
+     //motor1->Set(ControlMode::Velocity, speed*topspeed); //Need to test later
+     motor1->Set(ControlMode::PercentOutput, speed);
+     pos = 3;
    }
  }
 
