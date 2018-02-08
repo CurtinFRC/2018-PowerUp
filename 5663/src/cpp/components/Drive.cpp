@@ -42,7 +42,6 @@ Drive::Drive(int l1, int l2, int l3, int r1, int r2, int r3) {
   turn->SetContinuous(true);
 
   gearMode = new DoubleSolenoid(0,0,1);
-  SmartDashboard::PutNumber("drive count", 0);
   timer = new Timer();
 }
 
@@ -67,24 +66,21 @@ void Drive::TankDrive(double left, double right, bool square) {
 }
 
 // Start or continue a turn
-bool Drive::TurnAngle(double speed, double angle) {
+bool Drive::TurnAngle(double speed, double angle, double timeout) {
   if(turning) {
-    imu->GetAngle();
-    TankDrive(out->GetOutput(),out->GetOutput()); //one of these may need to be negative later >:(
-
+    TankDrive(out->GetOutput(), -out->GetOutput());
     if((abs(angle) - turnTolerance) < abs(imu->GetAngle()) && (abs(angle) + turnTolerance) > abs(imu->GetAngle()) && angle*imu->GetAngle() >= 0) {
       turning = false;
       turn->Disable();
       return true;
     }
   } else {
-    imu->ZeroYaw();
+    //imu->ZeroYaw();
     turn->SetOutputRange(-speed,speed);
     turn->Enable();
-    turn->SetSetpoint(angle);
+    turn->SetSetpoint(angle + imu->GetAngle());
     turning = true;
   }
-
   return false;
 }
 
@@ -178,6 +174,12 @@ void Drive::ToggleGear() {
   }
 }
 
+// Zero drivebase encoders
+void Drive::ResetEncoder() {
+  left1->SetSelectedSensorPosition(0, 0, 10);
+  right1->SetSelectedSensorPosition(0, 0, 10);
+}
+
 // Run periodic tasks
 void Drive::RunPeriodic() {
   if(currentGear) {
@@ -191,8 +193,8 @@ void Drive::RunPeriodic() {
     turn->Disable();
   }
 
-  SmartDashboard::PutNumber("Left Drive encoder pos", left1->GetSelectedSensorPosition(0));
-  SmartDashboard::PutNumber("Right Drive encoder pos", right1->GetSelectedSensorPosition(0));
+  SmartDashboard::PutNumber("Left Drive encoder", left1->GetSelectedSensorPosition(0));
+  SmartDashboard::PutNumber("Right Drive encoder", right1->GetSelectedSensorPosition(0));
   SmartDashboard::PutNumber("Left Drive velocity", left1->GetSelectedSensorVelocity(0));
   SmartDashboard::PutNumber("Right Drive velocity", right1->GetSelectedSensorVelocity(0));
 }

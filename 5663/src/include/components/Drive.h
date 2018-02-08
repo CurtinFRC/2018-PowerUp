@@ -4,6 +4,16 @@
 #include <AHRS.h>
 #include <PIDOutput.h>
 #include <Timer.h>
+/*
+* Drive Base:
+* Gear Ratio Slow =
+* Slow Gear = kReverse, direction?
+* Gear Ratio Fast =
+* Fast Gear = kForward, direction?
+* Max speed: ~710
+* Forward = positive value, postive encoder value
+* Reverse = negative value, negative encoder value
+*/
 
 class gyroPID : public PIDOutput {
   private:
@@ -25,11 +35,12 @@ namespace components {
       Drive(int l1, int l2, int l3, int r1, int r2, int r3); // Constructor
       void TankDrive(double left, double right, bool square=false);
       void Stop();
-      bool TurnAngle(double speed, double angle);
+      bool TurnAngle(double speed, double angle, double timeout=0);
       bool DriveDistance(double speed, double distance, double timeout=0);
       void SetSlowGear();
       void SetFastGear();
       void ToggleGear();
+      void ResetEncoder();
       void RunPeriodic();
       bool turning = false;
     private:

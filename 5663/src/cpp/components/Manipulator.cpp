@@ -29,8 +29,6 @@ void Manipulator::Release() {
 }
 
 void Manipulator::RunPeriodic() {
-  //if(intakeSpeed > 1) intakeSpeed = 1;
-  //if(intakeSpeed < -1) intakeSpeed = -1;
   intake->Set(intakeSpeed);
-  SmartDashboard::PutNumber("intakeSpeed", intakeSpeed);
+  SmartDashboard::PutNumber("Intake Speed", intakeSpeed);
 }

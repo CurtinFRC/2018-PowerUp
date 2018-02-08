@@ -16,16 +16,19 @@ Lift::Lift(int m1, int m2) {
   motor1->Config_kP(0, 0.2, 10);
   motor1->Config_kI(0, 0, 10);
   motor1->Config_kD(0, 0, 10);
-  motor1->ConfigMotionAcceleration(topspeed*0.9, 10);
-  motor1->ConfigMotionCruiseVelocity(topspeed*0.9, 10);
+  motor1->ConfigMotionAcceleration(topspeed, 10);
+  motor1->ConfigMotionCruiseVelocity(topspeed, 10);
   motor1->SetSensorPhase(false);
   motor1->SetSelectedSensorPosition(0, 0, 10);
+
+  topSwitch = new DigitalInput(1);
+  lowSwitch = new DigitalInput(0);
 }
 
 // Move lift to high position (for scale)
 void Lift::SetHighPosition() {
   motor1->Set(ControlMode::PercentOutput, 0);
-  motor1->Set(ControlMode::MotionMagic, 24000);
+  motor1->Set(ControlMode::MotionMagic, highPosition);
   pos = 2;
   manualMode = false;
 }
@@ -33,7 +36,7 @@ void Lift::SetHighPosition() {
 // Move lift to mid position (for switch)
 void Lift::SetMidPosition() {
   motor1->Set(ControlMode::PercentOutput, 0);
-  motor1->Set(ControlMode::MotionMagic, 7000);
+  motor1->Set(ControlMode::MotionMagic, midPosition);
   pos = 1;
   manualMode = false;
 }
@@ -47,18 +50,19 @@ void Lift::SetLowPosition() {
 }
 
 // Set speed of Lift class motors
-void Lift::SetSpeed(double speed, bool low, bool top) {
-   if(-deadzone < speed && speed < deadzone) {
+void Lift::SetSpeed(double speed) {
+   if(fabs(speed) < deadzone) {
      speed = 0;
      if(manualMode) {
-       motor1->Set(ControlMode::PercentOutput, 0);
+       //motor1->Set(ControlMode::PercentOutput, 0);
+       motor1->Set(ControlMode::MotionMagic, motor1->GetSelectedSensorPosition(0)); //Need to test
      }
    } else {
      manualMode = true;
      speed *= fabs(speed);
-     //motor1->Set(ControlMode::Velocity, speed*topspeed); //Need to test later
-     if(low && speed < 0) speed = 0;
-     if(top && speed > 0) speed = 0;
+     if(lowSwitch->Get() && speed < 0) speed = 0;
+     if(topSwitch->Get() && speed > 0) speed = 0;
+     if(motor1->GetSelectedSensorPosition(0) < 4000) speed *= 0.5;
      motor1->Set(ControlMode::PercentOutput, speed);
      pos = 3;
    }
@@ -71,9 +75,11 @@ void Lift::ResetEncoder() {
 
 // Run periodic tasks
 void Lift::RunPeriodic() {
+  if(lowSwitch->Get()) ResetEncoder();
   SmartDashboard::PutNumber("Lift Encoder", motor1->GetSelectedSensorPosition(0));
-  SmartDashboard::PutNumber("Lift Motor Speed", motor1->GetSelectedSensorVelocity(0));
-  liftEncoderPos = motor1->GetSelectedSensorPosition(0);
+  SmartDashboard::PutNumber("Lift Speed", motor1->GetSelectedSensorVelocity(0));
+  SmartDashboard::PutBoolean("topSwitch", topSwitch->Get());
+  SmartDashboard::PutBoolean("lowSwitch", lowSwitch->Get());
   switch(pos) {
     case 0:
       SmartDashboard::PutString("Lift Position", "Low");

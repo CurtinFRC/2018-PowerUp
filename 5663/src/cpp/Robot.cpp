@@ -8,7 +8,6 @@
 #include <PIDOutput.h>
 #include <I2C.h>
 #include <pathfinder.h>
-#include <DigitalInput.h>
 
 #include "components/Drive.h"
 #include "components/Lift.h"
@@ -40,10 +39,8 @@ class Robot : public IterativeRobot {
   Compressor *compressor;
   Autonomous *auton;
   I2C *arduino;
-  DigitalInput *topSwitch, *lowSwitch;
 
 public:
-  int AutoStage;
   uint8_t message = 72;
 
   void RobotInit() {
@@ -82,13 +79,12 @@ public:
     arduino = new I2C(arduino->kOnboard, 100);
     arduino->WriteBulk(&message, 1);
 
-    topSwitch = new DigitalInput(1);
-    lowSwitch = new DigitalInput(0);
   }
 
   void AutonomousInit() {
     drive->SetSlowGear();
     drive->Stop();
+    drive->ResetEncoder();
     lift->SetLowPosition();
     auton->ChooseRoutine((int)AutoChooser->GetSelected(), (int)StartingPosition->GetSelected());
   }
@@ -102,6 +98,7 @@ public:
   void TeleopInit() {
     drive->SetFastGear();
     drive->Stop();
+    drive->ResetEncoder();
   }
 
   void TeleopPeriodic() {
@@ -110,17 +107,14 @@ public:
 //———[controller 1]—————————————————————————————————————————————————————————————
   //———[drivetrain]—————————————————————————————————————————————————————————————
     if(xbox->GetAButton()) {
-      drive->TurnAngle(0.5, 180);
+      drive->TurnAngle(1, 180);
     } else {
       drive->TankDrive(-xbox->GetY(xbox->kLeftHand), -xbox->GetY(xbox->kRightHand), true);
+      drive->turning = false;
     }
     if(xbox->GetYButtonPressed() || xbox->GetBumperPressed(xbox->kRightHand)) {
       drive->ToggleGear();
     }
-    if(xbox->GetAButtonReleased()) {
-      drive->turning = false;
-    }
-
 
 //———[controller 2]—————————————————————————————————————————————————————————————
   //———[lift]———————————————————————————————————————————————————————————————————
@@ -130,14 +124,10 @@ public:
       lift->SetMidPosition();
     } else if(xbox2->GetYButton()) {
       lift->SetHighPosition();
-    } else if(xbox2->GetXButton()) {
-      lift->ResetEncoder();
     }
-    lift->SetSpeed(xbox2->GetY(xbox2->kRightHand), topSwitch->Get(), lowSwitch->Get());
-    if(lift->liftEncoderPos > 15000) drive->SetSlowGear();
-    if(lowSwitch->Get()) lift->ResetEncoder();
-    SmartDashboard::PutBoolean("topSwitch", topSwitch->Get());
-    SmartDashboard::PutBoolean("lowSwitch", lowSwitch->Get());
+    lift->SetSpeed(xbox2->GetY(xbox2->kRightHand));
+    if(lift->GetLiftPosition() > 10000) drive->SetSlowGear();
+
   //———[manipulator]————————————————————————————————————————————————————————————
     if(xbox2->GetBumper(xbox2->kLeftHand)) {
       man->Release();
