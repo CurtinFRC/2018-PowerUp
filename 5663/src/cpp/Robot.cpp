@@ -130,6 +130,7 @@ public:
       lift->ResetEncoder();
     }
     lift->SetSpeed(xbox2->GetY(xbox2->kRightHand));
+    if(lift->liftEncoderPos > 15000) drive->SetSlowGear();
 
   //———[manipulator]————————————————————————————————————————————————————————————
     if(xbox2->GetBumper(xbox2->kLeftHand)) {

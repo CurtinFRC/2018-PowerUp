@@ -16,7 +16,7 @@ namespace components {
       void SetSpeed(double speed);
       void ResetEncoder();
       void RunPeriodic();
-
+      int liftEncoderPos = 0;
     private:
       bool manualMode = false;
       int pos;

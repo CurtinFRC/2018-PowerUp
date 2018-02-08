@@ -71,7 +71,7 @@ void Lift::ResetEncoder() {
 void Lift::RunPeriodic() {
   SmartDashboard::PutNumber("Lift Encoder", motor1->GetSelectedSensorPosition(0));
   SmartDashboard::PutNumber("Lift Motor Speed", motor1->GetSelectedSensorVelocity(0));
-
+  liftEncoderPos = motor1->GetSelectedSensorPosition(0);
   switch(pos) {
     case 0:
       SmartDashboard::PutString("Lift Position", "Low");
