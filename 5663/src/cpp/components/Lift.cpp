@@ -47,7 +47,7 @@ void Lift::SetLowPosition() {
 }
 
 // Set speed of Lift class motors
-void Lift::SetSpeed(double speed) {
+void Lift::SetSpeed(double speed, bool low, bool top) {
    if(-deadzone < speed && speed < deadzone) {
      speed = 0;
      if(manualMode) {
@@ -57,6 +57,8 @@ void Lift::SetSpeed(double speed) {
      manualMode = true;
      speed *= fabs(speed);
      //motor1->Set(ControlMode::Velocity, speed*topspeed); //Need to test later
+     if(low && speed < 0) speed = 0;
+     if(top && speed > 0) speed = 0;
      motor1->Set(ControlMode::PercentOutput, speed);
      pos = 3;
    }

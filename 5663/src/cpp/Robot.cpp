@@ -8,6 +8,7 @@
 #include <PIDOutput.h>
 #include <I2C.h>
 #include <pathfinder.h>
+#include <DigitalInput.h>
 
 #include "components/Drive.h"
 #include "components/Lift.h"
@@ -39,6 +40,7 @@ class Robot : public IterativeRobot {
   Compressor *compressor;
   Autonomous *auton;
   I2C *arduino;
+  DigitalInput *topSwitch, *lowSwitch;
 
 public:
   int AutoStage;
@@ -78,8 +80,10 @@ public:
     auton = new Autonomous(drive, *lift, *man, *ramp);
 
     arduino = new I2C(arduino->kOnboard, 100);
-
     arduino->WriteBulk(&message, 1);
+
+    topSwitch = new DigitalInput(1);
+    lowSwitch = new DigitalInput(0);
   }
 
   void AutonomousInit() {
@@ -129,9 +133,11 @@ public:
     } else if(xbox2->GetXButton()) {
       lift->ResetEncoder();
     }
-    lift->SetSpeed(xbox2->GetY(xbox2->kRightHand));
+    lift->SetSpeed(xbox2->GetY(xbox2->kRightHand), topSwitch->Get(), lowSwitch->Get());
     if(lift->liftEncoderPos > 15000) drive->SetSlowGear();
-
+    if(lowSwitch->Get()) lift->ResetEncoder();
+    SmartDashboard::PutBoolean("topSwitch", topSwitch->Get());
+    SmartDashboard::PutBoolean("lowSwitch", lowSwitch->Get());
   //———[manipulator]————————————————————————————————————————————————————————————
     if(xbox2->GetBumper(xbox2->kLeftHand)) {
       man->Release();

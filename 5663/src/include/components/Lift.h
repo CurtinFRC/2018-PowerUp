@@ -13,12 +13,12 @@ namespace components {
       void SetHighPosition();
       void SetMidPosition();
       void SetLowPosition();
-      void SetSpeed(double speed);
+      void SetSpeed(double speed, bool low=false, bool top=false);
       void ResetEncoder();
       void RunPeriodic();
       int liftEncoderPos = 0;
-    private:
       bool manualMode = false;
+    private:
       int pos;
       double deadzone = 0.1, topspeed = 1800;
   };
