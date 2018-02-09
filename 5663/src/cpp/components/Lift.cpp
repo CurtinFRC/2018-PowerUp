@@ -16,9 +16,9 @@ Lift::Lift(int m1, int m2) {
   motor1->Config_kP(0, 0.2, 10);
   motor1->Config_kI(0, 0, 10);
   motor1->Config_kD(0, 0, 10);
-  motor1->ConfigMotionAcceleration(topspeed, 10);
-  motor1->ConfigMotionCruiseVelocity(topspeed, 10);
-  motor1->SetSensorPhase(false);
+  motor1->ConfigMotionAcceleration(topspeed*4, 10);
+  motor1->ConfigMotionCruiseVelocity(topspeed*5, 10);
+  motor1->SetSensorPhase(true);
   motor1->SetSelectedSensorPosition(0, 0, 10);
 
   topSwitch = new DigitalInput(1);
@@ -49,20 +49,30 @@ void Lift::SetLowPosition() {
   manualMode = false;
 }
 
+void Lift::Stop() {
+  motor1->NeutralOutput();
+}
+
 // Set speed of Lift class motors
 void Lift::SetSpeed(double speed) {
    if(fabs(speed) < deadzone) {
      speed = 0;
      if(manualMode) {
        //motor1->Set(ControlMode::PercentOutput, 0);
-       motor1->Set(ControlMode::MotionMagic, motor1->GetSelectedSensorPosition(0)); //Need to test
+       if(flag) {
+         motor1->Set(ControlMode::MotionMagic, motor1->GetSelectedSensorPosition(0));
+         flag = false;
+       }
      }
    } else {
      manualMode = true;
+     flag = true;
      speed *= fabs(speed);
      if(lowSwitch->Get() && speed < 0) speed = 0;
      if(topSwitch->Get() && speed > 0) speed = 0;
-     if(motor1->GetSelectedSensorPosition(0) < 4000) speed *= 0.5;
+     if(motor1->GetSelectedSensorPosition(0) < 4000 && speed < 0) speed *= 0.2;
+     if(motor1->GetSelectedSensorVelocity(0) < -500 && motor1->GetSelectedSensorPosition(0) < 10000) speed = 0.05;
+     if(motor1->GetSelectedSensorVelocity(0) > 800 && motor1->GetSelectedSensorPosition(0) > 22000) speed = 0.05;
      motor1->Set(ControlMode::PercentOutput, speed);
      pos = 3;
    }
@@ -75,11 +85,26 @@ void Lift::ResetEncoder() {
 
 // Run periodic tasks
 void Lift::RunPeriodic() {
-  if(lowSwitch->Get()) ResetEncoder();
+  if(lowSwitch->Get() && motor1->GetSelectedSensorVelocity(0) > 0) ResetEncoder();
+  if(motor1->GetSelectedSensorPosition(0) < 4000) motor1->ConfigPeakOutputReverse(-0.3, 0);
+  else motor1->ConfigPeakOutputReverse(-1, 0);
+
+  if(pos < lastpos) {
+    motor1->ConfigMotionAcceleration(topspeed*2, 10);
+    motor1->ConfigMotionCruiseVelocity(topspeed*2, 10);
+    lastpos = pos;
+  } else if(pos > lastpos) {
+    motor1->ConfigMotionAcceleration(topspeed*4, 10);
+    motor1->ConfigMotionCruiseVelocity(topspeed*5, 10);
+    lastpos = pos;
+  }
+
   SmartDashboard::PutNumber("Lift Encoder", motor1->GetSelectedSensorPosition(0));
   SmartDashboard::PutNumber("Lift Speed", motor1->GetSelectedSensorVelocity(0));
   SmartDashboard::PutBoolean("topSwitch", topSwitch->Get());
   SmartDashboard::PutBoolean("lowSwitch", lowSwitch->Get());
+  SmartDashboard::PutNumber("Lift percent speed", motor1->GetMotorOutputPercent());
+  SmartDashboard::PutBoolean("Manual Mode", manualMode);
   switch(pos) {
     case 0:
       SmartDashboard::PutString("Lift Position", "Low");

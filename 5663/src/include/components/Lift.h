@@ -5,10 +5,10 @@
 /*
 * Lift:
 * Encoder: 0 low -> 25000 top
-* Lift Max Height: ?m
+* Lift Max Height: 2.27m
 * Max speed: ~2000
-* Lift Up = negative speed value, postive encoder value
-* Lift Down = postive speed value, negative encoder value
+* Lift Up = positive speed value, postive encoder value
+* Lift Down = negative speed value, negative encoder value
 */
 
 namespace components {
@@ -23,14 +23,15 @@ namespace components {
       void SetHighPosition();
       void SetMidPosition();
       void SetLowPosition();
+      void Stop();
       void SetSpeed(double speed);
       void ResetEncoder();
       void RunPeriodic();
 
       int GetLiftPosition(){return motor1->GetSelectedSensorPosition(0);}
     private:
-      bool manualMode = false;
-      int pos = 3, midPosition = 7000, highPosition = 15000;
-      double deadzone = 0.05, topspeed = 1800;
+      bool manualMode = false, flag = true;
+      int pos = 3, lastpos = 3, midPosition = 10000, highPosition = 24500;
+      double deadzone = 0.1, topspeed = 1800;
   };
 }

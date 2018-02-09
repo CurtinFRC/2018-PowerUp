@@ -52,7 +52,7 @@ void Drive::Stop() {
 }
 
 // Set speed of Drive class motors
-void Drive::TankDrive(double left, double right, bool square) {
+void Drive::TankDrive(double left, double right, bool square, double maxspeed) {
   if(-deadzone < left && left < deadzone) left = 0;
   if(-deadzone < right && right < deadzone) right = 0;
   if(square) {
@@ -61,6 +61,12 @@ void Drive::TankDrive(double left, double right, bool square) {
   }
   SmartDashboard::PutNumber("Left speed", left);
   SmartDashboard::PutNumber("Right speed", right);
+  SmartDashboard::PutNumber("maxspeed", maxspeed);
+  if(left > maxspeed) left = maxspeed;
+  else if(left < -maxspeed) left = -maxspeed;
+  if(right > maxspeed) right = maxspeed;
+  else if(right < -maxspeed) right = -maxspeed;
+
   left1->Set(ControlMode::PercentOutput, left);
   right1->Set(ControlMode::PercentOutput, right);
 }

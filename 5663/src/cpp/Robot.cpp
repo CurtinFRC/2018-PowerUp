@@ -42,6 +42,7 @@ class Robot : public IterativeRobot {
 
 public:
   uint8_t message = 72;
+  double maxspeed = 1;
 
   void RobotInit() {
     camera = CameraServer::GetInstance()->StartAutomaticCapture();
@@ -99,6 +100,7 @@ public:
     drive->SetFastGear();
     drive->Stop();
     drive->ResetEncoder();
+    lift->Stop();
   }
 
   void TeleopPeriodic() {
@@ -106,12 +108,19 @@ public:
     SmartDashboard::PutBoolean("transaction", arduino->Transaction(&message, 1, NULL, 0));
 //———[controller 1]—————————————————————————————————————————————————————————————
   //———[drivetrain]—————————————————————————————————————————————————————————————
-    if(xbox->GetAButton()) {
-      drive->TurnAngle(1, 180);
-    } else {
-      drive->TankDrive(-xbox->GetY(xbox->kLeftHand), -xbox->GetY(xbox->kRightHand), true);
-      drive->turning = false;
-    }
+    if(lift->GetLiftPosition() > 10000) drive->SetSlowGear();
+
+    if(lift->GetLiftPosition() > 14000) maxspeed = 0.4;
+    else if(lift->GetLiftPosition() > 11000) maxspeed = 0.8;
+    else if(lift->GetLiftPosition() > 10000) maxspeed = 0.85;
+    else if(lift->GetLiftPosition() > 9000) maxspeed = 0.92;
+    else maxspeed = 1;
+    // if(xbox->GetAButton()) {
+    //   drive->TurnAngle(1, 180);
+    // } else {
+    drive->TankDrive(-xbox->GetY(xbox->kLeftHand), -xbox->GetY(xbox->kRightHand), true, maxspeed);
+    //  drive->turning = false;
+    //}
     if(xbox->GetYButtonPressed() || xbox->GetBumperPressed(xbox->kRightHand)) {
       drive->ToggleGear();
     }
@@ -125,8 +134,8 @@ public:
     } else if(xbox2->GetYButton()) {
       lift->SetHighPosition();
     }
-    lift->SetSpeed(xbox2->GetY(xbox2->kRightHand));
-    if(lift->GetLiftPosition() > 10000) drive->SetSlowGear();
+
+    lift->SetSpeed(-xbox2->GetY(xbox2->kRightHand));
 
   //———[manipulator]————————————————————————————————————————————————————————————
     if(xbox2->GetBumper(xbox2->kLeftHand)) {
