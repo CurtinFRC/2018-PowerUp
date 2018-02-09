@@ -29,7 +29,6 @@ public:
 
   BelevatorControl *belev;
   WinchControl *winch;
-  IntakeControl *intake;
 
   IO *io;
 
@@ -40,7 +39,6 @@ public:
 
     drive = new Drivetrain(io->left_motors[0], io->right_motors[0], io->left_motors[0], io->right_motors[0]);
     belev = new BelevatorControl();
-    intake = new IntakeControl();
     winch = new WinchControl();
   }
 
@@ -72,9 +70,8 @@ public:
   void AutonomousPeriodic() {
     drive->strategy_controller().periodic();
     drive->log_write(); // Make this bit call only on mutates later *
-    belev->log_write();
-    intake->log_write();
-    //winch->log_write();
+    // belev->log_write();
+    // winch->log_write();
   }
 
   void TeleopInit() {
@@ -87,12 +84,11 @@ public:
   void TeleopPeriodic() {
     drive->strategy_controller().periodic();
 
-    belev->send_to_robot(ControlMap::belevator_motor_power());
-
-    intake->send_to_robot(ControlMap::intake_claw_state());
+    belev->lift_speed(ControlMap::belevator_motor_power());
+    belev->claw(ControlMap::intake_claw_state());
+    belev->intake(ControlMap::intake_motor_power());
 
     winch->send_to_robot(ControlMap::winch_power());
-    // 14 changes to 5 cylinders reduce upstream from 120 to 60
   }
 
   void TestInit() {

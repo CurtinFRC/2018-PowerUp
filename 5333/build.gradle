@@ -24,6 +24,9 @@ model {
     components {
         frcUserProgram(NativeExecutableSpec) {
             targetPlatform 'roborio'
+            binaries.all {
+              cppCompiler.args << '-g'
+            }
             sources.cpp {
                 source {
                     srcDir 'src/cpp'

@@ -5,7 +5,6 @@
 static IO *io;
 
 int IO::init() { // Sets up IO
-  int n = 0;
 
   // Assign ports to the pointers, as instance to be called from other classes
   left_motors[0] = new CurtinTalonSRX(Map::Motors::left_motors[0]);
@@ -20,29 +19,10 @@ int IO::init() { // Sets up IO
   right_motors[1]->SetInverted(true);
   right_motors[1]->SetDual(CurtinTalonSRX::ControlMode::Follower, right_motors[0]->GetDeviceID());
 
-  n = 0;
-  for (auto motor : belev_motors) {
-    motor = new CurtinTalonSRX(Map::Motors::belev_motors[n]);
-    n++;
-  }
-
-  n = 0;
-  for (auto motor : intake_motors_left) {
-    motor = new CurtinTalonSRX(Map::Motors::intake_motors_left[n]);
-    n++;
-  }
-
-  n = 0;
-  for (auto motor : intake_motors_right) {
-    motor = new CurtinTalonSRX(Map::Motors::intake_motors_right[n]);
-    n++;
-  }
-
-  n = 0;
-  for (auto motor : winch_motors) {
-    motor = new CurtinTalonSRX(Map::Motors::winch_motors[n]);
-    n++;
-  }
+  for (int n = 0; n < Map::Motors::n_belev_motors; n++) belev_motors[n] = new CurtinTalonSRX(Map::Motors::belev_motors[n]);
+  for (int n = 0; n < Map::Motors::n_intake_motors; n++) intake_motors_left[n] = new CurtinTalonSRX(Map::Motors::intake_motors_left[n]);
+  for (int n = 0; n < Map::Motors::n_intake_motors; n++) intake_motors_right[n] = new CurtinTalonSRX(Map::Motors::intake_motors_right[n]);
+  for (int n = 0; n < Map::Motors::n_winch_motors; n++) winch_motors[n] = new CurtinTalonSRX(Map::Motors::winch_motors[n]);
 
 
   try {
@@ -55,23 +35,9 @@ int IO::init() { // Sets up IO
 
   navx->ZeroYaw();
 
-  n = 0;
-  for (auto solenoid : intake_solenoids) {
-    solenoid = new DoubleSolenoid(0, Map::Pneumatics::intake_solenoids[n][0], Map::Pneumatics::intake_solenoids[n][1]);
-    n++;
-  }
-
-  n = 0;
-  for (auto solenoid : brake_solenoids) {
-    solenoid = new DoubleSolenoid(0, Map::Pneumatics::brake_solenoids[n][0], Map::Pneumatics::brake_solenoids[n][1]);
-    n++;
-  }
-
-  n = 0;
-  for (auto solenoid : shifter_solenoids) {
-    solenoid = new DoubleSolenoid(0, Map::Pneumatics::shifter_solenoids[n][0], Map::Pneumatics::shifter_solenoids[n][1]);
-    n++;
-  }
+  for (int n = 0; n < Map::Pneumatics::n_intake_solenoids; n++) intake_solenoids[n] = new DoubleSolenoid(0, Map::Pneumatics::intake_solenoids[n][0], Map::Pneumatics::intake_solenoids[n][1]);
+  for (int n = 0; n < Map::Pneumatics::n_brake_solenoids; n++) brake_solenoids[n] = new DoubleSolenoid(0, Map::Pneumatics::brake_solenoids[n][0], Map::Pneumatics::brake_solenoids[n][1]);
+  for (int n = 0; n < Map::Pneumatics::n_shifter_solenoids; n++) shifter_solenoids[n] = new DoubleSolenoid(0, Map::Pneumatics::shifter_solenoids[n][0], Map::Pneumatics::shifter_solenoids[n][1]);
 
   #ifdef XBOX_CONTROL
   xbox = new XboxController(Map::Controllers::xbox);

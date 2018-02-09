@@ -151,8 +151,8 @@ bool ControlMap::drive_reverse() {
 
 double ControlMap::belevator_motor_power() { return IO::get_instance()->get_right_twist(); }
 
-double ControlMap::intake_motor_power() {}
-bool ControlMap::intake_claw_state() {}
+double ControlMap::intake_motor_power() { return (IO::get_instance()->get_left_button(9) ? -1 : 0) + (IO::get_instance()->get_left_button(10) ? 1 : 0); }
+bool ControlMap::intake_claw_state() { return IO::get_instance()->get_left_button(8); }
 
 double ControlMap::winch_power() { return (IO::get_instance()->get_left_button(11) ? -1 : 0) + (IO::get_instance()->get_left_button(12) ? 1 : 0); }
 

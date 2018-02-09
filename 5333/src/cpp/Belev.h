@@ -4,9 +4,9 @@
 
 class BelevatorControl {
 public:
-  BelevatorControl() : log("log_belev", "belev_motor") {}
-  void send_to_robot(double input);
-  void log_write();
-private:
-  curtinfrc::Logger log;
+  BelevatorControl();
+  void lift_speed(double input);
+  void claw(bool open);
+  void intake(double left, double right);
+  void intake(double power);
 };
