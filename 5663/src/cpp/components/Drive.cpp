@@ -59,9 +59,6 @@ void Drive::TankDrive(double left, double right, bool square, double maxspeed) {
     left *= fabs(left);
     right *= fabs(right); // square inputs
   }
-  SmartDashboard::PutNumber("Left speed", left);
-  SmartDashboard::PutNumber("Right speed", right);
-  SmartDashboard::PutNumber("maxspeed", maxspeed);
   if(left > maxspeed) left = maxspeed;
   else if(left < -maxspeed) left = -maxspeed;
   if(right > maxspeed) right = maxspeed;
@@ -69,6 +66,9 @@ void Drive::TankDrive(double left, double right, bool square, double maxspeed) {
 
   left1->Set(ControlMode::PercentOutput, left);
   right1->Set(ControlMode::PercentOutput, right);
+  SmartDashboard::PutNumber("Left speed", left);
+  SmartDashboard::PutNumber("Right speed", right);
+  SmartDashboard::PutNumber("maxspeed", maxspeed);
 }
 
 // Start or continue a turn
@@ -152,23 +152,27 @@ bool Drive::DriveDistance(double speed, double distance, double timeout) {
 }
 
 // Set gear to slow gear
-void Drive::SetSlowGear() {
+bool Drive::SetSlowGear() {
   if(slowGear == gearMode->kForward) {
     gearMode->Set(gearMode->kForward);
   } else {
     gearMode->Set(gearMode->kReverse);
   }
+  bool returnValue = currentGear;
   currentGear = false;
+  return returnValue;
 }
 
 // Set gear to fast gear
-void Drive::SetFastGear() {
+bool Drive::SetFastGear() {
   if(fastGear == gearMode->kForward) {
     gearMode->Set(gearMode->kForward);
   } else {
     gearMode->Set(gearMode->kReverse);
   }
+  bool returnValue = currentGear;
   currentGear = true;
+  return !returnValue;
 }
 
 // Toggle between slow and fast gear

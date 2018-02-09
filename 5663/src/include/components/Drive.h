@@ -37,8 +37,8 @@ namespace components {
       void Stop();
       bool TurnAngle(double speed, double angle, double timeout=0);
       bool DriveDistance(double speed, double distance, double timeout=0);
-      void SetSlowGear();
-      void SetFastGear();
+      bool SetSlowGear();
+      bool SetFastGear();
       void ToggleGear();
       void ResetEncoder();
       void RunPeriodic();
