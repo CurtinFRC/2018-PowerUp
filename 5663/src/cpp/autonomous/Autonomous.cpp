@@ -9,8 +9,8 @@ Autonomous::Autonomous(Drive *drive, Lift lift, Manipulator man, Ramp ramp) {
   autoDrive = drive;
   Lift autoLift = lift;
   Manipulator autoMan = man;
-  //baseline = new BaselineStrategy(drive);
-  //stratCon = new StrategyController();
+  timer = new Timer();
+  timer->Start();
 }
 
 // Choose the best autonomous routine
@@ -48,6 +48,18 @@ void Autonomous::ChooseRoutine(int autoMode, int startingPosition) {
 void Autonomous::RunPeriodic() {
   SmartDashboard::PutNumber("Auto State:", autoState);
   autoFunction();
+}
+
+bool Autonomous::Wait(int delay) {
+  if(waiting) {
+    if(timer->HasPeriodPassed(delay)) {
+        waiting = false;
+        return true;
+    }
+  } else {
+    timer->Reset();
+    waiting = true;
+  }
 }
 
 bool Autonomous::Baseline() {

@@ -28,7 +28,7 @@ namespace components {
     PIDController *turn;
     gyroPID *out;
     DoubleSolenoid *gearMode; //Solenoids for gears
-    Timer *timeoutCheck, *positionCheck;
+    
     public:
       Drive(int l1, int l2, int l3, int r1, int r2, int r3); // Constructor
       void TankDrive(double left, double right, bool square=false, double maxspeed=1);
@@ -44,6 +44,7 @@ namespace components {
 
       bool turning = false;
     private:
+      Timer *timeoutCheck, *positionCheck;
       TalonSRX *left1, *left2, *left3, *right1, *right2, *right3;
       const double PIE = 3.141592653589793238463;
       bool driving = false, checkingAngle = false; // State variables

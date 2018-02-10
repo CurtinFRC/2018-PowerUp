@@ -1,6 +1,7 @@
 #pragma once
 
 #include "WPILib.h"
+#include <Timer.h>
 #include <string>
 #include "autonomous/BaselineStrategy.h"
 #include "components/Drive.h"
@@ -25,8 +26,9 @@ namespace autonomous {
       Lift *autoLift;
       Drive *autoDrive;
       Manipulator *autoMan;
-      //BaselineStrategy *baseline;
-      //StrategyController *stratCon;
+      Timer *timer;
+
+      bool Wait(int delay);
       bool Baseline();
       bool S1L();
       bool S2L();
@@ -38,5 +40,6 @@ namespace autonomous {
       std::string gameData;
       std::function<bool()> autoFunction;
       int autoState = 0;
+      bool waiting = false;
   };
 }
