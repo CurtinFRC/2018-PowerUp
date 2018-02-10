@@ -8,10 +8,10 @@
 #include "IO.h"
 #include "Belev.h"
 #include "Map.h"
-#include "Intake.h"
 #include "Winch.h"
 #include "ControlMap.h"
 #include "DriveStarategy.h"
+#include "Auto.h"
 
 // Other required libraries
 #include <string>
@@ -29,9 +29,10 @@ public:
 
   BelevatorControl *belev;
   WinchControl *winch;
-  IntakeControl *intake;
 
   IO *io;
+
+  AutoControl *auto_;
 
   Robot() { }
 
@@ -40,8 +41,9 @@ public:
 
     drive = new Drivetrain(io->left_motors[0], io->right_motors[0], io->left_motors[0], io->right_motors[0]);
     belev = new BelevatorControl();
-    intake = new IntakeControl();
     winch = new WinchControl();
+
+    auto_ = new AutoControl(drive);
   }
 
   void AutonomousInit() {
@@ -49,32 +51,14 @@ public:
     auto io = IO::get_instance();
     io->navx->ZeroYaw();
 
-    // Note: wheelbase width: 0.72
-    MotionProfileConfig mcfg = {
-      1440, 6,                  // enc ticks, wheel diameter inches
-      1.0 / 0.2, 0, 0,          // P, I, D
-      3.34 / 12.0, 0.76 / 12.0  // kV, kA
-    };
-    double kt = 3 * (1.0 / 80.0);
-
-    auto mode_left = std::make_shared<PathfinderMPMode>(
-      io->left_motors[0], mcfg, "/home/lvuser/paths/test_left.csv"
-    );
-    auto mode_right = std::make_shared<PathfinderMPMode>(
-      io->right_motors[0], mcfg, "/home/lvuser/paths/test_right.csv"
-    );
-    auto strat = std::make_shared<DrivetrainMotionProfileStrategy>(
-      mode_left, mode_right, drive,
-      io->navx, kt
-    );
-    drive->strategy_controller().set_active(strat);
+    auto_->init();
   }
   void AutonomousPeriodic() {
+    auto_->tick();
     drive->strategy_controller().periodic();
     drive->log_write(); // Make this bit call only on mutates later *
-    belev->log_write();
-    intake->log_write();
-    //winch->log_write();
+    // belev->log_write();
+    // winch->log_write();
   }
 
   void TeleopInit() {
@@ -87,12 +71,11 @@ public:
   void TeleopPeriodic() {
     drive->strategy_controller().periodic();
 
-    belev->send_to_robot(ControlMap::belevator_motor_power());
-
-    intake->send_to_robot(ControlMap::intake_claw_state());
+    belev->lift_speed(ControlMap::belevator_motor_power());
+    belev->claw(ControlMap::intake_claw_state());
+    belev->intake(ControlMap::intake_motor_power());
 
     winch->send_to_robot(ControlMap::winch_power());
-    // 14 changes to 5 cylinders reduce upstream from 120 to 60
   }
 
   void TestInit() {
