@@ -21,3 +21,8 @@ void BelevatorControl::intake(double left, double right) {
 void BelevatorControl::intake(double power) {
   intake(power, power);
 }
+
+void BelevatorControl::log_write() {
+  auto io = IO::get_instance();
+  log.write(::frc::RobotController::GetFPGATime(), 4, io->belev_motors[0]->GetSelectedSensorPosition(0), io->intake_solenoids[0]->Get(), io->intake_motors_left->GetSelectedSensorPosition(0), io->intake_motors_right->GetSelectedSensorPosition(0));
+}
