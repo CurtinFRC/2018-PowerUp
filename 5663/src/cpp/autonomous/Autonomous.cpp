@@ -27,8 +27,8 @@ void Autonomous::ChooseRoutine(int autoMode, int startingPosition) {
 
   switch (autoMode) {
     case 0:
-      autoFunction = [=](){return this->Baseline();};
-      SmartDashboard::PutString("Auto Mode:", "baseline");
+      autoFunction = [=](){return this->S1L();};
+      SmartDashboard::PutString("Auto Mode:", "S1L");
       break;
 
     case 1:
@@ -46,18 +46,17 @@ void Autonomous::ChooseRoutine(int autoMode, int startingPosition) {
 }
 
 void Autonomous::RunPeriodic() {
+  SmartDashboard::PutNumber("Auto State:", autoState);
   autoFunction();
 }
 
 bool Autonomous::Baseline() {
-  SmartDashboard::PutBoolean("ran baseline", true);
-  SmartDashboard::PutNumber("Auto State:", autoState);
    switch (autoState) {
      case 0:
-      if(autoDrive->DriveDistance(0.2, 0.05)) autoState++;
+      if(autoDrive->DriveDistance(0.2, -0.05, 2000)) autoState++;
       break;
      case 1:
-      if(autoDrive->DriveDistance(0.2, 0.5)) autoState++;
+      if(autoDrive->DriveDistance(0.2, 0.5, 10000)) autoState++;
       break;
     default:
       autoDrive->Stop();
@@ -67,7 +66,18 @@ bool Autonomous::Baseline() {
 
 // Routine: Initial (1) > Switch (left)
 bool Autonomous::S1L() {
-
+  switch (autoState) {
+    case 0:
+      //if(autoDrive->DriveDistance(0.5, -0.01, 2000))
+      autoState++;
+      break;
+    case 1:
+      if(autoDrive->DriveDistance(0.5, 3.0, 10000)) autoState++;
+      break;
+    case 2:
+      autoDrive->Stop();
+      break;
+  }
 }
 
 // Routine: Initial (2) > Switch (left)

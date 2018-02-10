@@ -31,11 +31,11 @@ Drive::Drive(int l1, int l2, int l3, int r1, int r2, int r3) {
   right2->Set(ControlMode::Follower, r1);
   right3->Set(ControlMode::Follower, r1);
 
-  imu = new AHRS(I2C::Port::kMXP);
+  imu = new AHRS(I2C::Port::kOnboard);
 
   out = new gyroPID();
 
-  turn = new PIDController(kP, kI, kD, 0.0, imu, out);
+  turn = new PIDController(0.01, 0, 0, 0.0, imu, out);
   turn->SetInputRange(-180.0, 180.0);
   turn->SetOutputRange(-1.0,1.0);
   turn->SetAbsoluteTolerance(turnTolerance);
@@ -74,14 +74,24 @@ void Drive::TankDrive(double left, double right, bool square, double maxspeed) {
 // Start or continue a turn
 bool Drive::TurnAngle(double speed, double angle, double timeout) {
   if(turning) {
+    left1->ConfigOpenloopRamp(0.5,0);
+    right1->ConfigOpenloopRamp(0.5,0);
+
+    if(currentGear) turn->SetPID(0.005, 0.0, 0.001);
+    else turn->SetPID(0.02, 0.0, 0.001);
+
     TankDrive(out->GetOutput(), -out->GetOutput());
     if((abs(angle) - turnTolerance) < abs(imu->GetAngle()) && (abs(angle) + turnTolerance) > abs(imu->GetAngle()) && angle*imu->GetAngle() >= 0) {
       turning = false;
+      left1->ConfigOpenloopRamp(0, 0);
+      right1->ConfigOpenloopRamp(0, 0);
       turn->Disable();
       return true;
     }
   } else {
-    //imu->ZeroYaw();
+    left1->ConfigOpenloopRamp(0, 0);
+    right1->ConfigOpenloopRamp(0, 0);
+    imu->ZeroYaw();
     turn->SetOutputRange(-speed,speed);
     turn->Enable();
     turn->SetSetpoint(angle + imu->GetAngle());
@@ -96,20 +106,20 @@ bool Drive::DriveDistance(double speed, double distance, double timeout) {
     SmartDashboard::PutNumber("drive count", 1);
 	  timer->Start(); //current time
     int encoderCount = kM * distance;
-    leftFinalDistance = left1->GetSelectedSensorPosition(0) + encoderCount;
-    rightFinalDistance = right1->GetSelectedSensorPosition(0) + encoderCount;
-    left1->SetSelectedSensorPosition(0,0,0);
-    right1->SetSelectedSensorPosition(0,0,0);
+    left1->SetSelectedSensorPosition(0,0,10);
+    right1->SetSelectedSensorPosition(0,0,10);
+    leftFinalDistance = encoderCount;
+    rightFinalDistance = encoderCount;
     //setup PID and start driving...
     left1->ConfigNominalOutputForward(0,0); //configuring the left encoder PID
     left1->ConfigNominalOutputReverse(0,0);
     left1->ConfigPeakOutputForward(1,10);
     left1->ConfigPeakOutputReverse(-1,10);
-    left1->ConfigMotionCruiseVelocity(600, 0);
-    left1->ConfigMotionAcceleration(600, 0);
+    left1->ConfigMotionCruiseVelocity(350, 0);
+    left1->ConfigMotionAcceleration(350, 0);
 
-    left1->Config_kF(0,1.705,0); //set left PID-F values
-    left1->Config_kP(0,0.1,0);
+    left1->Config_kF(0,2.7,0); //set left PID-F values
+    left1->Config_kP(0,2.0,0);  //4.2
     left1->Config_kI(0,0.0,0);
     left1->Config_kD(0,0.0,0);
 
@@ -117,11 +127,11 @@ bool Drive::DriveDistance(double speed, double distance, double timeout) {
     right1->ConfigNominalOutputReverse(0,0);
     right1->ConfigPeakOutputForward(1,10);
     right1->ConfigPeakOutputReverse(-1,10);
-    right1->ConfigMotionCruiseVelocity(600, 0); //max = 710
-    right1->ConfigMotionAcceleration(600, 0);
+    right1->ConfigMotionCruiseVelocity(350, 0); //max = 710
+    right1->ConfigMotionAcceleration(350, 0);
 
-    right1->Config_kF(0,1.705,0); //set right PID-F values    //VALUE FOR TOUGHBOX MINI 0.05536513205
-    right1->Config_kP(0,0.1,0);
+    right1->Config_kF(0,2.7,0); //set right PID-F values    //VALUE FOR TOUGHBOX MINI 0.05536513205
+    right1->Config_kP(0,2.0,0);
     right1->Config_kI(0,0.0,0);
     right1->Config_kD(0,0.0,0);
 
@@ -143,10 +153,10 @@ bool Drive::DriveDistance(double speed, double distance, double timeout) {
         return true;
       }
     }
-	  if(timer->HasPeriodPassed(timeout) && timeout != 0) {
-      timer->Stop();
-	 	  return true;
-    }
+	  // if(timer->HasPeriodPassed(timeout) && timeout != 0) {
+    //   timer->Stop();
+	 	//   return true;
+    // }
 }
   return false;
 }
@@ -201,8 +211,11 @@ void Drive::RunPeriodic() {
   }
   if(!turning) {
     turn->Disable();
+    left1->ConfigOpenloopRamp(0, 0);
+    right1->ConfigOpenloopRamp(0, 0);
   }
-
+  SmartDashboard::PutNumber("output", out->GetOutput());
+  SmartDashboard::PutNumber("Yaw:", imu->GetYaw());
   SmartDashboard::PutNumber("Left Drive encoder", left1->GetSelectedSensorPosition(0));
   SmartDashboard::PutNumber("Right Drive encoder", right1->GetSelectedSensorPosition(0));
   SmartDashboard::PutNumber("Left Drive velocity", left1->GetSelectedSensorVelocity(0));

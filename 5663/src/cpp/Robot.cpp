@@ -43,7 +43,7 @@ class Robot : public IterativeRobot {
 public:
   uint8_t message = 72;
   double maxspeed = 1;
-  bool previousGear = false;
+  bool previousGear = false, pressedTurn = false;
 
   void RobotInit() {
     camera = CameraServer::GetInstance()->StartAutomaticCapture();
@@ -87,7 +87,8 @@ public:
     drive->SetSlowGear();
     drive->Stop();
     drive->ResetEncoder();
-    lift->SetLowPosition();
+    //lift->SetLowPosition();
+    lift->SetMidPosition();
     auton->ChooseRoutine((int)AutoChooser->GetSelected(), (int)StartingPosition->GetSelected());
   }
 
@@ -113,13 +114,14 @@ public:
 
     if(lift->GetLiftPosition() > 14000) maxspeed = 0.4;
     else if(9000 <= lift->GetLiftPosition() && lift->GetLiftPosition() <= 14000) {
-      maxspeed = 0.003333333333 * (45 - ( sqrt(15) * sqrt(15835-lift->GetLiftPosition()) ) );
+      maxspeed = -(1.0/300.0) * (45.0 - ( sqrt(15.0) * sqrt(15835.0-lift->GetLiftPosition()) ) );
     }
     else if(lift->GetLiftPosition() < 9000) maxspeed = 1;
 
     if(xbox->GetAButton() && lift->GetLiftPosition() < 10000) {
-      drive->TurnAngle(1, 180);
-    } else {
+      drive->TurnAngle(1,180);
+    }
+    else {
       drive->TankDrive(-xbox->GetY(xbox->kLeftHand) + xbox->GetTriggerAxis(xbox->kLeftHand)*0.5,
         -xbox->GetY(xbox->kRightHand) + xbox->GetTriggerAxis(xbox->kRightHand)*0.5, true, maxspeed);
       drive->turning = false;

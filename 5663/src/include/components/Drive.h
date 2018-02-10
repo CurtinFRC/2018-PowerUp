@@ -48,7 +48,7 @@ namespace components {
 
       bool driving = false; // State variables
       double turnTolerance = 2.0, driveTolerance = 40; // Tolerance variables
-      double kP = 0.025, kI = 0.0004, kD = 0.04, kM = (80*26.041666667)/0.4787787204; // need to check kM
+      double kP = 0.01, kI = 0.0005, kD = 0.001, kM = (80*26.041666667)/0.4787787204; // need to check kM
       int slowGear = gearMode->kReverse;
       int fastGear = gearMode->kForward;
       double deadzone = 0.015;
