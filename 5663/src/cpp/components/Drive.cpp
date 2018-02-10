@@ -42,8 +42,8 @@ Drive::Drive(int l1, int l2, int l3, int r1, int r2, int r3) {
   turn->SetContinuous(true);
 
   gearMode = new DoubleSolenoid(0,0,1);
-  timer = new Timer();
-  timer->Start();
+  timeoutCheck = new Timer(); positionCheck = new Timer();
+  timeoutCheck->Start(); positionCheck->Start();
 }
 
 // Stop all Drive class motors
@@ -89,24 +89,32 @@ bool Drive::TurnAngle(double speed, double angle, double timeout) {
 
     if((abs(angle) - turnTolerance) < abs(imu->GetAngle()) &&
     (abs(angle) + turnTolerance) > abs(imu->GetAngle()) && angle*imu->GetAngle() >= 0) {
+        positionCheck->Reset();
+        checkingAngle = true;
+    } else checkingAngle = false;
+
+    if(positionCheck->HasPeriodPassed(300) && checkingAngle) {
       turning = false;
       SetRampRate(0);
       turn->Disable();
       return true;
     }
-    if(timer->HasPeriodPassed(timeout)) {
+
+    if(timeoutCheck->HasPeriodPassed(timeout)) {  //Whole function timeout
       turning = false;
       SetRampRate(0);
       turn->Disable();
       return true;
     }
+
   } else {
     imu->ZeroYaw();
     turn->SetOutputRange(-speed,speed);
     turn->Enable();
     turn->SetSetpoint(angle);
     turning = true;
-    timer->Reset();
+    checkingAngle = false;
+    timeoutCheck->Reset();
   }
   return false;
 }
@@ -146,7 +154,7 @@ bool Drive::DriveDistance(double speed, double distance, double timeout) {
     right1->Config_kD(0,D,0);
 
     driving = true;
-    timer->Reset();
+    timeoutCheck->Reset();
   } else {
     //run driving code
     left1->Set(ControlMode::MotionMagic, finalDistance); //drive code in this format
@@ -159,7 +167,7 @@ bool Drive::DriveDistance(double speed, double distance, double timeout) {
         return true;
       }
     }
-	  if(timer->HasPeriodPassed(timeout) && timeout != 0) {
+	  if(timeoutCheck->HasPeriodPassed(timeout) && timeout != 0) {
 	 	  return true;
     }
 }
