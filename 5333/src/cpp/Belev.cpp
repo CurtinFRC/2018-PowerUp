@@ -3,14 +3,12 @@
 
 #include <RobotController.h>
 
-BelevatorControl::BelevatorControl() {}
-
 void BelevatorControl::lift_speed(double output) {
   for (auto motor : IO::get_instance()->belev_motors) motor->Set(output); // Set for all motors
 }
 
 void BelevatorControl::claw(bool open) {
-  IO::get_instance()->intake_solenoids[0]->Set(open ? DoubleSolenoid::Value::kForward : DoubleSolenoid::Value::kOff);
+  for (auto solonoid : IO::get_instance()->intake_solenoids) solonoid->Set(open ? DoubleSolenoid::Value::kForward : DoubleSolenoid::Value::kOff);
 }
 
 void BelevatorControl::intake(double left, double right) {
@@ -24,5 +22,5 @@ void BelevatorControl::intake(double power) {
 
 void BelevatorControl::log_write() {
   auto io = IO::get_instance();
-  log.write(::frc::RobotController::GetFPGATime(), 4, io->belev_motors[0]->GetSelectedSensorPosition(0), io->intake_solenoids[0]->Get(), io->intake_motors_left->GetSelectedSensorPosition(0), io->intake_motors_right->GetSelectedSensorPosition(0));
+  log.write(::frc::RobotController::GetFPGATime(), 5, io->belev_motors[0]->GetSelectedSensorPosition(0), io->intake_solenoids[0]->Get(), io->intake_solenoids[1]->Get(), io->intake_motors_left[0]->GetSelectedSensorPosition(0), io->intake_motors_right[0]->GetSelectedSensorPosition(0));
 }
