@@ -96,7 +96,7 @@ bool Autonomous::Wait(int delay) {
 bool Autonomous::BackDrive() {
   switch (autoState) {
     case 0:
-      if(autoDrive->DriveDistance(0.5, -0.05, 500)) autoState++;
+      if(autoDrive->DriveDistance(0.5, -0.05, 100)) autoState++;
       break;
     default:
       autoDrive->Stop();
@@ -108,7 +108,7 @@ bool Autonomous::Baseline() {
   switch (autoState) {
     case 0:
       autoLift->SetMidPosition();
-      if(autoDrive->DriveDistance(1.0, 3.0, 10000)) autoState++;
+      if(autoDrive->DriveDistance(1, 3.0, 6000)) autoState++;  //Change to 4secs after testing
       break;
     default:
       autoDrive->Stop();
@@ -120,7 +120,13 @@ bool Autonomous::Baseline() {
 bool Autonomous::S1L() {
   switch (autoState) {
     case 0:
-      if(autoDrive->DriveDistance(0.5, 3.0, 10000)) autoState++;
+      if(autoDrive->DriveDistance(1, 3.2, 10000)) autoState++;
+      break;
+    case 1:
+      if(autoDrive->TurnAngle(1, 40, 2000)) autoState++;
+      break;
+    case 2:
+      autoMan->SetIntakeSpeed(1);
       break;
     default:
       autoDrive->Stop();

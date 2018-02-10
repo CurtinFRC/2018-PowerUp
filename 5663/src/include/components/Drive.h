@@ -7,13 +7,13 @@
 /*
 * Drive Base:
 * Slow Gear = kReverse, direction?, 26.04:1
-* Max speed: ~380 =
+* Max speed: ~380 = ~0.873m/s
 * Fast Gear = kForward, direction?, 7.08:1
-* Max speed:
+* Max speed: ~380 = ~3.21m/s
 * Forward = positive value, postive encoder value
 * Reverse = negative value, negative encoder value
 */
-
+// Write function for automated timeouts?
 class gyroPID : public PIDOutput {
   private:
     double thisisoutput = 0;

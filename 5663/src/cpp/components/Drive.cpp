@@ -80,7 +80,7 @@ void Drive::TankDrive(double left, double right, bool square, double maxspeed) {
 // Start or continue a turn
 bool Drive::TurnAngle(double speed, double angle, double timeout) {
   if(turning) {
-    SetRampRate(0.5);
+    SetRampRate(0.5); //different ramp rates for fast gear
 
     if(currentGear) turn->SetPID(0.005, 0.0, 0.0); //fast
     else turn->SetPID(0.02, 0.0, 0.0); //slow
