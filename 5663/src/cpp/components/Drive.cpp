@@ -43,12 +43,20 @@ Drive::Drive(int l1, int l2, int l3, int r1, int r2, int r3) {
 
   gearMode = new DoubleSolenoid(0,0,1);
   timer = new Timer();
+  timer->Start();
 }
 
 // Stop all Drive class motors
 void Drive::Stop() {
   left1->NeutralOutput();
   right1->NeutralOutput();
+}
+
+//Set time to get to full speed
+void Drive::SetRampRate(double rate) {
+  SmartDashboard::PutNumber("Ramp Rate", rate);
+  left1->ConfigOpenloopRamp(rate,0);
+  right1->ConfigOpenloopRamp(rate,0);
 }
 
 // Set speed of Drive class motors
@@ -66,36 +74,39 @@ void Drive::TankDrive(double left, double right, bool square, double maxspeed) {
 
   left1->Set(ControlMode::PercentOutput, left);
   right1->Set(ControlMode::PercentOutput, right);
-  SmartDashboard::PutNumber("Left speed", left);
-  SmartDashboard::PutNumber("Right speed", right);
   SmartDashboard::PutNumber("maxspeed", maxspeed);
 }
 
 // Start or continue a turn
 bool Drive::TurnAngle(double speed, double angle, double timeout) {
   if(turning) {
-    left1->ConfigOpenloopRamp(0.5,0);
-    right1->ConfigOpenloopRamp(0.5,0);
+    SetRampRate(0.5);
 
-    if(currentGear) turn->SetPID(0.005, 0.0, 0.001);
-    else turn->SetPID(0.02, 0.0, 0.001);
+    if(currentGear) turn->SetPID(0.005, 0.0, 0.0); //fast
+    else turn->SetPID(0.02, 0.0, 0.0); //slow
 
     TankDrive(out->GetOutput(), -out->GetOutput());
-    if((abs(angle) - turnTolerance) < abs(imu->GetAngle()) && (abs(angle) + turnTolerance) > abs(imu->GetAngle()) && angle*imu->GetAngle() >= 0) {
+
+    if((abs(angle) - turnTolerance) < abs(imu->GetAngle()) &&
+    (abs(angle) + turnTolerance) > abs(imu->GetAngle()) && angle*imu->GetAngle() >= 0) {
       turning = false;
-      left1->ConfigOpenloopRamp(0, 0);
-      right1->ConfigOpenloopRamp(0, 0);
+      SetRampRate(0);
+      turn->Disable();
+      return true;
+    }
+    if(timer->HasPeriodPassed(timeout)) {
+      turning = false;
+      SetRampRate(0);
       turn->Disable();
       return true;
     }
   } else {
-    left1->ConfigOpenloopRamp(0, 0);
-    right1->ConfigOpenloopRamp(0, 0);
     imu->ZeroYaw();
     turn->SetOutputRange(-speed,speed);
     turn->Enable();
-    turn->SetSetpoint(angle + imu->GetAngle());
+    turn->SetSetpoint(angle);
     turning = true;
+    timer->Reset();
   }
   return false;
 }
@@ -103,60 +114,54 @@ bool Drive::TurnAngle(double speed, double angle, double timeout) {
 // Start or continue a forward drive and stop at the given distance
 bool Drive::DriveDistance(double speed, double distance, double timeout) {
   if(!driving) { // Run setup
-    SmartDashboard::PutNumber("drive count", 1);
-	  timer->Start(); //current time
     int encoderCount = kM * distance;
+    double F = 2.7, P = 4.0, I = 0, D = 0; // P = 2.0
+
     left1->SetSelectedSensorPosition(0,0,10);
     right1->SetSelectedSensorPosition(0,0,10);
-    leftFinalDistance = encoderCount;
-    rightFinalDistance = encoderCount;
+    finalDistance = encoderCount;
     //setup PID and start driving...
     left1->ConfigNominalOutputForward(0,0); //configuring the left encoder PID
     left1->ConfigNominalOutputReverse(0,0);
     left1->ConfigPeakOutputForward(1,10);
     left1->ConfigPeakOutputReverse(-1,10);
-    left1->ConfigMotionCruiseVelocity(350, 0);
-    left1->ConfigMotionAcceleration(350, 0);
+    left1->ConfigMotionCruiseVelocity(380*speed, 0);
+    left1->ConfigMotionAcceleration(380, 0);
 
-    left1->Config_kF(0,2.7,0); //set left PID-F values
-    left1->Config_kP(0,2.0,0);  //4.2
-    left1->Config_kI(0,0.0,0);
-    left1->Config_kD(0,0.0,0);
+    left1->Config_kF(0,F,0); //set left PID-F values
+    left1->Config_kP(0,P,0);  //4.2
+    left1->Config_kI(0,I,0);
+    left1->Config_kD(0,D,0);
 
     right1->ConfigNominalOutputForward(0,0); //configuring the right encoder PID
     right1->ConfigNominalOutputReverse(0,0);
     right1->ConfigPeakOutputForward(1,10);
     right1->ConfigPeakOutputReverse(-1,10);
-    right1->ConfigMotionCruiseVelocity(350, 0); //max = 710
-    right1->ConfigMotionAcceleration(350, 0);
+    right1->ConfigMotionCruiseVelocity(380*speed, 0);
+    right1->ConfigMotionAcceleration(380*0.5, 0);
 
-    right1->Config_kF(0,2.7,0); //set right PID-F values    //VALUE FOR TOUGHBOX MINI 0.05536513205
-    right1->Config_kP(0,2.0,0);
-    right1->Config_kI(0,0.0,0);
-    right1->Config_kD(0,0.0,0);
+    right1->Config_kF(0,F,0); //set right PID-F values
+    right1->Config_kP(0,P,0);
+    right1->Config_kI(0,I,0);
+    right1->Config_kD(0,D,0);
 
     driving = true;
+    timer->Reset();
   } else {
     //run driving code
-    left1->Set(ControlMode::MotionMagic, leftFinalDistance); //drive code in this format
-    right1->Set(ControlMode::MotionMagic, rightFinalDistance);
-    SmartDashboard::PutNumber("drive count", 2);
-    SmartDashboard::PutNumber("Left speed", left1->GetMotorOutputPercent());
-    SmartDashboard::PutNumber("Right speed", right1->GetMotorOutputPercent());
-    SmartDashboard::PutNumber("Left Drive encoder pos", left1->GetSelectedSensorPosition(0));
-    SmartDashboard::PutNumber("Right Drive encoder pos", right1->GetSelectedSensorPosition(0));
-    if(abs(leftFinalDistance) + driveTolerance > abs(left1->GetSelectedSensorPosition(0)) &&  abs(leftFinalDistance) - driveTolerance < abs(left1->GetSelectedSensorPosition(0)) && left1->GetSelectedSensorPosition(0) * leftFinalDistance >= 0) {
-      if(abs(rightFinalDistance) + driveTolerance > abs(right1->GetSelectedSensorPosition(0)) &&  abs(rightFinalDistance) - driveTolerance < abs(right1->GetSelectedSensorPosition(0)) && right1->GetSelectedSensorPosition(0) * rightFinalDistance >= 0) {
+    left1->Set(ControlMode::MotionMagic, finalDistance); //drive code in this format
+    right1->Set(ControlMode::MotionMagic, finalDistance);
+
+    if(abs(finalDistance) + driveTolerance > abs(left1->GetSelectedSensorPosition(0)) &&  abs(finalDistance) - driveTolerance < abs(left1->GetSelectedSensorPosition(0)) && left1->GetSelectedSensorPosition(0) * finalDistance >= 0) {
+      if(abs(finalDistance) + driveTolerance > abs(right1->GetSelectedSensorPosition(0)) &&  abs(finalDistance) - driveTolerance < abs(right1->GetSelectedSensorPosition(0)) && right1->GetSelectedSensorPosition(0) * finalDistance >= 0) {
         Stop();
         driving = false;
-        timer->Stop();
         return true;
       }
     }
-	  // if(timer->HasPeriodPassed(timeout) && timeout != 0) {
-    //   timer->Stop();
-	 	//   return true;
-    // }
+	  if(timer->HasPeriodPassed(timeout) && timeout != 0) {
+	 	  return true;
+    }
 }
   return false;
 }
@@ -211,9 +216,11 @@ void Drive::RunPeriodic() {
   }
   if(!turning) {
     turn->Disable();
-    left1->ConfigOpenloopRamp(0, 0);
-    right1->ConfigOpenloopRamp(0, 0);
   }
+  SmartDashboard::PutNumber("Left speed", left1->GetMotorOutputPercent());
+  SmartDashboard::PutNumber("Right speed", right1->GetMotorOutputPercent());
+  SmartDashboard::PutNumber("Left Drive encoder pos", left1->GetSelectedSensorPosition(0));
+  SmartDashboard::PutNumber("Right Drive encoder pos", right1->GetSelectedSensorPosition(0));
   SmartDashboard::PutNumber("output", out->GetOutput());
   SmartDashboard::PutNumber("Yaw:", imu->GetYaw());
   SmartDashboard::PutNumber("Left Drive encoder", left1->GetSelectedSensorPosition(0));

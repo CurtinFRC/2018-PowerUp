@@ -118,14 +118,16 @@ public:
     }
     else if(lift->GetLiftPosition() < 9000) maxspeed = 1;
 
-    if(xbox->GetAButton() && lift->GetLiftPosition() < 10000) {
-      drive->TurnAngle(1,180);
+    if(xbox->GetAButton() && lift->GetLiftPosition() < 10000 && !pressedTurn) {
+      pressedTurn = drive->TurnAngle(1, 180);
     }
     else {
       drive->TankDrive(-xbox->GetY(xbox->kLeftHand) + xbox->GetTriggerAxis(xbox->kLeftHand)*0.5,
         -xbox->GetY(xbox->kRightHand) + xbox->GetTriggerAxis(xbox->kRightHand)*0.5, true, maxspeed);
       drive->turning = false;
+      if(!xbox->GetAButton()) pressedTurn = false;
     }
+
     if(xbox->GetYButtonPressed() || xbox->GetBumperPressed(xbox->kRightHand) || xbox->GetBumperPressed(xbox->kLeftHand)) {
       drive->ToggleGear();
     }

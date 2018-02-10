@@ -68,8 +68,7 @@ bool Autonomous::Baseline() {
 bool Autonomous::S1L() {
   switch (autoState) {
     case 0:
-      //if(autoDrive->DriveDistance(0.5, -0.01, 2000))
-      autoState++;
+      if(autoDrive->DriveDistance(0.5, -0.01, 2000)) autoState++;
       break;
     case 1:
       if(autoDrive->DriveDistance(0.5, 3.0, 10000)) autoState++;

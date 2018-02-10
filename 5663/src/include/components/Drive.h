@@ -35,6 +35,7 @@ namespace components {
       Drive(int l1, int l2, int l3, int r1, int r2, int r3); // Constructor
       void TankDrive(double left, double right, bool square=false, double maxspeed=1);
       void Stop();
+      void SetRampRate(double rate);
       bool TurnAngle(double speed, double angle, double timeout=0);
       bool DriveDistance(double speed, double distance, double timeout=0);
       bool SetSlowGear();
@@ -42,18 +43,19 @@ namespace components {
       void ToggleGear();
       void ResetEncoder();
       void RunPeriodic();
+
       bool turning = false;
     private:
       TalonSRX *left1, *left2, *left3, *right1, *right2, *right3;
-
+      const double PIE = 3.141592653589793238463;
       bool driving = false; // State variables
       double turnTolerance = 2.0, driveTolerance = 40; // Tolerance variables
-      double kP = 0.01, kI = 0.0005, kD = 0.001, kM = (80*26.041666667)/0.4787787204; // need to check kM
+      double kM = (80.0*(50.0/12.0)*(60.0/24.0)*(60.0/24.0))/(6.0*PIE*0.0254);  //(80*26.041666667)/0.4787787204;
       int slowGear = gearMode->kReverse;
       int fastGear = gearMode->kForward;
       double deadzone = 0.015;
       bool currentGear = false;
-      int leftFinalDistance= 0, rightFinalDistance = 0;
+      int finalDistance = 0;
       double starting_time;
   };
 }

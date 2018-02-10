@@ -32,6 +32,6 @@ namespace components {
     private:
       bool manualMode = false;
       int pos = 3, lastpos = 3, midPosition = 10000, highPosition = 24500;
-      double deadzone = 0.1, topspeed = 1800;
+      double deadzone = 0.25, topspeed = 1800;
   };
 }
