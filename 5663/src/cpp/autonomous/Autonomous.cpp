@@ -13,41 +13,72 @@ Autonomous::Autonomous(Drive *drive, Lift lift, Manipulator man, Ramp ramp) {
   timer->Start();
 }
 
+// Set starting position and auto Mode
+void Autonomous::SetStageOne(int mode, int startingPosition) {
+  gameData = DriverStation::GetInstance().GetGameSpecificMessage();
+
+  switch(mode) {
+    case 0:
+      stage1 = [=](){return this->Baseline();};
+      break;
+
+    case 1:
+      if(gameData[0] == 'L') {
+        if(startingPosition == 1) stage1 = [=](){return this->S1L();};
+        else if(startingPosition == 2) stage1 = [=](){return this->S2L();};
+        else autoFunction = [=](){return this->S3L();};
+      } else {
+        if(startingPosition == 1) stage1 = [=](){return this->S1R();};
+        else if(startingPosition == 2) stage1 = [=](){return this->S2R();};
+        else stage1 = [=](){return this->S3R();};
+      }
+  }
+
+}
+
+void Autonomous::SetStageTwo(int mode) {
+  switch(mode) {
+
+  }
+}
+
+void Autonomous::SetStageThree(int mode) {
+  switch(mode) {
+
+  }
+}
+
 // Choose the best autonomous routine
-void Autonomous::ChooseRoutine(int autoMode, int startingPosition) {
-  SmartDashboard::PutString("Auto Mode:", "null");
-  SmartDashboard::PutBoolean("ran baseline", false);
+void Autonomous::ChooseStage() {
   autoState = 0;
+  switch(currentStage) {
+      case 0:
+        autoFunction = [=](){return this->BackDrive();};
+        break;
+      case 1:
+        autoFunction = stage1;
+        break;
+      case 2:
+        autoFunction = stage2;
+        break;
+      case 3:
+        autoFunction = stage3;
+        break;
+  }
+}
+
+void Autonomous::RunPeriodic() {
   gameData = DriverStation::GetInstance().GetGameSpecificMessage(); //Get specific match data
   // gameData will be an array with 3 characters, eg. "LRL"
   // check https://wpilib.screenstepslive.com/s/currentCS/m/getting_started/l/826278-2018-game-data-details
   SmartDashboard::PutString("Alliance Switch:", &gameData[0]);
   SmartDashboard::PutString("Scale:", &gameData[1]);
   SmartDashboard::PutString("Enemy Switch:", &gameData[2]);  //Put data on shuffleboard
-
-  switch (autoMode) {
-    case 0:
-      autoFunction = [=](){return this->S1L();};
-      SmartDashboard::PutString("Auto Mode:", "S1L");
-      break;
-
-    case 1:
-      SmartDashboard::PutString("Auto Mode:", "next stage");
-      if(gameData[0] == 'L') {
-        if(startingPosition == 1) autoFunction = [=](){return this->S1L();};
-        else if(startingPosition == 2) autoFunction = [=](){return this->S2L();};
-        else autoFunction = [=](){return this->S3L();};
-      } else {
-        if(startingPosition == 1) autoFunction = [=](){return this->S1R();};
-        else if(startingPosition == 2) autoFunction = [=](){return this->S2R();};
-        else autoFunction = [=](){return this->S3R();};
-      }
-  }
-}
-
-void Autonomous::RunPeriodic() {
   SmartDashboard::PutNumber("Auto State:", autoState);
-  autoFunction();
+  if(autoFunction()) {
+    currentStage++;
+    ChooseStage();
+  }
 }
 
 bool Autonomous::Wait(int delay) {
@@ -62,17 +93,26 @@ bool Autonomous::Wait(int delay) {
   }
 }
 
-bool Autonomous::Baseline() {
-   switch (autoState) {
-     case 0:
-      if(autoDrive->DriveDistance(0.2, -0.05, 2000)) autoState++;
-      break;
-     case 1:
-      if(autoDrive->DriveDistance(0.2, 0.5, 10000)) autoState++;
+bool Autonomous::BackDrive() {
+  switch (autoState) {
+    case 0:
+      if(autoDrive->DriveDistance(0.5, -0.05, 500)) autoState++;
       break;
     default:
       autoDrive->Stop();
+      return true;
+    }
+}
+
+bool Autonomous::Baseline() {
+  switch (autoState) {
+    case 0:
+      autoLift->SetMidPosition();
+      if(autoDrive->DriveDistance(1.0, 3.0, 10000)) autoState++;
       break;
+    default:
+      autoDrive->Stop();
+      return true;
   }
 }
 
@@ -80,14 +120,11 @@ bool Autonomous::Baseline() {
 bool Autonomous::S1L() {
   switch (autoState) {
     case 0:
-      if(autoDrive->DriveDistance(0.5, -0.01, 2000)) autoState++;
-      break;
-    case 1:
       if(autoDrive->DriveDistance(0.5, 3.0, 10000)) autoState++;
       break;
-    case 2:
+    default:
       autoDrive->Stop();
-      break;
+      return true;
   }
 }
 

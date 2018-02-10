@@ -98,8 +98,8 @@ void Lift::RunPeriodic() {
     motor1->ConfigMotionCruiseVelocity(topspeed*2, 10);
     lastpos = pos;
   } else if(pos > lastpos) {
-    motor1->ConfigMotionAcceleration(topspeed*5, 10);   // was 4
-    motor1->ConfigMotionCruiseVelocity(topspeed*6, 10); // was 5
+    motor1->ConfigMotionAcceleration(topspeed*5, 10);
+    motor1->ConfigMotionCruiseVelocity(topspeed*6, 10);
     lastpos = pos;
   }
 

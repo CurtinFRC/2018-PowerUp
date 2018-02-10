@@ -167,7 +167,10 @@ bool Drive::DriveDistance(double speed, double distance, double timeout) {
         return true;
       }
     }
+
 	  if(timeoutCheck->HasPeriodPassed(timeout) && timeout != 0) {
+      Stop();
+      driving = false;
 	 	  return true;
     }
 }

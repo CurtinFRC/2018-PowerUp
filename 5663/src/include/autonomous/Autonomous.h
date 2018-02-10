@@ -19,7 +19,10 @@ namespace autonomous {
 
     public:
       Autonomous(Drive *drive, Lift lift, Manipulator man, Ramp ramp);
-      void ChooseRoutine(int autoMode, int startingPosition);
+      void SetStageOne(int mode, int startingPosition);
+      void SetStageTwo(int mode);
+      void SetStageThree(int mode);
+      void ChooseStage();
       void RunPeriodic();
 
     private:
@@ -29,6 +32,7 @@ namespace autonomous {
       Timer *timer;
 
       bool Wait(int delay);
+      bool BackDrive();
       bool Baseline();
       bool S1L();
       bool S2L();
@@ -37,9 +41,9 @@ namespace autonomous {
       bool S2R();
       bool S3R();
 
-      std::string gameData;
-      std::function<bool()> autoFunction;
-      int autoState = 0;
+      std::string gameData = "LRL";
+      std::function<bool()> autoFunction, stage1, stage2, stage3;
+      int autoState = 0, currentStage = 0, startingPosition = -1;
       bool waiting = false;
   };
 }

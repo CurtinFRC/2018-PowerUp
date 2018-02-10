@@ -87,9 +87,10 @@ public:
     drive->SetSlowGear();
     drive->Stop();
     drive->ResetEncoder();
-    //lift->SetLowPosition();
-    lift->SetMidPosition();
-    auton->ChooseRoutine((int)AutoChooser->GetSelected(), (int)StartingPosition->GetSelected());
+    lift->ResetEncoder();
+    lift->SetLowPosition();
+    auton->SetStageOne((int)AutoChooser->GetSelected(), (int)StartingPosition->GetSelected());
+    auton->ChooseStage();
   }
 
   void AutonomousPeriodic() {

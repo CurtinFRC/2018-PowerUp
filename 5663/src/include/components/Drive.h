@@ -7,8 +7,9 @@
 /*
 * Drive Base:
 * Slow Gear = kReverse, direction?, 26.04:1
+* Max speed: ~380 =
 * Fast Gear = kForward, direction?, 7.08:1
-* Max speed: ~710
+* Max speed:
 * Forward = positive value, postive encoder value
 * Reverse = negative value, negative encoder value
 */
@@ -28,7 +29,7 @@ namespace components {
     PIDController *turn;
     gyroPID *out;
     DoubleSolenoid *gearMode; //Solenoids for gears
-    
+
     public:
       Drive(int l1, int l2, int l3, int r1, int r2, int r3); // Constructor
       void TankDrive(double left, double right, bool square=false, double maxspeed=1);
@@ -49,7 +50,7 @@ namespace components {
       const double PIE = 3.141592653589793238463;
       bool driving = false, checkingAngle = false; // State variables
       double turnTolerance = 2.0, driveTolerance = 40; // Tolerance variables
-      double kM = (80.0*(50.0/12.0)*(60.0/24.0)*(60.0/24.0))/(6.0*PIE*0.0254);  //(80*26.041666667)/0.4787787204;
+      double kM = (80.0*(50.0/12.0)*(60.0/24.0)*(60.0/24.0))/(6.0*PIE*0.0254);  //(80*26.041666667)/0.4787787204 ~= 4351.35
       int slowGear = gearMode->kReverse;
       int fastGear = gearMode->kForward;
       double deadzone = 0.015;
