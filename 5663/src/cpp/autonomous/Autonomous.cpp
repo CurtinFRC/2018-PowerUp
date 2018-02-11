@@ -108,7 +108,7 @@ bool Autonomous::Baseline() {
   switch (autoState) {
     case 0:
       autoLift->SetMidPosition();
-      if(autoDrive->DriveDistance(1, 3.0, 6000)) autoState++;  //Change to 4secs after testing
+      if(autoDrive->DriveDistance(1, 3.0, 6000)) autoState++;  //Change to 4secs after testing timeout
       break;
     default:
       autoDrive->Stop();
@@ -120,6 +120,7 @@ bool Autonomous::Baseline() {
 bool Autonomous::S1L() {
   switch (autoState) {
     case 0:
+      autoLift->SetMidPosition();
       if(autoDrive->DriveDistance(1, 3.2, 10000)) autoState++;
       break;
     case 1:

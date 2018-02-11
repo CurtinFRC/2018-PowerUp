@@ -7,9 +7,10 @@
 /*
 * Drive Base:
 * Slow Gear = kReverse, direction?, 26.04:1
-* Max speed: ~380 = ~0.873m/s
+* Max speed: ~380 = ~0.873m/s ??
+* Acceleration: ~0.418m/s/s ??
 * Fast Gear = kForward, direction?, 7.08:1
-* Max speed: ~380 = ~3.21m/s
+* Max speed: ~380 = ~3.21m/s ??
 * Forward = positive value, postive encoder value
 * Reverse = negative value, negative encoder value
 */
