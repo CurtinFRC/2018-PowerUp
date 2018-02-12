@@ -12,12 +12,12 @@ Lift::Lift(int m1, int m2) {
 	motor1->ConfigNominalOutputReverse(0, 0);
 	motor1->ConfigPeakOutputForward(1, 0);
 	motor1->ConfigPeakOutputReverse(-1, 0);
-  motor1->Config_kF(0, 1023.0/topspeed, 10);
+  motor1->Config_kF(0, 1023.0/maxVelocity, 10);
   motor1->Config_kP(0, 0.2, 10);
   motor1->Config_kI(0, 0, 10);
   motor1->Config_kD(0, 0, 10);
-  motor1->ConfigMotionAcceleration(topspeed*4, 10);
-  motor1->ConfigMotionCruiseVelocity(topspeed*5, 10);
+  motor1->ConfigMotionAcceleration(maxVelocity*4, 10);
+  motor1->ConfigMotionCruiseVelocity(maxVelocity*5, 10);
   motor1->SetSensorPhase(true);
   motor1->SetSelectedSensorPosition(0, 0, 10);
 
@@ -68,13 +68,14 @@ void Lift::SetSpeed(double speed) {
 
      //Lower lift boundries
      if(lowSwitch->Get() && speed < 0) speed = 0; //limit switch
-     if(GetLiftPosition() < 4000 && speed < 0) speed *= 0.2;  //Soft speed limit
-     if(motor1->GetSelectedSensorVelocity(0) < -600 && GetLiftPosition() < 10000) speed = 0;  //Hardstop
-
+     if(GetLiftPosition() < 5000 && speed < 0) speed *= 0.2;  //Soft speed limit
+     if(motor1->GetSelectedSensorVelocity(0) < -600 && GetLiftPosition() < 7000) speed = -0.1;  //Hardstop
+     if(motor1->GetSelectedSensorVelocity(0) < -1000 && GetLiftPosition() < 7000) speed = -0.05;  //Hardstop
      //Upper lift boundries
      if(topSwitch->Get() && speed > 0) speed = 0; //limit switch
-     if(GetLiftPosition() > 21000 && speed > 0) speed *= 0.5; //Soft speed limit
-     if(motor1->GetSelectedSensorVelocity(0) > 600 && GetLiftPosition() > 22000) speed = 0; //Hardstop
+     if(GetLiftPosition() > 21000 && speed > 0) speed *= 0.4; //Soft speed limit
+     if(motor1->GetSelectedSensorVelocity(0) > 800 && GetLiftPosition() > 22000) speed = 0.2; //Hardstop
+     if(motor1->GetSelectedSensorVelocity(0) > 1200 && GetLiftPosition() > 22000) speed = 0.05; //Hardstop
 
      motor1->Set(ControlMode::PercentOutput, speed);
      pos = 3;
@@ -94,12 +95,12 @@ void Lift::RunPeriodic() {
   else motor1->ConfigPeakOutputReverse(-1, 0);
 
   if(pos < lastpos) {
-    motor1->ConfigMotionAcceleration(topspeed*2, 10);
-    motor1->ConfigMotionCruiseVelocity(topspeed*2, 10);
+    motor1->ConfigMotionAcceleration(maxVelocity*2, 10);
+    motor1->ConfigMotionCruiseVelocity(maxVelocity*2, 10);
     lastpos = pos;
   } else if(pos > lastpos) {
-    motor1->ConfigMotionAcceleration(topspeed*5, 10);
-    motor1->ConfigMotionCruiseVelocity(topspeed*6, 10);
+    motor1->ConfigMotionAcceleration(maxVelocity*5, 10);
+    motor1->ConfigMotionCruiseVelocity(maxVelocity*6, 10);
     lastpos = pos;
   }
 

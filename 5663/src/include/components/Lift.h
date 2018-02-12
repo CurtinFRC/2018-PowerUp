@@ -6,7 +6,7 @@
 * Lift:
 * Encoder: 0 low -> 25000 top
 * Lift Max Height: 2.27m
-* Max speed: ~2000
+* Max velocity: ~2000
 * Lift Up = positive speed value, postive encoder value
 * Lift Down = negative speed value, negative encoder value
 */
@@ -32,6 +32,6 @@ namespace components {
     private:
       bool manualMode = false;
       int pos = 3, lastpos = 3, midPosition = 10000, highPosition = 24500;
-      double deadzone = 0.25, topspeed = 1800;
+      double deadzone = 0.25, maxVelocity = 1800;
   };
 }

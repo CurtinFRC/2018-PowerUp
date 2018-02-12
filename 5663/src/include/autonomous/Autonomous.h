@@ -18,7 +18,7 @@ namespace autonomous {
   class Autonomous {
 
     public:
-      Autonomous(Drive *drive, Lift lift, Manipulator man, Ramp ramp);
+      Autonomous(Drive *drive, Lift *lift, Manipulator *man);
       void SetStageOne(int mode, int startingPosition);
       void SetStageTwo(int mode);
       void SetStageThree(int mode);
@@ -30,7 +30,8 @@ namespace autonomous {
       Drive *autoDrive;
       Manipulator *autoMan;
       Timer *timer;
-
+      SendableChooser<int*> *AutoWait;
+      bool Stop();
       bool Wait(int delay);
       bool BackDrive();
       bool Baseline();
@@ -41,8 +42,13 @@ namespace autonomous {
       bool S2R();
       bool S3R();
 
-      std::string gameData = "LRL";
-      std::function<bool()> autoFunction, stage1, stage2, stage3;
+      std::string gameData = "LRL";  //BIG OOF IF NO REMOVE
+
+      std::function<bool()> autoFunction,
+      stage1 = [=](){return this->Baseline();},
+      stage2 = [=](){return this->Stop();},
+      stage3 = [=](){return this->Stop();};
+
       int autoState = 0, currentStage = 0, startingPosition = -1;
       bool waiting = false;
   };

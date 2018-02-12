@@ -11,7 +11,7 @@ double gyroPID::GetOutput() {
 }
 
 // Constructor for Drive class
-Drive::Drive(int l1, int l2, int l3, int r1, int r2, int r3) {
+Drive::Drive(int l1, int l2, int l3, int r1, int r2, int r3, int fwd, int rev) {
   left1 = new TalonSRX(l1);
   left2 = new TalonSRX(l2);
   left3 = new TalonSRX(l3);
@@ -41,7 +41,7 @@ Drive::Drive(int l1, int l2, int l3, int r1, int r2, int r3) {
   turn->SetAbsoluteTolerance(turnTolerance);
   turn->SetContinuous(true);
 
-  gearMode = new DoubleSolenoid(0,0,1);
+  gearMode = new DoubleSolenoid(0,fwd,rev);
   timeoutCheck = new Timer(); positionCheck = new Timer();
   timeoutCheck->Start(); positionCheck->Start();
 }
@@ -80,10 +80,16 @@ void Drive::TankDrive(double left, double right, bool square, double maxspeed) {
 // Start or continue a turn
 bool Drive::TurnAngle(double speed, double angle, double timeout) {
   if(turning) {
-    SetRampRate(0.5); //different ramp rates for fast gear
 
-    if(currentGear) turn->SetPID(0.005, 0.0, 0.0); //fast
-    else turn->SetPID(0.02, 0.0, 0.0); //slow
+    if(currentGear) {
+      if(turn->GetError() > 30) turn->SetPID(0.02, 0.0, 0.06); //fast  //0.05 = D
+      else turn->SetPID(0.02, 0.0005, 0.06);
+      SetRampRate(0.5);
+    }
+    else {
+      turn->SetPID(0.02, 0.0, 0.005); //slow
+      SetRampRate(0.3);
+    }
 
     TankDrive(out->GetOutput(), -out->GetOutput());
 
@@ -100,7 +106,7 @@ bool Drive::TurnAngle(double speed, double angle, double timeout) {
       return true;
     }
 
-    if(timeoutCheck->HasPeriodPassed(timeout)) {  //Whole function timeout
+    if(timeout != 0 && timeoutCheck->HasPeriodPassed(timeout)) {  //Whole function timeout
       turning = false;
       SetRampRate(0);
       turn->Disable();
@@ -124,7 +130,11 @@ bool Drive::DriveDistance(double speed, double distance, double timeout) {
   if(!driving) { // Run setup
     int encoderCount = kM * distance;
     double F = 2.7, P = 4.0, I = 0, D = 0; // P = 2.0
+<<<<<<< HEAD
     int maxVelocity = 400; // used to be 380
+=======
+    int maxVelocity = 630;
+>>>>>>> c22cbd343ac76fa9ccc6a53342e08bc07c6678c0
     left1->SetSelectedSensorPosition(0,0,10);
     right1->SetSelectedSensorPosition(0,0,10);
     finalDistance = encoderCount;
@@ -134,7 +144,11 @@ bool Drive::DriveDistance(double speed, double distance, double timeout) {
     left1->ConfigPeakOutputForward(1,10);
     left1->ConfigPeakOutputReverse(-1,10);
     left1->ConfigMotionCruiseVelocity(maxVelocity*speed, 0);
+<<<<<<< HEAD
     left1->ConfigMotionAcceleration(400, 0);
+=======
+    left1->ConfigMotionAcceleration(380, 0);
+>>>>>>> c22cbd343ac76fa9ccc6a53342e08bc07c6678c0
 
     left1->Config_kF(0,F,0); //set left PID-F values
     left1->Config_kP(0,P,0);  //4.2
@@ -146,7 +160,11 @@ bool Drive::DriveDistance(double speed, double distance, double timeout) {
     right1->ConfigPeakOutputForward(1,10);
     right1->ConfigPeakOutputReverse(-1,10);
     right1->ConfigMotionCruiseVelocity(maxVelocity*speed, 0);
+<<<<<<< HEAD
     right1->ConfigMotionAcceleration(400, 0);
+=======
+    right1->ConfigMotionAcceleration(380, 0);
+>>>>>>> c22cbd343ac76fa9ccc6a53342e08bc07c6678c0
 
     right1->Config_kF(0,F,0); //set right PID-F values
     right1->Config_kP(0,P,0);

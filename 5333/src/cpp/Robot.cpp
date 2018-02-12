@@ -1,20 +1,23 @@
+// Shared headers
 #include "curtinfrc/math.h"
-#include "curtinfrc/drivetrain.h" // Shared drivetrain in commons
+#include "curtinfrc/drivetrain.h" // Shared drivetrain
 #include "curtinfrc/strategy/mp_strategy.h"
 #include "WPILib.h"
 // #include <pathfinder.h>
 
+// Robot part classes
 #include "IO.h"
 #include "Belev.h"
 #include "Map.h"
 #include "Claw.h"
 #include "Intake.h"
 #include "ControlMap.h"
-#include "Auto.h"
 
+// Other required libraries
 #include <string>
 #include <SmartDashboard/SmartDashboard.h>
 #include <iostream>
+#include <stdint.h>
 #include <cmath>
 
 using namespace frc; // WPILib classes/functions
@@ -22,11 +25,9 @@ using namespace std;
 
 class Robot : public TimedRobot {
 public:
-  Drivetrain<2> *drive;
+  Drivetrain *drive;
   double throttle;
   bool left_bumper_toggle, right_bumper_toggle;
-
-  AutoControl *auto_;
 
   BelevatorControl *belev;
   ClawControl *claw;
@@ -39,12 +40,10 @@ public:
   void RobotInit() {
     io = IO::get_instance(); // Refer to IO
 
-    auto_ = new AutoControl();
-
-    drive = new Drivetrain<2>(io->left_motors, io->right_motors);
+    drive = new Drivetrain(io->left_motors[0], io->right_motors[0], io->left_motors[0], io->right_motors[0]);
     belev = new BelevatorControl();
-    intake = new IntakeControl();
     claw = new ClawControl();
+    intake = new IntakeControl();
 
     throttle = 0.6;
     left_bumper_toggle = right_bumper_toggle = false;
@@ -54,25 +53,33 @@ public:
     std::cout << "Auto Init" << std::endl;
     auto io = IO::get_instance();
     io->navx->ZeroYaw();
+
     // Note: wheelbase width: 0.72
-    MotionProfileConfig cfg = {
-      1440, 6,                                // enc_ticks, wheel_diam
-      12.0 / 0.2, 0,                             // kp (1 / full_speed_threshold_distance), kd
-      //3.34 / 12.0, 0.911 / 12.0,                  // kv, ka
-      3.34, 0.76,                 // kv, ka
-      3 * (1.0/80.0),
-      curtinfrc::MotionProfileMode::PATHFINDER
+    MotionProfileConfig mcfg = {
+      1440, 6,                  // enc ticks, wheel diameter inches
+      1.0 / 0.2, 0, 0,          // P, I, D
+      3.34 / 12.0, 0.76 / 12.0  // kV, kA
     };
-    auto strat = std::make_shared<curtinfrc::MotionProfileStrategy>(
-      io->left_motors[0], io->right_motors[0],
-      io->navx, 
-      "/home/lvuser/paths/test_left.csv", "/home/lvuser/paths/test_right.csv",
-      cfg
+    double kt = 3 * (1.0 / 80.0);
+
+    auto mode_left = std::make_shared<PathfinderMPMode>(
+      io->left_motors[0], mcfg, "/home/lvuser/paths/test_left.csv"
+    );
+    auto mode_right = std::make_shared<PathfinderMPMode>(
+      io->right_motors[0], mcfg, "/home/lvuser/paths/test_right.csv"
+    );
+    auto strat = std::make_shared<DrivetrainMotionProfileStrategy>(
+      mode_left, mode_right, drive,
+      io->navx, kt
     );
     drive->strategy_controller().set_active(strat);
   }
   void AutonomousPeriodic() {
     drive->strategy_controller().periodic();
+    drive->log_write(); // Make this bit call only on mutates later *
+    belev->log_write();
+    claw->log_write();
+    intake->log_write();
   }
 
   void TeleopInit() {
