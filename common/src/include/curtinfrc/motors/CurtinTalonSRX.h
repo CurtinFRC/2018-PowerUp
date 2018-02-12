@@ -1,34 +1,22 @@
 #pragma once
 
 #include "curtinfrc/selftest/selftest.h"
-
-#include <SpeedController.h>
-#include <ctre/phoenix/MotorControl/CAN/BaseMotorController.h>
-#include <ctre/phoenix/MotorControl/CAN/TalonSRX.h>
+#include "curtinfrc/motors/EncoderProvider.h"
 
 extern "C" {
   #include <pathfinder.h>
 }
 
-namespace curtinfrc {
+#include <SpeedController.h>
+#include <ctre/phoenix/MotorControl/CAN/BaseMotorController.h>
+#include <ctre/phoenix/MotorControl/CAN/TalonSRX.h>
 
-  class Pathfinder {
-  public:
-    /**
-     * Load a pathfinder trajectory from a .csv file.
-     */
-    static int pathfinder_load_file(const char *filename, Segment *segments) {
-      FILE *fp;
-      fp = fopen(filename, "rb");
-      int len = ::pathfinder_deserialize_csv(fp, segments);
-      fclose(fp);
-      return len;
-    }
-  };
+namespace curtinfrc {
 
   class CurtinTalonSRX : public virtual ctre::phoenix::motorcontrol::can::TalonSRX,
     public virtual frc::SpeedController,
-    public ISelfTestable {
+    public ISelfTestable,
+    public EncoderProvider {
   public:
     using ctre::phoenix::motorcontrol::can::TalonSRX::TalonSRX;
     using ctre::phoenix::motorcontrol::can::BaseMotorController::BaseMotorController;
@@ -43,12 +31,14 @@ namespace curtinfrc {
 
     void SetControlMode(ControlMode mode);
     void Set(double speed) override;
+    void SetDual(ControlMode mode, double speed);
     double Get() const override;
     void SetInverted(bool inv) override;
     bool GetInverted() const override;
     void Disable() override;
     void StopMotor() override;
     void PIDWrite(double val) override;
+    uint64_t GetEncoder() override;
 
     // SELF TEST //
 
