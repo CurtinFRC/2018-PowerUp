@@ -82,12 +82,13 @@ bool Drive::TurnAngle(double speed, double angle, double timeout) {
   if(turning) {
 
     if(currentGear) {
-      turn->SetPID(0.005, 0.0, 0.0); //fast
+      if(turn->GetError() > 30) turn->SetPID(0.02, 0.0, 0.06); //fast  //0.05 = D
+      else turn->SetPID(0.02, 0.0005, 0.06);
       SetRampRate(0.5);
     }
     else {
-      turn->SetPID(0.02, 0.0, 0.0); //slow
-      SetRampRate(0);
+      turn->SetPID(0.02, 0.0, 0.005); //slow
+      SetRampRate(0.3);
     }
 
     TankDrive(out->GetOutput(), -out->GetOutput());
@@ -105,7 +106,7 @@ bool Drive::TurnAngle(double speed, double angle, double timeout) {
       return true;
     }
 
-    if(timeoutCheck->HasPeriodPassed(timeout)) {  //Whole function timeout
+    if(timeout != 0 && timeoutCheck->HasPeriodPassed(timeout)) {  //Whole function timeout
       turning = false;
       SetRampRate(0);
       turn->Disable();
@@ -129,7 +130,7 @@ bool Drive::DriveDistance(double speed, double distance, double timeout) {
   if(!driving) { // Run setup
     int encoderCount = kM * distance;
     double F = 2.7, P = 4.0, I = 0, D = 0; // P = 2.0
-    int maxVelocity = 400;
+    int maxVelocity = 630;
     left1->SetSelectedSensorPosition(0,0,10);
     right1->SetSelectedSensorPosition(0,0,10);
     finalDistance = encoderCount;

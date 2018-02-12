@@ -30,7 +30,7 @@ namespace autonomous {
       Drive *autoDrive;
       Manipulator *autoMan;
       Timer *timer;
-
+      SendableChooser<int*> *AutoWait;
       bool Stop();
       bool Wait(int delay);
       bool BackDrive();
@@ -42,8 +42,8 @@ namespace autonomous {
       bool S2R();
       bool S3R();
 
-      std::string gameData = "LRL";
-      
+      std::string gameData = "LRL";  //BIG OOF IF NO REMOVE
+
       std::function<bool()> autoFunction,
       stage1 = [=](){return this->Baseline();},
       stage2 = [=](){return this->Stop();},

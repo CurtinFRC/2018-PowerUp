@@ -113,7 +113,7 @@ public:
   void TeleopPeriodic() {
 //———[controller 1]—————————————————————————————————————————————————————————————
   //———[drivetrain]—————————————————————————————————————————————————————————————
-    if(lift->GetLiftPosition() > 9600) drive->SetSlowGear();
+    if(lift->GetLiftPosition() > 11000) drive->SetSlowGear();
 
     if(lift->GetLiftPosition() > 14000) maxspeed = 0.4;
     else if(9000 <= lift->GetLiftPosition() && lift->GetLiftPosition() <= 14000) {
@@ -121,7 +121,7 @@ public:
     }
     else if(lift->GetLiftPosition() < 9000) maxspeed = 1;
 
-    if(xbox->GetAButton() && lift->GetLiftPosition() < 10000 && !pressedTurn) {
+    if(xbox->GetAButton() && lift->GetLiftPosition() < 9000 && !pressedTurn) {
       pressedTurn = drive->TurnAngle(1, 180);
     }
     else {
