@@ -130,11 +130,7 @@ bool Drive::DriveDistance(double speed, double distance, double timeout) {
   if(!driving) { // Run setup
     int encoderCount = kM * distance;
     double F = 2.7, P = 4.0, I = 0, D = 0; // P = 2.0
-<<<<<<< HEAD
-    int maxVelocity = 400; // used to be 380
-=======
     int maxVelocity = 630;
->>>>>>> c22cbd343ac76fa9ccc6a53342e08bc07c6678c0
     left1->SetSelectedSensorPosition(0,0,10);
     right1->SetSelectedSensorPosition(0,0,10);
     finalDistance = encoderCount;
@@ -144,11 +140,7 @@ bool Drive::DriveDistance(double speed, double distance, double timeout) {
     left1->ConfigPeakOutputForward(1,10);
     left1->ConfigPeakOutputReverse(-1,10);
     left1->ConfigMotionCruiseVelocity(maxVelocity*speed, 0);
-<<<<<<< HEAD
     left1->ConfigMotionAcceleration(400, 0);
-=======
-    left1->ConfigMotionAcceleration(380, 0);
->>>>>>> c22cbd343ac76fa9ccc6a53342e08bc07c6678c0
 
     left1->Config_kF(0,F,0); //set left PID-F values
     left1->Config_kP(0,P,0);  //4.2
@@ -160,11 +152,7 @@ bool Drive::DriveDistance(double speed, double distance, double timeout) {
     right1->ConfigPeakOutputForward(1,10);
     right1->ConfigPeakOutputReverse(-1,10);
     right1->ConfigMotionCruiseVelocity(maxVelocity*speed, 0);
-<<<<<<< HEAD
     right1->ConfigMotionAcceleration(400, 0);
-=======
-    right1->ConfigMotionAcceleration(380, 0);
->>>>>>> c22cbd343ac76fa9ccc6a53342e08bc07c6678c0
 
     right1->Config_kF(0,F,0); //set right PID-F values
     right1->Config_kP(0,P,0);

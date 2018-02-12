@@ -144,12 +144,8 @@ bool Autonomous::Baseline() {
 bool Autonomous::S1L() {
   switch (autoState) {
     case 0:
-<<<<<<< HEAD
       autoLift->SetMidPosition();
-      if(autoDrive->DriveDistance(1, 3.2, 10000)) autoState++;
-=======
       if(autoDrive->DriveDistance(1, 3.7)) autoState++;
->>>>>>> c22cbd343ac76fa9ccc6a53342e08bc07c6678c0
       break;
     case 1:
       if(autoDrive->TurnAngle(1, 90)) autoState++;
