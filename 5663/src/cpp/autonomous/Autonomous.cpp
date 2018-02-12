@@ -5,10 +5,10 @@ using namespace components;
 using namespace curtinfrc;
 
 // Constructor for Autonomous class
-Autonomous::Autonomous(Drive *drive, Lift lift, Manipulator man, Ramp ramp) {
+Autonomous::Autonomous(Drive *drive, Lift *lift, Manipulator *man) {
   autoDrive = drive;
-  Lift autoLift = lift;
-  Manipulator autoMan = man;
+  autoLift = lift;
+  autoMan = man;
   timer = new Timer();
   timer->Start();
 }
@@ -79,6 +79,12 @@ void Autonomous::RunPeriodic() {
     currentStage++;
     ChooseStage();
   }
+}
+
+bool Autonomous::Stop() {
+  autoDrive->Stop();
+  autoLift->Stop();
+  autoMan->SetIntakeSpeed(0);
 }
 
 bool Autonomous::Wait(int delay) {

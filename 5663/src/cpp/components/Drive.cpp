@@ -80,10 +80,15 @@ void Drive::TankDrive(double left, double right, bool square, double maxspeed) {
 // Start or continue a turn
 bool Drive::TurnAngle(double speed, double angle, double timeout) {
   if(turning) {
-    SetRampRate(0.5); //different ramp rates for fast gear
 
-    if(currentGear) turn->SetPID(0.005, 0.0, 0.0); //fast
-    else turn->SetPID(0.02, 0.0, 0.0); //slow
+    if(currentGear) {
+      turn->SetPID(0.005, 0.0, 0.0); //fast
+      SetRampRate(0.5);
+    }
+    else {
+      turn->SetPID(0.02, 0.0, 0.0); //slow
+      SetRampRate(0);
+    }
 
     TankDrive(out->GetOutput(), -out->GetOutput());
 
@@ -124,7 +129,7 @@ bool Drive::DriveDistance(double speed, double distance, double timeout) {
   if(!driving) { // Run setup
     int encoderCount = kM * distance;
     double F = 2.7, P = 4.0, I = 0, D = 0; // P = 2.0
-
+    int maxVelocity = 400;
     left1->SetSelectedSensorPosition(0,0,10);
     right1->SetSelectedSensorPosition(0,0,10);
     finalDistance = encoderCount;
@@ -133,7 +138,7 @@ bool Drive::DriveDistance(double speed, double distance, double timeout) {
     left1->ConfigNominalOutputReverse(0,0);
     left1->ConfigPeakOutputForward(1,10);
     left1->ConfigPeakOutputReverse(-1,10);
-    left1->ConfigMotionCruiseVelocity(380*speed, 0);
+    left1->ConfigMotionCruiseVelocity(maxVelocity*speed, 0);
     left1->ConfigMotionAcceleration(380, 0);
 
     left1->Config_kF(0,F,0); //set left PID-F values
@@ -145,8 +150,8 @@ bool Drive::DriveDistance(double speed, double distance, double timeout) {
     right1->ConfigNominalOutputReverse(0,0);
     right1->ConfigPeakOutputForward(1,10);
     right1->ConfigPeakOutputReverse(-1,10);
-    right1->ConfigMotionCruiseVelocity(380*speed, 0);
-    right1->ConfigMotionAcceleration(380*0.5, 0);
+    right1->ConfigMotionCruiseVelocity(maxVelocity*speed, 0);
+    right1->ConfigMotionAcceleration(380, 0);
 
     right1->Config_kF(0,F,0); //set right PID-F values
     right1->Config_kP(0,P,0);
