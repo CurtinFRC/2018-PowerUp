@@ -43,10 +43,12 @@ namespace autonomous {
       bool S3R();
 
       std::string gameData = "LRL";
+      
       std::function<bool()> autoFunction,
       stage1 = [=](){return this->Baseline();},
       stage2 = [=](){return this->Stop();},
       stage3 = [=](){return this->Stop();};
+
       int autoState = 0, currentStage = 0, startingPosition = -1;
       bool waiting = false;
   };

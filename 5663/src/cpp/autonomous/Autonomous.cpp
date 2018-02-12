@@ -85,6 +85,7 @@ bool Autonomous::Stop() {
   autoDrive->Stop();
   autoLift->Stop();
   autoMan->SetIntakeSpeed(0);
+  return true;
 }
 
 bool Autonomous::Wait(int delay) {
@@ -97,6 +98,7 @@ bool Autonomous::Wait(int delay) {
     timer->Reset();
     waiting = true;
   }
+  return false;
 }
 
 bool Autonomous::BackDrive() {
@@ -105,9 +107,10 @@ bool Autonomous::BackDrive() {
       if(autoDrive->DriveDistance(0.5, -0.05, 100)) autoState++;
       break;
     default:
-      autoDrive->Stop();
+      Stop();
       return true;
     }
+    return false;
 }
 
 bool Autonomous::Baseline() {
@@ -117,9 +120,10 @@ bool Autonomous::Baseline() {
       if(autoDrive->DriveDistance(1, 3.0, 6000)) autoState++;  //Change to 4secs after testing
       break;
     default:
-      autoDrive->Stop();
+      Stop();
       return true;
   }
+  return false;
 }
 
 // Routine: Initial (1) > Switch (left)
@@ -135,32 +139,68 @@ bool Autonomous::S1L() {
       autoMan->SetIntakeSpeed(1);
       break;
     default:
-      autoDrive->Stop();
+      Stop();
       return true;
   }
+  return false;
 }
 
 // Routine: Initial (2) > Switch (left)
 bool Autonomous::S2L() {
-  //2-LF
+  switch(autoState) {
+    case 0:
+      break;
+    default:
+      Stop();
+      return true;
+  }
+  return false;
 }
 
 // Routine: Initial (3) > Switch (left)
 bool Autonomous::S3L() {
-  //3-RS RS-RB RB-LB LB-LS
+  switch(autoState) {
+    case 0:
+      break;
+    default:
+      Stop();
+      return true;
+  }
+  return false;
 }
 
 // Routine: Initial (1) > Switch (right)
 bool Autonomous::S1R() {
-  //1-LS LS-LB LB-RB RB-RS
+  switch(autoState) {
+    case 0:
+      break;
+    default:
+      Stop();
+      return true;
+  }
+  return false;
 }
 
 // Routine: Initial (2) > Switch (right)
 bool Autonomous::S2R() {
-  //2-RF
+  switch(autoState) {
+    case 0:
+      break;
+    default:
+      Stop();
+      return true;
+  }
+  return false;
 }
 
 // Routine: Initial (3) > Switch (right)
 bool Autonomous::S3R() {
-  //3-RS
+  switch(autoState) {
+    case 0:
+      break;
+    default:
+      Stop();
+      return true;
+  }
+  return false;
 }

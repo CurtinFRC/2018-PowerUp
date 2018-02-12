@@ -6,7 +6,7 @@
 * Lift:
 * Encoder: 0 low -> 25000 top
 * Lift Max Height: 2.27m
-* Max speed: ~2000
+* Max velocity: ~2000
 * Lift Up = positive speed value, postive encoder value
 * Lift Down = negative speed value, negative encoder value
 */

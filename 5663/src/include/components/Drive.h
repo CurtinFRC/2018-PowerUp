@@ -31,7 +31,7 @@ namespace components {
     DoubleSolenoid *gearMode; //Solenoids for gears
 
     public:
-      Drive(int l1, int l2, int l3, int r1, int r2, int r3); // Constructor
+      Drive(int l1, int l2, int l3, int r1, int r2, int r3, int fwd, int rev); // Constructor
       void TankDrive(double left, double right, bool square=false, double maxspeed=1);
       void Stop();
       void SetRampRate(double rate);

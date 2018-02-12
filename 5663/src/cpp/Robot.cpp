@@ -8,7 +8,7 @@
 #include <PIDOutput.h>
 #include <I2C.h>
 #include <pathfinder.h>
-
+#include <Timer.h>
 #include "components/Drive.h"
 #include "components/Lift.h"
 #include "components/Ramp.h"
@@ -39,11 +39,12 @@ class Robot : public IterativeRobot {
   Compressor *compressor;
   Autonomous *auton;
   I2C *arduino;
+  Timer *timer;
 
 public:
   uint8_t message = 72;
   double maxspeed = 1;
-  bool previousGear = false, pressedTurn = false;
+  bool pressedTurn = false;
 
   void RobotInit() {
     camera = CameraServer::GetInstance()->StartAutomaticCapture();
@@ -68,7 +69,9 @@ public:
     ControlModeChooser->AddDefault("Dual",(int*) 0);
     ControlModeChooser->AddObject("Single (Debug)",(int*) 1);
 
-    drive = new Drive(1, 2, 3, 6, 5, 4);
+    drive = new Drive(1, 2, 3,  //left
+                      6, 5, 4,  //right
+                      0, 1);    //solenoid
     lift = new Lift(8, 7);
     ramp = new Ramp(4, 5);
     man = new Manipulator(0, 2, 3);
@@ -81,6 +84,7 @@ public:
     arduino = new I2C(arduino->kOnboard, 100);
     arduino->WriteBulk(&message, 1);
 
+    timer = new Timer(); timer->Start();
   }
 
   void AutonomousInit() {
@@ -102,13 +106,11 @@ public:
   void TeleopInit() {
     drive->SetFastGear();
     drive->Stop();
-    drive->ResetEncoder();
     lift->Stop();
+    man->SetIntakeSpeed(0);
   }
 
   void TeleopPeriodic() {
-    message = 76;
-    SmartDashboard::PutBoolean("transaction", arduino->Transaction(&message, 1, NULL, 0));
 //———[controller 1]—————————————————————————————————————————————————————————————
   //———[drivetrain]—————————————————————————————————————————————————————————————
     if(lift->GetLiftPosition() > 9600) drive->SetSlowGear();
@@ -155,13 +157,15 @@ public:
 
   //———[ramp]———————————————————————————————————————————————————————————————————
     if(xbox->GetBumper(xbox->kLeftHand) && xbox->GetBumper(xbox->kRightHand) && xbox2->GetBumper(xbox2->kLeftHand) && xbox2->GetBumper(xbox2->kRightHand)) {
-      ramp->ConfirmIntentionalDeployment();
+      if(timer->GetMatchTime() < 30) ramp->ConfirmIntentionalDeployment();
     }
 
   //———[climber]————————————————————————————————————————————————————————————————
 
 
   //———[periodic]———————————————————————————————————————————————————————————————
+    message = 76;
+    SmartDashboard::PutBoolean("transaction", arduino->Transaction(&message, 1, NULL, 0));
     drive->RunPeriodic();
     lift->RunPeriodic();
     man->RunPeriodic();

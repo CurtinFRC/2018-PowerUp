@@ -11,7 +11,7 @@ double gyroPID::GetOutput() {
 }
 
 // Constructor for Drive class
-Drive::Drive(int l1, int l2, int l3, int r1, int r2, int r3) {
+Drive::Drive(int l1, int l2, int l3, int r1, int r2, int r3, int fwd, int rev) {
   left1 = new TalonSRX(l1);
   left2 = new TalonSRX(l2);
   left3 = new TalonSRX(l3);
@@ -41,7 +41,7 @@ Drive::Drive(int l1, int l2, int l3, int r1, int r2, int r3) {
   turn->SetAbsoluteTolerance(turnTolerance);
   turn->SetContinuous(true);
 
-  gearMode = new DoubleSolenoid(0,0,1);
+  gearMode = new DoubleSolenoid(0,fwd,rev);
   timeoutCheck = new Timer(); positionCheck = new Timer();
   timeoutCheck->Start(); positionCheck->Start();
 }
