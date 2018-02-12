@@ -103,11 +103,13 @@ void Lift::RunPeriodic() {
     lastpos = pos;
   }
 
-  SmartDashboard::PutNumber("Lift Encoder", GetLiftPosition());
-  SmartDashboard::PutNumber("Lift Speed", motor1->GetSelectedSensorVelocity(0));
+  SmartDashboard::PutNumber("Lift encoder", GetLiftPosition());
+  SmartDashboard::PutNumber("Lift velocity", motor1->GetSelectedSensorVelocity(0));
+  SmartDashboard::PutNumber("Lift percent", (motor1->GetSelectedSensorPosition(0)-12500)/12500.0);
   SmartDashboard::PutBoolean("topSwitch", topSwitch->Get());
+  SmartDashboard::PutBoolean("inMiddle", !topSwitch->Get()&&!lowSwitch->Get());
   SmartDashboard::PutBoolean("lowSwitch", lowSwitch->Get());
-  SmartDashboard::PutNumber("Lift percent speed", motor1->GetMotorOutputPercent());
+  SmartDashboard::PutNumber("Lift speed", motor1->GetMotorOutputPercent());
   SmartDashboard::PutBoolean("Manual Mode", manualMode);
   switch(pos) {
     case 0:

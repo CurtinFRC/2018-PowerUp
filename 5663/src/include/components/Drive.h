@@ -1,5 +1,6 @@
 #pragma once
 
+#include <networktables/NetworkTableInstance.h>
 #include <ctre/Phoenix.h>
 #include <AHRS.h>
 #include <PIDOutput.h>
@@ -30,7 +31,7 @@ namespace components {
     PIDController *turn;
     gyroPID *out;
     DoubleSolenoid *gearMode; //Solenoids for gears
-
+    NetworkTable *table;
     public:
       Drive(int l1, int l2, int l3, int r1, int r2, int r3, int fwd, int rev); // Constructor
       void TankDrive(double left, double right, bool square=false, double maxspeed=1);
@@ -61,6 +62,6 @@ namespace components {
   };
 }
 
-//nt::NetworkTableInstance::GetDefault().GetTable("table")->GetEntry("turn").SetDouble(0);
+
 //var = nt::NetworkTableInstance::GetDefault().GetTable("table")->GetEntry("turn").GetDouble(0);
 // #include <networktables/NetworkTableInstance.h>

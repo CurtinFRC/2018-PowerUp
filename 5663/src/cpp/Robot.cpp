@@ -59,7 +59,8 @@ public:
     AutoChooser->AddDefault("Cross Baseline",(int*) 0);
     AutoChooser->AddObject("Single Switch",(int*) 1);
     AutoChooser->AddObject("Single Scale",(int*) 2);
-
+    SmartDashboard::PutData("AutoChooser", AutoChooser);
+    
     StartingPosition = new SendableChooser<int*>;
     StartingPosition->AddObject("Left (1)", (int*) 1);
     StartingPosition->AddDefault("Middle (2)", (int*) 2);

@@ -12,6 +12,7 @@ double gyroPID::GetOutput() {
 
 // Constructor for Drive class
 Drive::Drive(int l1, int l2, int l3, int r1, int r2, int r3, int fwd, int rev) {
+  nt::NetworkTableInstance::GetDefault().GetTable("table")->GetEntry("turn").SetDouble(0);
   left1 = new TalonSRX(l1);
   left2 = new TalonSRX(l2);
   left3 = new TalonSRX(l3);
@@ -234,14 +235,16 @@ void Drive::RunPeriodic() {
   if(!turning) {
     turn->Disable();
   }
+  SmartDashboard::PutBoolean("Gear Mode Bool", currentGear);
   SmartDashboard::PutNumber("Left speed", left1->GetMotorOutputPercent());
   SmartDashboard::PutNumber("Right speed", right1->GetMotorOutputPercent());
-  SmartDashboard::PutNumber("Left Drive encoder pos", left1->GetSelectedSensorPosition(0));
-  SmartDashboard::PutNumber("Right Drive encoder pos", right1->GetSelectedSensorPosition(0));
   SmartDashboard::PutNumber("output", out->GetOutput());
-  SmartDashboard::PutNumber("Yaw:", imu->GetYaw());
-  SmartDashboard::PutNumber("Left Drive encoder", left1->GetSelectedSensorPosition(0));
-  SmartDashboard::PutNumber("Right Drive encoder", right1->GetSelectedSensorPosition(0));
-  SmartDashboard::PutNumber("Left Drive velocity", left1->GetSelectedSensorVelocity(0));
-  SmartDashboard::PutNumber("Right Drive velocity", right1->GetSelectedSensorVelocity(0));
+  SmartDashboard::PutBoolean("imu connected", imu->IsConnected());
+  SmartDashboard::PutNumber("Yaw", imu->GetYaw());
+  SmartDashboard::PutNumber("Roll", imu->GetRoll());
+  SmartDashboard::PutNumber("Pitch", imu->GetPitch());
+  SmartDashboard::PutNumber("Left encoder", left1->GetSelectedSensorPosition(0));
+  SmartDashboard::PutNumber("Right encoder", right1->GetSelectedSensorPosition(0));
+  SmartDashboard::PutNumber("Left velocity", left1->GetSelectedSensorVelocity(0));
+  SmartDashboard::PutNumber("Right velocity", right1->GetSelectedSensorVelocity(0));
 }
