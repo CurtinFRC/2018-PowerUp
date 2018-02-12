@@ -24,7 +24,11 @@ public:
   DoubleSolenoid *brake_solenoids[Map::Pneumatics::n_brake_solenoids];
   DoubleSolenoid *intake_solenoids[Map::Pneumatics::n_intake_solenoids];
 
+
   AHRS *navx;
+
+  DigitalInput *belev_limit_max, *belev_limit_min;
+
 
   #ifdef XBOX_CONTROL
 
@@ -103,6 +107,11 @@ public:
   bool get_right_button(int nButton);
 
   #endif
+
+
+  bool get_belev_limit_max();
+  bool get_belev_limit_min();
+
 
   static IO *get_instance();
 };

@@ -35,6 +35,10 @@ int IO::init() { // Sets up IO
 
   navx->ZeroYaw();
 
+  belev_limit_max = new DigitalInput(Map::Sensors::belev_limit_max);
+  belev_limit_min = new DigitalInput(Map::Sensors::belev_limit_min);
+
+
   for (int n = 0; n < Map::Pneumatics::n_intake_solenoids; n++) intake_solenoids[n] = new DoubleSolenoid(0, Map::Pneumatics::intake_solenoids[n][0], Map::Pneumatics::intake_solenoids[n][1]);
   for (int n = 0; n < Map::Pneumatics::n_brake_solenoids; n++) brake_solenoids[n] = new DoubleSolenoid(0, Map::Pneumatics::brake_solenoids[n][0], Map::Pneumatics::brake_solenoids[n][1]);
   for (int n = 0; n < Map::Pneumatics::n_shifter_solenoids; n++) shifter_solenoids[n] = new DoubleSolenoid(0, Map::Pneumatics::shifter_solenoids[n][0], Map::Pneumatics::shifter_solenoids[n][1]);
@@ -131,6 +135,11 @@ bool IO::get_right_trigger() { return right_joy->GetTrigger(); }
 bool IO::get_right_button(int nButton) { return right_joy->GetRawButton(nButton); }
 
 #endif
+
+
+bool IO::get_belev_limit_max() { return belev_limit_max->Get(); }
+bool IO::get_belev_limit_min() { return belev_limit_min->Get(); }
+
 
 IO *IO::get_instance() { // Only make one instance of IO
   if (io == NULL) {

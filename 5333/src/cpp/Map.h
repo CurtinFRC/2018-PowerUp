@@ -26,7 +26,10 @@ namespace Map { // Map ports
     #endif
   };
 
-  namespace Sensors { };
+  namespace Sensors {
+    const int belev_limit_max   = 1;
+    const int belev_limit_min   = 2;
+  };
 
   namespace Motors {
     const int n_drive_motors                             = 2;
