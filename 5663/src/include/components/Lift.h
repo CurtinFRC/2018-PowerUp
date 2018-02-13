@@ -31,7 +31,7 @@ namespace components {
       int GetLiftPosition(){return motor1->GetSelectedSensorPosition(0);}
     private:
       bool manualMode = false;
-      int pos = 3, lastpos = 3, midPosition = 10000, highPosition = 24500;
+      int pos = 3, lastpos = 3, midPosition = 11000, highPosition = 25000;
       double deadzone = 0.25, maxVelocity = 1800;
   };
 }

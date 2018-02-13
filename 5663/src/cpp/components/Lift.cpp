@@ -68,11 +68,11 @@ void Lift::SetSpeed(double speed) {
 
      //Lower lift boundries
      if(lowSwitch->Get() && speed < 0) speed = 0; //limit switch
-     if(GetLiftPosition() < 5000 && speed < 0) speed *= 0.2;  //Soft speed limit
-     if(motor1->GetSelectedSensorVelocity(0) < -600 && GetLiftPosition() < 7000) speed = -0.05;  //Hardstop
+     if(GetLiftPosition() < 6000 && speed < 0) speed *= 0.2;  //Soft speed limit
+     if(motor1->GetSelectedSensorVelocity(0) < -600 && GetLiftPosition() < 7000) speed = 0;  //Hardstop
      //Upper lift boundries
      if(topSwitch->Get() && speed > 0) speed = 0; //limit switch
-     if(GetLiftPosition() > 21000 && speed > 0) speed *= 0.6; //Soft speed limit
+     if(GetLiftPosition() > 21000 && speed > 0) speed *= 0.5; //Soft speed limit
      if(motor1->GetSelectedSensorVelocity(0) > 800 && GetLiftPosition() > 22000) speed = 0.2; //Hardstop
      if(motor1->GetSelectedSensorVelocity(0) > 1200 && GetLiftPosition() > 22000) speed = 0.05; //Hardstop
 
@@ -105,7 +105,7 @@ void Lift::RunPeriodic() {
 
   SmartDashboard::PutNumber("Lift encoder", GetLiftPosition());
   SmartDashboard::PutNumber("Lift velocity", motor1->GetSelectedSensorVelocity(0));
-  SmartDashboard::PutNumber("Lift percent", (motor1->GetSelectedSensorPosition(0)-12500)/12500.0);
+  SmartDashboard::PutNumber("Lift percent", (motor1->GetSelectedSensorPosition(0))/25000.0);
   SmartDashboard::PutBoolean("topSwitch", topSwitch->Get());
   SmartDashboard::PutBoolean("inMiddle", !topSwitch->Get()&&!lowSwitch->Get());
   SmartDashboard::PutBoolean("lowSwitch", lowSwitch->Get());

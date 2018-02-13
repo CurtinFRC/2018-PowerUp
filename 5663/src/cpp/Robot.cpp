@@ -30,6 +30,7 @@ class Robot : public IterativeRobot {
   PowerDistributionPanel *pdp;
   SendableChooser<int*> *AutoChooser; // Choose auto mode
   SendableChooser<int*> *StartingPosition; // Choose starting position
+  SendableChooser<int*> *AutoWait;
   Drive *drive;
   Lift *lift;
   Ramp *ramp;
@@ -64,6 +65,21 @@ public:
     StartingPosition->AddObject("Left (1)", (int*) 1);
     StartingPosition->AddDefault("Middle (2)", (int*) 2);
     StartingPosition->AddObject("Right (3)", (int*) 3);
+    SmartDashboard::PutData("StartingPosition", StartingPosition);
+
+    AutoWait = new SendableChooser<int*>;
+    AutoWait->AddDefault("0S",(int*) 0);
+    AutoWait->AddObject("1S",(int*) 1000);
+    AutoWait->AddObject("2S",(int*) 2000);
+    AutoWait->AddObject("3S",(int*) 3000);
+    AutoWait->AddObject("4S",(int*) 4000);
+    AutoWait->AddObject("5S",(int*) 5000);
+    AutoWait->AddObject("6S",(int*) 6000);
+    AutoWait->AddObject("7S",(int*) 7000);
+    AutoWait->AddObject("8S",(int*) 8000);
+    AutoWait->AddObject("9S",(int*) 9000);
+    AutoWait->AddObject("10S",(int*) 10000);
+    SmartDashboard::PutData("AutoWait", AutoWait);
 
     drive = new Drive(1, 2, 3,  //left
                       6, 5, 4,  //right
@@ -89,7 +105,7 @@ public:
     drive->ResetEncoder();
     lift->ResetEncoder();
     lift->SetLowPosition();
-    auton->SetStageOne((int)AutoChooser->GetSelected(), (int)StartingPosition->GetSelected());
+    auton->SetStageOne((int)AutoChooser->GetSelected(), (int)StartingPosition->GetSelected(), (int)AutoWait->GetSelected());
     auton->ChooseStage();
   }
 
@@ -102,7 +118,6 @@ public:
   void TeleopInit() {
     drive->SetFastGear();
     drive->Stop();
-    lift->Stop();
     man->SetIntakeSpeed(0);
   }
 

@@ -19,7 +19,7 @@ namespace autonomous {
 
     public:
       Autonomous(Drive *drive, Lift *lift, Manipulator *man);
-      void SetStageOne(int mode, int startingPosition);
+      void SetStageOne(int mode, int startingPosition, int wait);
       void SetStageTwo(int mode);
       void SetStageThree(int mode);
       void ChooseStage();
@@ -30,7 +30,6 @@ namespace autonomous {
       Drive *autoDrive;
       Manipulator *autoMan;
       Timer *timer;
-      SendableChooser<int*> *AutoWait;
       bool Stop();
       bool Wait(int delay);
       bool BackDrive();
@@ -56,6 +55,6 @@ namespace autonomous {
       stage3 = [=](){return this->Stop();};
 
       int autoState = 0, currentStage = 0, startingPosition = -1;
-      bool waiting = false;
+      bool waiting = false; int waitStart = 0;
   };
 }
