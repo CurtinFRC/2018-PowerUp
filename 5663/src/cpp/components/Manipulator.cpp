@@ -31,4 +31,6 @@ void Manipulator::Release() {
 void Manipulator::RunPeriodic() {
   intake->Set(intakeSpeed);
   SmartDashboard::PutNumber("Intake Speed", intakeSpeed);
+  if(restrainer->Get() == restrainer->kReverse) SmartDashboard::PutBoolean("Open/Closed", true); //Open
+  else SmartDashboard::PutBoolean("Open/Closed", false); //Closed
 }

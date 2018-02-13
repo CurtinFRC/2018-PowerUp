@@ -69,16 +69,16 @@ public:
 
     AutoWait = new SendableChooser<int*>;
     AutoWait->AddDefault("0S",(int*) 0);
-    AutoWait->AddObject("1S",(int*) 1000);
-    AutoWait->AddObject("2S",(int*) 2000);
-    AutoWait->AddObject("3S",(int*) 3000);
-    AutoWait->AddObject("4S",(int*) 4000);
-    AutoWait->AddObject("5S",(int*) 5000);
-    AutoWait->AddObject("6S",(int*) 6000);
-    AutoWait->AddObject("7S",(int*) 7000);
-    AutoWait->AddObject("8S",(int*) 8000);
-    AutoWait->AddObject("9S",(int*) 9000);
-    AutoWait->AddObject("10S",(int*) 10000);
+    AutoWait->AddObject("1S",(int*) 1);
+    AutoWait->AddObject("2S",(int*) 2);
+    AutoWait->AddObject("3S",(int*) 3);
+    AutoWait->AddObject("4S",(int*) 4);
+    AutoWait->AddObject("5S",(int*) 5);
+    AutoWait->AddObject("6S",(int*) 6);
+    AutoWait->AddObject("7S",(int*) 7);
+    AutoWait->AddObject("8S",(int*) 8);
+    AutoWait->AddObject("9S",(int*) 9);
+    AutoWait->AddObject("10S",(int*) 10);
     SmartDashboard::PutData("AutoWait", AutoWait);
 
     drive = new Drive(1, 2, 3,  //left
@@ -177,6 +177,7 @@ public:
   //———[periodic]———————————————————————————————————————————————————————————————
     message = 76;
     SmartDashboard::PutBoolean("transaction", arduino->Transaction(&message, 1, NULL, 0));
+    SmartDashboard::PutBoolean("rampsReady", timer->GetMatchTime() < 30);
     drive->RunPeriodic();
     lift->RunPeriodic();
     man->RunPeriodic();

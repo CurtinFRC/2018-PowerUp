@@ -19,7 +19,7 @@ void Autonomous::SetStageOne(int mode, int startingPosition, int wait) {
 
   switch(mode) {
     case 0: //Baseline
-      stage1 = [=](){return this->Sw3R();};
+      stage1 = [=](){return this->Baseline();};
       break;
 
     case 1: //Switch
@@ -83,10 +83,14 @@ void Autonomous::RunPeriodic() {
   gameData = DriverStation::GetInstance().GetGameSpecificMessage(); //Get specific match data
   // gameData will be an array with 3 characters, eg. "LRL"
   // check https://wpilib.screenstepslive.com/s/currentCS/m/getting_started/l/826278-2018-game-data-details
-  SmartDashboard::PutString("Alliance Switch:", &gameData[0]);
-  SmartDashboard::PutString("Scale:", &gameData[1]);
-  SmartDashboard::PutString("Enemy Switch:", &gameData[2]);  //Put data on shuffleboard
-  SmartDashboard::PutNumber("Auto State:", autoState);
+  SmartDashboard::PutString("switch", &gameData[0]);
+  if(&gameData[0] == "L") SmartDashboard::PutBoolean("switchBool", true);
+  else SmartDashboard::PutBoolean("switchBool", false);
+  if(&gameData[0] == "L") SmartDashboard::PutBoolean("scaleBool", true);
+  else SmartDashboard::PutBoolean("scaleBool", false);
+  SmartDashboard::PutString("scale", &gameData[1]);
+  SmartDashboard::PutNumber("autoState", autoState);
+  SmartDashboard::PutNumber("currentStage", currentStage);
   if(autoFunction()) {
     currentStage++;
     ChooseStage();
