@@ -3,8 +3,6 @@
 
 #include <RobotController.h>
 
-BelevatorControl::BelevatorControl() {}
-
 void BelevatorControl::lift_speed(double output) {
   if (IO::get_instance()->get_belev_limit_max() && output > 0) output = 0;
   else if (IO::get_instance()->get_belev_limit_min() && output < 0) output = 0;
@@ -13,7 +11,7 @@ void BelevatorControl::lift_speed(double output) {
 }
 
 void BelevatorControl::claw(bool open) {
-  IO::get_instance()->intake_solenoids[0]->Set(open ? DoubleSolenoid::Value::kForward : DoubleSolenoid::Value::kOff);
+  for (auto solonoid : IO::get_instance()->intake_solenoids) solonoid->Set(open ? DoubleSolenoid::Value::kForward : DoubleSolenoid::Value::kOff);
 }
 
 void BelevatorControl::intake(double left, double right) {
@@ -23,4 +21,9 @@ void BelevatorControl::intake(double left, double right) {
 
 void BelevatorControl::intake(double power) {
   intake(power, power);
+}
+
+void BelevatorControl::log_write() {
+  auto io = IO::get_instance();
+  log.write(::frc::RobotController::GetFPGATime(), 5, io->belev_motors[0]->GetSelectedSensorPosition(0), io->intake_solenoids[0]->Get(), io->intake_solenoids[1]->Get(), io->intake_motors_left[0]->GetSelectedSensorPosition(0), io->intake_motors_right[0]->GetSelectedSensorPosition(0));
 }
