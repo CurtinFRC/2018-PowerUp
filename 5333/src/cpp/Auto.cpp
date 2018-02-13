@@ -24,7 +24,7 @@ void AutoControl::tick() {
 
       std::shared_ptr<Strategy> strat = nullptr;
       if (near_switch == MatchData::OwnedSide::LEFT && scale == MatchData::OwnedSide::LEFT)
-        strat = MPStarategy::make_strat(drive, "/home/lvuser/paths/test_left.csv", "/home/lvuser/paths/test_right.csv");
+        strat = MPStarategy::make_strat(drive, "test_left", "test_right");
       drive->strategy_controller().set_active(strat);
     }
   } else {
