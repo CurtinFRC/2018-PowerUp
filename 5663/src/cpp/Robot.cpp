@@ -30,7 +30,6 @@ class Robot : public IterativeRobot {
   PowerDistributionPanel *pdp;
   SendableChooser<int*> *AutoChooser; // Choose auto mode
   SendableChooser<int*> *StartingPosition; // Choose starting position
-  SendableChooser<int*> *ControlModeChooser; // Choose control mode
   Drive *drive;
   Lift *lift;
   Ramp *ramp;
@@ -60,15 +59,11 @@ public:
     AutoChooser->AddObject("Single Switch",(int*) 1);
     AutoChooser->AddObject("Single Scale",(int*) 2);
     SmartDashboard::PutData("AutoChooser", AutoChooser);
-    
+
     StartingPosition = new SendableChooser<int*>;
     StartingPosition->AddObject("Left (1)", (int*) 1);
     StartingPosition->AddDefault("Middle (2)", (int*) 2);
     StartingPosition->AddObject("Right (3)", (int*) 3);
-
-    ControlModeChooser = new SendableChooser<int*>;
-    ControlModeChooser->AddDefault("Dual",(int*) 0);
-    ControlModeChooser->AddObject("Single (Debug)",(int*) 1);
 
     drive = new Drive(1, 2, 3,  //left
                       6, 5, 4,  //right

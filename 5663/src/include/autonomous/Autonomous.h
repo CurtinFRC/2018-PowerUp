@@ -9,9 +9,9 @@
 #include "components/Manipulator.h"
 #include "components/Ramp.h"
 #include "curtinfrc/strategy/strategy.h"
-
+// 111.8cm long
+// 99.1cm wide
 using namespace components;
-//using namespace curtinfrc;
 using namespace autonomous;
 
 namespace autonomous {
@@ -35,12 +35,18 @@ namespace autonomous {
       bool Wait(int delay);
       bool BackDrive();
       bool Baseline();
-      bool S1L();
-      bool S2L();
-      bool S3L();
-      bool S1R();
-      bool S2R();
-      bool S3R();
+      bool Sw1L();
+      bool Sw2L();
+      bool Sw3L();
+      bool Sw1R();
+      bool Sw2R();
+      bool Sw3R();
+      bool Sc1L();
+      bool Sc2L();
+      bool Sc3L();
+      bool Sc1R();
+      bool Sc2R();
+      bool Sc3R();
 
       std::string gameData = "LRL";  //BIG OOF IF NO REMOVE
 

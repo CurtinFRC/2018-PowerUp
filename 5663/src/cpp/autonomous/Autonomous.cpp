@@ -2,7 +2,6 @@
 
 using namespace autonomous;
 using namespace components;
-using namespace curtinfrc;
 
 // Constructor for Autonomous class
 Autonomous::Autonomous(Drive *drive, Lift *lift, Manipulator *man) {
@@ -30,19 +29,30 @@ void Autonomous::SetStageOne(int mode, int startingPosition) {
   gameData = DriverStation::GetInstance().GetGameSpecificMessage();
 
   switch(mode) {
-    case 0:
+    case 0: //Baseline
       stage1 = [=](){return this->Baseline();};
       break;
 
-    case 1:
+    case 1: //Switch
       if(gameData[0] == 'L') {
-        if(startingPosition == 1) stage1 = [=](){return this->S1L();};
-        else if(startingPosition == 2) stage1 = [=](){return this->S2L();};
-        else autoFunction = [=](){return this->S3L();};
+        if(startingPosition == 1) stage1 = [=](){return this->Sw1L();};
+        else if(startingPosition == 2) stage1 = [=](){return this->Sw2L();};
+        else autoFunction = [=](){return this->Sw3L();};
       } else {
-        if(startingPosition == 1) stage1 = [=](){return this->S1R();};
-        else if(startingPosition == 2) stage1 = [=](){return this->S2R();};
-        else stage1 = [=](){return this->S3R();};
+        if(startingPosition == 1) stage1 = [=](){return this->Sw1R();};
+        else if(startingPosition == 2) stage1 = [=](){return this->Sw2R();};
+        else stage1 = [=](){return this->Sw3R();};
+      }
+
+    case 2: //Scale
+      if(gameData[0] == 'L') {
+        if(startingPosition == 1) stage1 = [=](){return this->Sc1L();};
+        else if(startingPosition == 2) stage1 = [=](){return this->Sc2L();};
+        else stage1 = [=](){return this->Sc3L();};
+      } else {
+        if(startingPosition == 1) stage1 = [=](){return this->Sc1R();};
+        else if(startingPosition == 2) stage1 = [=](){return this->Sc2R();};
+        else stage1 = [=](){return this->Sc3R();};
       }
   }
 
@@ -95,7 +105,7 @@ void Autonomous::RunPeriodic() {
 
 bool Autonomous::Stop() {
   autoDrive->Stop();
-  autoMan->SetIntakeSpeed(0);
+  //autoMan->SetIntakeSpeed(0);
   return true;
 }
 
@@ -141,7 +151,7 @@ bool Autonomous::Baseline() {
 }
 
 // Routine: Initial (1) > Switch (left)
-bool Autonomous::S1L() {
+bool Autonomous::Sw1L() {
   switch (autoState) {
     case 0:
       autoLift->SetMidPosition();
@@ -151,11 +161,17 @@ bool Autonomous::S1L() {
       if(autoDrive->TurnAngle(1, 90)) autoState++;
       break;
     case 2:
-      if(autoDrive->DriveDistance(1, 0.9)) autoState++;
+      if(autoDrive->DriveDistance(1, 0.9, 1000)) autoState++;
       break;
     case 3:
       autoMan->SetIntakeSpeed(1);
-      if(Wait(1000)) autoState++;
+      if(Wait(500)) autoState++;
+      break;
+    case 4:
+      if(autoDrive->DriveDistance(1, -0.5)) autoState++;
+      break;
+    case 5:
+      autoLift->SetLowPosition();
       break;
     default:
       Stop();
@@ -165,7 +181,7 @@ bool Autonomous::S1L() {
 }
 
 // Routine: Initial (2) > Switch (left)
-bool Autonomous::S2L() {
+bool Autonomous::Sw2L() {
   switch(autoState) {
     case 0:
       if(autoDrive->DriveDistance(1, 0.5)) autoState++;
@@ -179,6 +195,19 @@ bool Autonomous::S2L() {
     case 3:
       if(autoDrive->TurnAngle(1, 45)) autoState++;
       break;
+    case 4:
+      if(autoDrive->DriveDistance(1, 0.8, 1500)) autoState++;
+      break;
+    case 5:
+      autoMan->SetIntakeSpeed(1);
+      if(Wait(500)) autoState++;
+      break;
+    case 6:
+      if(autoDrive->DriveDistance(1, -0.5)) autoState++;
+      break;
+    case 7:
+      autoLift->SetLowPosition();
+      break;
     default:
       Stop();
       return true;
@@ -187,7 +216,7 @@ bool Autonomous::S2L() {
 }
 
 // Routine: Initial (3) > Switch (left)
-bool Autonomous::S3L() {
+bool Autonomous::Sw3L() {
   switch(autoState) {
     case 0:
       break;
@@ -199,7 +228,7 @@ bool Autonomous::S3L() {
 }
 
 // Routine: Initial (1) > Switch (right)
-bool Autonomous::S1R() {
+bool Autonomous::Sw1R() {
   switch(autoState) {
     case 0:
       break;
@@ -211,9 +240,33 @@ bool Autonomous::S1R() {
 }
 
 // Routine: Initial (2) > Switch (right)
-bool Autonomous::S2R() {
+bool Autonomous::Sw2R() {
   switch(autoState) {
     case 0:
+      autoLift->SetMidPosition();
+      if(autoDrive->DriveDistance(1, 0.5)) autoState++;
+      break;
+    case 1:
+      if(autoDrive->TurnAngle(1, 30)) autoState++;
+      break;
+    case 2:
+      if(autoDrive->DriveDistance(1, 2.0)) autoState++;
+      break;
+    case 3:
+      if(autoDrive->TurnAngle(1, -30)) autoState++;
+      break;
+    case 4:
+      if(autoDrive->DriveDistance(1, 0.5, 1000)) autoState++;
+      break;
+    case 5:
+      autoMan->SetIntakeSpeed(1);
+      if(Wait(500)) autoState++;
+      break;
+    case 6:
+      if(autoDrive->DriveDistance(1, -0.5)) autoState++;
+      break;
+    case 7:
+      autoLift->SetLowPosition();
       break;
     default:
       Stop();
@@ -223,8 +276,109 @@ bool Autonomous::S2R() {
 }
 
 // Routine: Initial (3) > Switch (right)
-bool Autonomous::S3R() {
-  switch(autoState) {
+bool Autonomous::Sw3R() {
+  switch (autoState) {
+    case 0:
+      autoLift->SetMidPosition();
+      if(autoDrive->DriveDistance(1, 3.7)) autoState++;
+      break;
+    case 1:
+      if(autoDrive->TurnAngle(1, -90)) autoState++;
+      break;
+    case 2:
+      if(autoDrive->DriveDistance(1, 0.9, 1000)) autoState++;
+      break;
+    case 3:
+      autoMan->SetIntakeSpeed(1);
+      if(Wait(500)) autoState++;
+      break;
+    case 4:
+      if(autoDrive->DriveDistance(1, -0.5)) autoState++;
+      break;
+    case 5:
+      autoLift->SetLowPosition();
+      break;
+    default:
+      Stop();
+      return true;
+  }
+  return false;
+}
+
+bool Autonomous::Sc1L() {
+  switch (autoState) {
+    case 0:
+      if(autoDrive->DriveDistance(1, 8.0)) autoState++;
+      break;
+    case 1:
+      if(autoDrive->TurnAngle(1, -90)) autoState++;
+      break;
+    case 2:
+      if(autoDrive->DriveDistance(1, -2.0, 2500)) autoState++;
+      break;
+    case 3:
+      autoLift->SetHighPosition();
+      if(Wait(1000)) autoState++;
+      break;
+    case 4:
+      if(autoDrive->DriveDistance(0.5, 0.3)) autoState++;
+      break;
+    case 5:
+      autoMan->SetIntakeSpeed(1);
+      if(Wait(300)) autoState++;
+    default:
+      Stop();
+      return true;
+  }
+  return false;
+}
+
+bool Autonomous::Sc2L() {
+  switch (autoState) {
+    case 0:
+      break;
+    default:
+      Stop();
+      return true;
+  }
+  return false;
+}
+
+bool Autonomous::Sc3L() {
+  switch (autoState) {
+    case 0:
+      break;
+    default:
+      Stop();
+      return true;
+  }
+  return false;
+}
+
+bool Autonomous::Sc1R() {
+  switch (autoState) {
+    case 0:
+      break;
+    default:
+      Stop();
+      return true;
+  }
+  return false;
+}
+
+bool Autonomous::Sc2R() {
+  switch (autoState) {
+    case 0:
+      break;
+    default:
+      Stop();
+      return true;
+  }
+  return false;
+}
+
+bool Autonomous::Sc3R() {
+  switch (autoState) {
     case 0:
       break;
     default:
