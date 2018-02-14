@@ -107,7 +107,7 @@
           "6,0": {
             "size": [
               2,
-              3
+              4
             ],
             "content": {
               "_type": "List Layout",
@@ -128,7 +128,7 @@
               ]
             }
           },
-          "6,3": {
+          "6,4": {
             "size": [
               2,
               2
@@ -141,25 +141,23 @@
           },
           "8,0": {
             "size": [
-              6,
+              4,
               4
             ],
             "content": {
               "_type": "Graph",
-              "_source0": "network_table:///SmartDashboard/Left velocity",
-              "_title": "Left Velocity",
+              "_title": "Graph (no sources)",
               "Visible time": 30.0
             }
           },
           "8,4": {
             "size": [
-              6,
+              4,
               4
             ],
             "content": {
               "_type": "Graph",
-              "_source0": "network_table:///SmartDashboard/Right velocity",
-              "_title": "Right Velocity",
+              "_title": "Graph (no sources)",
               "Visible time": 30.0
             }
           }
@@ -386,17 +384,6 @@
         "hgap": 16.0,
         "vgap": 16.0,
         "tiles": {
-          "0,0": {
-            "size": [
-              2,
-              2
-            ],
-            "content": {
-              "_type": "ComboBox Chooser",
-              "_source0": "network_table:///SmartDashboard/AutoChooser",
-              "_title": "AutoChooser"
-            }
-          },
           "0,2": {
             "size": [
               2,
@@ -408,7 +395,18 @@
               "_title": "StartingPosition"
             }
           },
-          "0,4": {
+          "0,0": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "ComboBox Chooser",
+              "_source0": "network_table:///SmartDashboard/AutoChooser",
+              "_title": "AutoChooser"
+            }
+          },
+          "2,0": {
             "size": [
               2,
               2
@@ -419,7 +417,7 @@
               "_title": "AutoWait"
             }
           },
-          "13,0": {
+          "11,0": {
             "size": [
               2,
               5
@@ -452,7 +450,7 @@
               ]
             }
           },
-          "15,0": {
+          "13,0": {
             "size": [
               2,
               5
@@ -485,7 +483,7 @@
               ]
             }
           },
-          "11,0": {
+          "9,0": {
             "size": [
               2,
               5
@@ -512,7 +510,7 @@
               ]
             }
           },
-          "9,0": {
+          "7,0": {
             "size": [
               2,
               4
@@ -546,7 +544,7 @@
         "hgap": 16.0,
         "vgap": 16.0,
         "tiles": {
-          "0,0": {
+          "1,0": {
             "size": [
               2,
               2
@@ -559,10 +557,10 @@
               "colorWhenFalse": "#8B0000FF"
             }
           },
-          "11,0": {
+          "9,0": {
             "size": [
-              3,
-              7
+              2,
+              6
             ],
             "content": {
               "_type": "List Layout",
@@ -578,7 +576,7 @@
                 {
                   "_type": "Boolean Box",
                   "_source0": "network_table:///SmartDashboard/Gear Mode Bool",
-                  "_title": "",
+                  "_title": "SmartDashboard/Gear Mode Bool",
                   "colorWhenTrue": "#990000FF",
                   "colorWhenFalse": "#1A0068FF"
                 },
@@ -590,10 +588,10 @@
               ]
             }
           },
-          "2,0": {
+          "3,0": {
             "size": [
-              9,
-              7
+              6,
+              6
             ],
             "content": {
               "_type": "Camera Stream",
