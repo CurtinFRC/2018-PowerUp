@@ -1,6 +1,6 @@
 #include "Auto.h"
 #include "IO.h"
-#include "MPStarategy.h"
+#include "Starategies/MPStarategy.h"
 
 #include <openrio/powerup/MatchData.h>
 #include "curtinfrc/strategy/mp_strategy.h"

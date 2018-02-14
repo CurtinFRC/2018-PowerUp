@@ -10,7 +10,7 @@
 #include "Map.h"
 #include "Winch.h"
 #include "ControlMap.h"
-#include "DriveStarategy.h"
+#include "Starategies/DriveStarategy.h"
 #include "Auto.h"
 
 // Other required libraries
@@ -34,6 +34,8 @@ public:
 
   AutoControl *auto_;
 
+  int belev_ticks;
+
   Robot() { }
 
   void RobotInit() {
@@ -44,6 +46,8 @@ public:
     winch = new WinchControl();
 
     auto_ = new AutoControl(drive);
+
+    belev_ticks = 0;
   }
 
   void AutonomousInit() {

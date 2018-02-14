@@ -1,6 +1,7 @@
 #pragma once
 
 #include "WPILib.h"
+#include <cmath>
 
 #define nSolenoidPorts 2
 
@@ -65,6 +66,12 @@ namespace Map { // Map ports
     constexpr float wheel_circ        = 0.4788; // Metres
     constexpr float track_width       = 0.61; // Metres
     const int encoder_ticks_per_rot   = 1000;
+
+    // Belev winch
+    const int belev_encoder_ticks_per_rot   = 1;
+    constexpr float belev_winch_diameter    = 0.37; // Metres
+
+    constexpr double belev_ticks_per_metre = belev_encoder_ticks_per_rot / (M_PI * belev_winch_diameter);
   };
 
   namespace PID {

@@ -2,6 +2,7 @@
 
 #include "WPILib.h"
 #include "curtinfrc/motors/CurtinTalonSRX.h"
+
 #include "AHRS.h"
 #include "Map.h"
 
