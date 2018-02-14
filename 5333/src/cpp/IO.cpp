@@ -19,7 +19,17 @@ int IO::init() { // Sets up IO
   right_motors[1]->SetInverted(true);
   right_motors[1]->SetDual(CurtinTalonSRX::ControlMode::Follower, right_motors[0]->GetDeviceID());
 
-  for (int n = 0; n < Map::Motors::n_belev_motors; n++) belev_motors[n] = new CurtinTalonSRX(Map::Motors::belev_motors[n]);
+  for (int n = 0; n < Map::Motors::n_belev_motors; n++) {
+    if (!n) {
+      belev_motors[n] = new CurtinTalonSRX(Map::Motors::left_motors[0]);
+      belev_motors[n]->SetInverted(false);
+    } else {
+      belev_motors[n] = new CurtinTalonSRX(Map::Motors::left_motors[1]);
+      belev_motors[n]->SetInverted(false);
+      belev_motors[n]->SetDual(CurtinTalonSRX::ControlMode::Follower, left_motors[0]->GetDeviceID());
+    }
+  }
+
   for (int n = 0; n < Map::Motors::n_intake_motors; n++) intake_motors_left[n] = new CurtinTalonSRX(Map::Motors::intake_motors_left[n]);
   for (int n = 0; n < Map::Motors::n_intake_motors; n++) intake_motors_right[n] = new CurtinTalonSRX(Map::Motors::intake_motors_right[n]);
   for (int n = 0; n < Map::Motors::n_winch_motors; n++) winch_motors[n] = new CurtinTalonSRX(Map::Motors::winch_motors[n]);
