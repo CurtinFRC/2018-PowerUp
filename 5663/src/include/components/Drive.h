@@ -52,7 +52,8 @@ namespace components {
       const double PIE = 3.141592653589793238463;
       bool driving = false, checkingAngle = false; // State variables
       double turnTolerance = 2.0, driveTolerance = 40; // Tolerance variables
-      double kM = (80.0*(50.0/12.0)*(60.0/24.0)*(60.0/24.0))/(6.0*PIE*0.0254);  //(80*26.041666667)/0.4787787204 ~= 4351.35
+      double kSG = (80.0*(50.0/12.0)*(60.0/24.0)*(60.0/24.0))/(6.0*PIE*0.0254);  //(80*26.041666667)/0.4787787204 ~= 4351.35
+      double kFG = (80.0*(50.0/12.0)*(34.0/50.0)*(60.0/24.0))/(6.0*PIE*0.0254);
       int slowGear = gearMode->kReverse;
       int fastGear = gearMode->kForward;
       double deadzone = 0.015;

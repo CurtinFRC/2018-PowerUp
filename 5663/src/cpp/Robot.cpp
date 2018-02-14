@@ -100,12 +100,13 @@ public:
   }
 
   void AutonomousInit() {
-    drive->SetSlowGear();
+    drive->SetFastGear();
     drive->Stop();
     drive->ResetEncoder();
     lift->ResetEncoder();
     lift->SetLowPosition();
-    auton->SetStageOne((int)AutoChooser->GetSelected(), (int)StartingPosition->GetSelected(), (int)AutoWait->GetSelected());
+    //(int)AutoChooser->GetSelected() (int)StartingPosition->GetSelected()(int)AutoWait->GetSelected()
+    auton->SetStageOne(1, 2, 1);
     auton->ChooseStage();
   }
 
@@ -118,6 +119,7 @@ public:
   void TeleopInit() {
     drive->SetFastGear();
     drive->Stop();
+    lift->Stop();
     man->SetIntakeSpeed(0);
   }
 

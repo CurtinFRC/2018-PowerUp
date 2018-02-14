@@ -129,7 +129,9 @@ bool Drive::TurnAngle(double speed, double angle, double timeout) {
 // Start or continue a forward drive and stop at the given distance
 bool Drive::DriveDistance(double speed, double distance, double timeout) {
   if(!driving) { // Run setup
-    int encoderCount = kM * distance;
+    int encoderCount = 0;
+    if(currentGear) encoderCount = kFG * distance;
+    else encoderCount = kSG * distance;
     double F = 2.7, P = 4.0, I = 0, D = 0; // P = 2.0
     int acceleration = 400;
     if(currentGear) acceleration = 200;
@@ -141,7 +143,7 @@ bool Drive::DriveDistance(double speed, double distance, double timeout) {
     left1->ConfigNominalOutputReverse(0,0);
     left1->ConfigPeakOutputForward(1,10);
     left1->ConfigPeakOutputReverse(-1,10);
-    left1->ConfigMotionCruiseVelocity(615*speed, 0);
+    left1->ConfigMotionCruiseVelocity(620*speed, 0);
     left1->ConfigMotionAcceleration(acceleration, 0);
 
     left1->Config_kF(0,F,0); //set left PID-F values
