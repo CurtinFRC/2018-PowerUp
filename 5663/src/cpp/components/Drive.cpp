@@ -100,7 +100,7 @@ bool Drive::TurnAngle(double speed, double angle, double timeout) {
         checkingAngle = true;
     } else checkingAngle = false;
 
-    if(positionCheck->HasPeriodPassed(300) && checkingAngle) {
+    if(positionCheck->HasPeriodPassed(0.3) && checkingAngle) {
       turning = false;
       SetRampRate(0);
       turn->Disable();
@@ -131,7 +131,8 @@ bool Drive::DriveDistance(double speed, double distance, double timeout) {
   if(!driving) { // Run setup
     int encoderCount = kM * distance;
     double F = 2.7, P = 4.0, I = 0, D = 0; // P = 2.0
-    int maxVelocity = 630;
+    int acceleration = 400;
+    if(currentGear) acceleration = 200;
     left1->SetSelectedSensorPosition(0,0,10);
     right1->SetSelectedSensorPosition(0,0,10);
     finalDistance = encoderCount;
@@ -141,7 +142,7 @@ bool Drive::DriveDistance(double speed, double distance, double timeout) {
     left1->ConfigPeakOutputForward(1,10);
     left1->ConfigPeakOutputReverse(-1,10);
     left1->ConfigMotionCruiseVelocity(615*speed, 0);
-    left1->ConfigMotionAcceleration(400, 0);
+    left1->ConfigMotionAcceleration(acceleration, 0);
 
     left1->Config_kF(0,F,0); //set left PID-F values
     left1->Config_kP(0,P,0);  //4.2
@@ -152,8 +153,8 @@ bool Drive::DriveDistance(double speed, double distance, double timeout) {
     right1->ConfigNominalOutputReverse(0,0);
     right1->ConfigPeakOutputForward(1,10);
     right1->ConfigPeakOutputReverse(-1,10);
-    right1->ConfigMotionCruiseVelocity(maxVelocity*speed, 0);
-    right1->ConfigMotionAcceleration(400, 0);
+    right1->ConfigMotionCruiseVelocity(630*speed, 0);
+    right1->ConfigMotionAcceleration(acceleration, 0);
 
     right1->Config_kF(0,F,0); //set right PID-F values
     right1->Config_kP(0,P,0);
