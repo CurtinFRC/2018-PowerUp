@@ -125,16 +125,18 @@ bool Autonomous::Wait(int delay) {
 bool Autonomous::BackDrive() {
   switch (autoState) {
     case 0:
-      //autoDrive->TankDrive(-0.5, -0.5);
-      if(Wait(0.3)) autoState++;
-      break;
-    case 1:
       autoLift->SetMidPosition();
       autoState++;
       break;
+    case 1:
+      autoMan->SetIntakeSpeed(-1);
+      autoDrive->TankDrive(-0.5, -0.5);
+      if(Wait(0.3)) autoState++;
+      break;
     case 2:
       autoDrive->TankDrive(0, 0);
-      if(Wait(1)) autoState++;
+      autoMan->SetIntakeSpeed(0);
+      if(Wait(waitStart)) autoState++;
       break;
     default:
       Stop();
@@ -192,7 +194,7 @@ bool Autonomous::Sw2L() {
       if(autoDrive->DriveDistance(1, 0.3)) autoState++;
       break;
     case 1:
-      if(autoDrive->TurnAngle(0.7, -45, 0.5)) autoState++;
+      if(autoDrive->TurnAngle(1, -45, 0.5)) autoState++;
       break;
     case 2:
       if(autoDrive->DriveDistance(1, 2.5)) autoState++;
@@ -315,20 +317,20 @@ bool Autonomous::Sw3R() {
 bool Autonomous::Sc1L() {
   switch (autoState) {
     case 0:
-      if(autoDrive->DriveDistance(1, 8)) autoState++;
+      if(autoDrive->DriveDistance(1, 6.5)) autoState++;
       break;
     case 1:
-      if(autoDrive->TurnAngle(1, 90, 1.3)) autoState++;
+      if(autoDrive->TurnAngle(0.8, 40, 0.6)) autoState++;
       break;
     case 2:
-      if(autoDrive->DriveDistance(1, -0.4, 1)) autoState++;
+      autoLift->SetHighPosition();
+      autoState++;
       break;
     case 3:
-      autoLift->SetHighPosition();
       if(Wait(1)) autoState++;
       break;
     case 4:
-      if(autoDrive->DriveDistance(0.5, 0.6, 0.7)) autoState++;
+      if(autoDrive->DriveDistance(0.5, 1, 1)) autoState++;
       break;
     case 5:
       autoMan->SetIntakeSpeed(1);
@@ -339,7 +341,9 @@ bool Autonomous::Sc1L() {
       break;
     case 7:
       autoLift->SetLowPosition();
-      if(Wait(1)) autoState++;
+      autoState++;
+    case 8:
+      autoMan->SetIntakeSpeed(0);
       break;
     default:
       Stop();
@@ -394,34 +398,6 @@ bool Autonomous::Sc2R() {
 
 bool Autonomous::Sc3R() {
   switch (autoState) {
-    // case 0:
-    //   if(autoDrive->DriveDistance(1, 8)) autoState++;
-    //   break;
-    // case 1:
-    //   if(autoDrive->TurnAngle(0.8, -90, 1.5)) autoState++;
-    //   break;
-    // case 2:
-    //   if(autoDrive->DriveDistance(1, -0.5, 1)) autoState++;
-    //   break;
-    // case 3:
-    //   autoLift->SetHighPosition();
-    //   if(Wait(1)) autoState++;
-    //   break;
-    // case 4:
-    //   if(autoDrive->DriveDistance(0.5, 0.6)) autoState++;
-    //   break;
-    // case 5:
-    //   autoMan->SetIntakeSpeed(1);
-    //   if(Wait(0.5)) autoState++;
-    //   break;
-    // case 6:
-    //   if(autoDrive->DriveDistance(0.5, -1, 1)) autoState++;
-    //   break;
-    // case 7:
-    //   autoLift->SetLowPosition();
-    //   autoState++;
-    //   break;
-
     case 0:
       if(autoDrive->DriveDistance(1, 6.5)) autoState++;
       break;
@@ -430,25 +406,25 @@ bool Autonomous::Sc3R() {
       break;
     case 2:
       autoLift->SetHighPosition();
-      if(Wait(1)) autoState++;
+      autoState++;
       break;
     case 3:
-      if(autoDrive->DriveDistance(0.8, 1, 1)) autoState++;
+      if(Wait(1)) autoState++;
       break;
-    // case 4:
-    //   if(autoDrive->DriveDistance(0.5, 0.2)) autoState++;
-    //   break;
     case 4:
+      if(autoDrive->DriveDistance(0.5, 1, 1)) autoState++;
+      break;
+    case 5:
       autoMan->SetIntakeSpeed(1);
       if(Wait(0.5)) autoState++;
       break;
-    case 5:
+    case 6:
       if(autoDrive->DriveDistance(0.5, -1, 1)) autoState++;
       break;
-    case 6:
+    case 7:
       autoLift->SetLowPosition();
       autoState++;
-    case 7:
+    case 8:
       autoMan->SetIntakeSpeed(0);
       break;
     default:
@@ -457,3 +433,31 @@ bool Autonomous::Sc3R() {
   }
   return false;
 }
+
+// case 0:                //Scale from side
+//   if(autoDrive->DriveDistance(1, 8)) autoState++;
+//   break;
+// case 1:
+//   if(autoDrive->TurnAngle(0.8, -90, 1.5)) autoState++;
+//   break;
+// case 2:
+//   if(autoDrive->DriveDistance(1, -0.5, 1)) autoState++;
+//   break;
+// case 3:
+//   autoLift->SetHighPosition();
+//   if(Wait(1)) autoState++;
+//   break;
+// case 4:
+//   if(autoDrive->DriveDistance(0.5, 0.6)) autoState++;
+//   break;
+// case 5:
+//   autoMan->SetIntakeSpeed(1);
+//   if(Wait(0.5)) autoState++;
+//   break;
+// case 6:
+//   if(autoDrive->DriveDistance(0.5, -1, 1)) autoState++;
+//   break;
+// case 7:
+//   autoLift->SetLowPosition();
+//   autoState++;
+//   break;

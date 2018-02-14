@@ -85,7 +85,7 @@ bool Drive::TurnAngle(double speed, double angle, double timeout) {
     if(currentGear) {
       if(turn->GetError() > 30) turn->SetPID(0.02, 0.0, 0.06); //fast  //0.05 = D
       else turn->SetPID(0.02, 0.0005, 0.06);
-      SetRampRate(0.5);
+      SetRampRate(0.6);
     }
     else {
       turn->SetPID(0.02, 0.0, 0.005); //slow

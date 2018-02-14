@@ -56,30 +56,8 @@ public:
     pdp = new PowerDistributionPanel(0);
 
     AutoChooser = new SendableChooser<int*>;
-    AutoChooser->AddDefault("Cross Baseline",(int*) 0);
-    AutoChooser->AddObject("Single Switch",(int*) 1);
-    AutoChooser->AddObject("Single Scale",(int*) 2);
-    SmartDashboard::PutData("AutoChooser", AutoChooser);
-
     StartingPosition = new SendableChooser<int*>;
-    StartingPosition->AddObject("Left (1)", (int*) 1);
-    StartingPosition->AddDefault("Middle (2)", (int*) 2);
-    StartingPosition->AddObject("Right (3)", (int*) 3);
-    SmartDashboard::PutData("StartingPosition", StartingPosition);
-
     AutoWait = new SendableChooser<int*>;
-    AutoWait->AddDefault("0S",(int*) 0);
-    AutoWait->AddObject("1S",(int*) 1);
-    AutoWait->AddObject("2S",(int*) 2);
-    AutoWait->AddObject("3S",(int*) 3);
-    AutoWait->AddObject("4S",(int*) 4);
-    AutoWait->AddObject("5S",(int*) 5);
-    AutoWait->AddObject("6S",(int*) 6);
-    AutoWait->AddObject("7S",(int*) 7);
-    AutoWait->AddObject("8S",(int*) 8);
-    AutoWait->AddObject("9S",(int*) 9);
-    AutoWait->AddObject("10S",(int*) 10);
-    SmartDashboard::PutData("AutoWait", AutoWait);
 
     drive = new Drive(1, 2, 3,  //left
                       6, 5, 4,  //right
@@ -97,6 +75,29 @@ public:
     arduino->WriteBulk(&message, 1);
 
     timer = new Timer(); timer->Start();
+
+    AutoChooser->AddDefault("Cross Baseline",(int*) 0);
+    AutoChooser->AddObject("Single Switch",(int*) 1);
+    AutoChooser->AddObject("Single Scale",(int*) 2);
+    //SmartDashboard::PutData("AutoChooser", AutoChooser);
+
+    StartingPosition->AddObject("Left (1)", (int*) 1);
+    StartingPosition->AddDefault("Middle (2)", (int*) 2);
+    StartingPosition->AddObject("Right (3)", (int*) 3);
+    SmartDashboard::PutData("StartingPosition", StartingPosition);
+
+    AutoWait->AddDefault("0S",(int*) 0);
+    AutoWait->AddObject("1S",(int*) 1);
+    AutoWait->AddObject("2S",(int*) 2);
+    AutoWait->AddObject("3S",(int*) 3);
+    AutoWait->AddObject("4S",(int*) 4);
+    AutoWait->AddObject("5S",(int*) 5);
+    AutoWait->AddObject("6S",(int*) 6);
+    AutoWait->AddObject("7S",(int*) 7);
+    AutoWait->AddObject("8S",(int*) 8);
+    AutoWait->AddObject("9S",(int*) 9);
+    AutoWait->AddObject("10S",(int*) 10);
+    SmartDashboard::PutData("AutoWait", AutoWait);
   }
 
   void AutonomousInit() {
@@ -105,8 +106,7 @@ public:
     drive->ResetEncoder();
     lift->ResetEncoder();
     lift->SetLowPosition();
-    //(int)AutoChooser->GetSelected() (int)StartingPosition->GetSelected()(int)AutoWait->GetSelected()
-    auton->SetStageOne(1, 2, 1);
+    auton->SetStageOne((int)AutoChooser->GetSelected(), (int)StartingPosition->GetSelected(), (int)AutoWait->GetSelected());
     auton->ChooseStage();
   }
 
@@ -179,7 +179,8 @@ public:
   //———[periodic]———————————————————————————————————————————————————————————————
     message = 76;
     SmartDashboard::PutBoolean("transaction", arduino->Transaction(&message, 1, NULL, 0));
-    SmartDashboard::PutBoolean("rampsReady", timer->GetMatchTime() < 30);
+    SmartDashboard::PutBoolean("rampsReady", (timer->GetMatchTime() < 30));
+    SmartDashboard::PutData("AutoWait", AutoWait);
     drive->RunPeriodic();
     lift->RunPeriodic();
     man->RunPeriodic();
