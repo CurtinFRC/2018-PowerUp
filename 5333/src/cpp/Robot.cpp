@@ -74,8 +74,7 @@ public:
   }
   void TeleopPeriodic() {
     drive->strategy_controller().periodic();
-
-    belev->lift_speed(ControlMap::belevator_motor_power());
+    
     belev->claw(ControlMap::intake_claw_state());
     belev->intake(ControlMap::intake_motor_power());
 
