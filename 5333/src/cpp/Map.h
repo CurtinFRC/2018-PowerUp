@@ -82,13 +82,21 @@ namespace Map { // Map ports
       constexpr double kf = 0;
     };
 
+    namespace Turn {
+      constexpr double kp = 0.01;
+      constexpr double ki = 0.0;
+      constexpr double kd = 0.0;
+
+      constexpr double kde = 1;
+    };
+
     namespace Belev {
       constexpr double kp = 0.01;
       constexpr double ki = 0.001;
       constexpr double kd = 0.0;
       constexpr double kf = 0.0;
 
-      constexpr double acc = 10;
+      constexpr double kde = 1;
     };
   };
 }

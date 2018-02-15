@@ -13,7 +13,7 @@ public:
   void stop() override;
 
 private:
+  Drivetrain *drive;
   double throttle;
   bool left_bumper_toggle, right_bumper_toggle;
-  Drivetrain *drive;
 };

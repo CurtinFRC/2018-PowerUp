@@ -22,7 +22,7 @@ void AutoBelevStarategy::start() {
 }
 
 void AutoBelevStarategy::tick(double time) {
-  if (abs(belev_motor->GetEncoder() - target) < Map::PID::Belev::acc) this->done = true; // 10 is temp const
+  if (abs(belev_motor->GetEncoder() - target) < Map::PID::Belev::kde) this->done = true; // 10 is temp const
 }
 
 void AutoBelevStarategy::stop() {

@@ -3,6 +3,10 @@
 
 #include <RobotController.h>
 
+void BelevatorControl::tick() {
+  if (IO::get_instance()->get_belev_limit_min()) IO::get_instance()->belev_motors[0]->SetSelectedSensorPosition(0, 0, 0);
+}
+
 void BelevatorControl::claw(bool open) {
   for (auto solonoid : IO::get_instance()->intake_solenoids) solonoid->Set(open ? DoubleSolenoid::Value::kForward : DoubleSolenoid::Value::kOff);
 }
