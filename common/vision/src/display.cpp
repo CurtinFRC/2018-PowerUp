@@ -29,12 +29,8 @@ void display::init()
 
 void display::put(cv::Mat* frame, cv::Mat* thresholded, std::vector< std::vector<cv::Point> >* filtered_contours, std::vector< std::vector<cv::Point> >* bounding_boxes, std::vector<int>* centre_xs)
 {
-	if (!frame->empty())
-		cv::imshow("Raw", *frame);
-	if (!thresholded->empty())
-		cv::imshow("Threshold", *thresholded);
-	
-	cv::Mat processed(frame->rows, frame->cols, CV_8UC3);
+
+	cv::Mat processed = frame->clone();
 	for (int i = 0; i < filtered_contours->size(); i++)
 		cv::drawContours(processed, *filtered_contours, i, cv::Scalar(0xFF, 0xFF, 0xFF));
 	for (int i = 0; i < bounding_boxes->size(); i++)
@@ -43,6 +39,15 @@ void display::put(cv::Mat* frame, cv::Mat* thresholded, std::vector< std::vector
 		draw_vertical_line(&processed, (*centre_xs)[i], 1, cv::Scalar(0, 0, 0xFF));
 
 	cv::imshow("Processed", processed);
+	if (!frame->empty())
+		cv::imshow("Raw", *frame);
+	if (!thresholded->empty())
+		cv::imshow("Threshold", *thresholded);
+
+	if (bounding_boxes->size() > 0)
+		system("xset led on");
+	else
+		system("xset led off");
 }
 
 double average(std::vector<double> v)
