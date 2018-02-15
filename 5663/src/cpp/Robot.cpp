@@ -9,12 +9,13 @@
 #include <I2C.h>
 #include <pathfinder.h>
 #include <Timer.h>
+// #include <networktables/NetworkTable.h>
+// #include <networktables/NetworkTableInstance.h>
 #include "components/Drive.h"
 #include "components/Lift.h"
 #include "components/Ramp.h"
 #include "components/Manipulator.h"
 #include "components/Climber.h"
-
 #include "autonomous/Autonomous.h"
 
 using namespace frc;
@@ -23,6 +24,7 @@ using namespace std;
 using namespace components;
 using namespace cs;
 using namespace autonomous;
+using namespace nt;
 
 class Robot : public IterativeRobot {
   UsbCamera camera;
@@ -106,6 +108,7 @@ public:
     drive->ResetEncoder();
     lift->ResetEncoder();
     lift->SetLowPosition();
+    
     auton->SetStageOne((int)AutoChooser->GetSelected(), (int)StartingPosition->GetSelected(), (int)AutoWait->GetSelected());
     auton->ChooseStage();
   }
