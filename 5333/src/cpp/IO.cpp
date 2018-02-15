@@ -1,9 +1,11 @@
 #include "IO.h"
 #include "Map.h"
+#include "SmartDashboard/SmartDashboard.h"
 
 static IO *io;
 
 int IO::init() { // Sets up IO
+
   // Assign ports to the pointers, as instance to be called from other classes
   left_motors[0] = new CurtinTalonSRX(Map::Motors::left_motors[0]);
   left_motors[0]->SetInverted(false);
@@ -17,9 +19,20 @@ int IO::init() { // Sets up IO
   right_motors[1]->SetInverted(true);
   right_motors[1]->SetDual(CurtinTalonSRX::ControlMode::Follower, right_motors[0]->GetDeviceID());
 
-  belev_motors[0] = new CurtinTalonSRX(Map::Motors::belev_motors[0]);
-  intake_motors[0][0] = new CurtinTalonSRX(Map::Motors::intake_motors[0][0]);
-  intake_motors[1][0] = new CurtinTalonSRX(Map::Motors::intake_motors[1][0]);
+  for (int n = 0; n < Map::Motors::n_belev_motors; n++) {
+    if (!n) {
+      belev_motors[n] = new CurtinTalonSRX(Map::Motors::left_motors[0]);
+      belev_motors[n]->SetInverted(false);
+    } else {
+      belev_motors[n] = new CurtinTalonSRX(Map::Motors::left_motors[1]);
+      belev_motors[n]->SetInverted(false);
+      belev_motors[n]->SetDual(CurtinTalonSRX::ControlMode::Follower, left_motors[0]->GetDeviceID());
+    }
+  }
+
+  for (int n = 0; n < Map::Motors::n_intake_motors; n++) intake_motors_left[n] = new CurtinTalonSRX(Map::Motors::intake_motors_left[n]);
+  for (int n = 0; n < Map::Motors::n_intake_motors; n++) intake_motors_right[n] = new CurtinTalonSRX(Map::Motors::intake_motors_right[n]);
+  for (int n = 0; n < Map::Motors::n_winch_motors; n++) winch_motors[n] = new CurtinTalonSRX(Map::Motors::winch_motors[n]);
 
 
   try {
@@ -32,21 +45,13 @@ int IO::init() { // Sets up IO
 
   navx->ZeroYaw();
 
-  intake_solenoids[0] = new DoubleSolenoid(
-    Map::Pneumatics::intake_solenoids[0][0],
-    Map::Pneumatics::intake_solenoids[0][1],
-    Map::Pneumatics::intake_solenoids[0][1] + 1
-  );
-  intake_solenoids[1] = new DoubleSolenoid(
-    Map::Pneumatics::intake_solenoids[1][0],
-    Map::Pneumatics::intake_solenoids[1][1],
-    Map::Pneumatics::intake_solenoids[1][1] + 1
-  );
-  claw_solenoids[0] = new DoubleSolenoid(
-    Map::Pneumatics::claw_solenoids[0][0],
-    Map::Pneumatics::claw_solenoids[0][1],
-    Map::Pneumatics::claw_solenoids[0][1] + 1
-  );
+  belev_limit_max = new DigitalInput(Map::Sensors::belev_limit_max);
+  belev_limit_min = new DigitalInput(Map::Sensors::belev_limit_min);
+
+
+  for (int n = 0; n < Map::Pneumatics::n_intake_solenoids; n++) intake_solenoids[n] = new DoubleSolenoid(0, Map::Pneumatics::intake_solenoids[n][0], Map::Pneumatics::intake_solenoids[n][1]);
+  for (int n = 0; n < Map::Pneumatics::n_brake_solenoids; n++) brake_solenoids[n] = new DoubleSolenoid(0, Map::Pneumatics::brake_solenoids[n][0], Map::Pneumatics::brake_solenoids[n][1]);
+  for (int n = 0; n < Map::Pneumatics::n_shifter_solenoids; n++) shifter_solenoids[n] = new DoubleSolenoid(0, Map::Pneumatics::shifter_solenoids[n][0], Map::Pneumatics::shifter_solenoids[n][1]);
 
   #ifdef XBOX_CONTROL
   xbox = new XboxController(Map::Controllers::xbox);
@@ -107,10 +112,12 @@ bool IO::get_right_button(int nButton) { return right_joy->GetRawButton(nButton)
 
 #elif DRIVER_TRAINING
 
+bool IO::get_left_xbox_trigger() { return xbox->GetTriggerAxis(XboxController::JoystickHand::kLeftHand) > Map::Controllers::xbox_trigger_deadzone; }
 bool IO::get_left_xbox_bumper() { return xbox->GetBumper(XboxController::JoystickHand::kLeftHand); }
 double IO::get_left_xbox_Y() { return -xbox->GetY(XboxController::JoystickHand::kLeftHand); }
 bool IO::get_left_xbox_stick() { return xbox->GetStickButton(XboxController::JoystickHand::kLeftHand); }
 
+bool IO::get_right_xbox_trigger() { return xbox->GetTriggerAxis(XboxController::JoystickHand::kRightHand) > Map::Controllers::xbox_trigger_deadzone; }
 bool IO::get_right_xbox_bumper() { return xbox->GetBumper(XboxController::JoystickHand::kRightHand); }
 double IO::get_right_xbox_Y() { return -xbox->GetY(XboxController::JoystickHand::kRightHand); }
 bool IO::get_right_xbox_stick() { return xbox->GetStickButton(XboxController::JoystickHand::kRightHand); }
@@ -121,7 +128,10 @@ bool IO::get_xbox_A() { return xbox->GetAButton(); }
 
 double IO::get_left_Y() { return -left_joy->GetY(); }
 double IO::get_left_X() { return left_joy->GetX(); }
-double IO::get_left_twist() { return left_joy->GetZ(); }
+double IO::get_left_twist() {
+  SmartDashboard::PutNumber("Left Z:", -left_joy->GetZ());
+  return -left_joy->GetZ();
+}
 
 bool IO::get_left_trigger() { return left_joy->GetTrigger(); }
 bool IO::get_left_button(int nButton) { return left_joy->GetRawButton(nButton); }
@@ -129,12 +139,17 @@ bool IO::get_left_button(int nButton) { return left_joy->GetRawButton(nButton); 
 
 double IO::get_right_Y() { return -right_joy->GetY(); }
 double IO::get_right_X() { return right_joy->GetX(); }
-double IO::get_right_twist() { return right_joy->GetZ(); }
+double IO::get_right_twist() { return -right_joy->GetZ(); }
 
 bool IO::get_right_trigger() { return right_joy->GetTrigger(); }
 bool IO::get_right_button(int nButton) { return right_joy->GetRawButton(nButton); }
 
 #endif
+
+
+bool IO::get_belev_limit_max() { return belev_limit_max->Get(); }
+bool IO::get_belev_limit_min() { return belev_limit_min->Get(); }
+
 
 IO *IO::get_instance() { // Only make one instance of IO
   if (io == NULL) {
