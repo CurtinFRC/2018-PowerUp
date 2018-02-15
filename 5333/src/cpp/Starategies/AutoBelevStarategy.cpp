@@ -17,12 +17,12 @@ AutoBelevStarategy::AutoBelevStarategy(CurtinTalonSRX *_belev_motor, float _posi
 void AutoBelevStarategy::start() {
   belev_motor->Set(0);
   belev_motor->SetControlMode(CurtinTalonSRX::ControlMode::Position);
-  belev_motor->configure_pidf(0.01, 0.001, 0.0, 0.0);
+  belev_motor->configure_pidf(Map::PID::Belev::kp, Map::PID::Belev::ki, Map::PID::Belev::kd, Map::PID::Belev::kf);
   belev_motor->Set(target);
 }
 
 void AutoBelevStarategy::tick(double time) {
-  if (abs(belev_motor->GetEncoder() - target) < 10) this->done = true; // 10 is temp const
+  if (abs(belev_motor->GetEncoder() - target) < Map::PID::Belev::acc) this->done = true; // 10 is temp const
 }
 
 void AutoBelevStarategy::stop() {

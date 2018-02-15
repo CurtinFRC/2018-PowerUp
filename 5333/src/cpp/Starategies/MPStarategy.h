@@ -9,5 +9,5 @@ using namespace curtinfrc;
 
 class MPStarategy {
 public:
-   static std::shared_ptr<Strategy> make_strat(Drivetrain *drive, std::string left_mp_file, std::string right_mp_file);
+   static std::shared_ptr<Strategy> make_strat(Drivetrain *drive, std::string mp_file_base);
 };

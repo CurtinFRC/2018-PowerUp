@@ -16,10 +16,10 @@ static constexpr MotionProfileConfig mcfg = {
 
 static constexpr double kt = 3 * (1.0 / 80.0);
 
-std::shared_ptr<Strategy> MPStarategy::make_strat(Drivetrain *drive, std::string left_mp_file, std::string right_mp_file) {
+std::shared_ptr<Strategy> MPStarategy::make_strat(Drivetrain *drive, std::string mp_file_base) {
   try {
-    left_mp_file = "/home/lvuser/paths/" + left_mp_file + ".csv";
-    right_mp_file = "/home/lvuser/paths/" + right_mp_file + ".csv";
+    std::string left_mp_file = "/home/lvuser/paths/" + mp_file_base + ".left.csv";
+    std::string right_mp_file = "/home/lvuser/paths/" + mp_file_base + ".right.csv";
 
     auto mode_left = std::make_shared<PathfinderMPMode>(
       IO::get_instance()->left_motors[0], mcfg, left_mp_file.c_str()

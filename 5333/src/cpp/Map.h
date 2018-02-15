@@ -82,10 +82,13 @@ namespace Map { // Map ports
       constexpr double kf = 0;
     };
 
-    namespace Navx {
-      constexpr double kp = 1;
-      constexpr double ki = 0;
-      constexpr double kd = 0;
+    namespace Belev {
+      constexpr double kp = 0.01;
+      constexpr double ki = 0.001;
+      constexpr double kd = 0.0;
+      constexpr double kf = 0.0;
+
+      constexpr double acc = 10;
     };
   };
 }
