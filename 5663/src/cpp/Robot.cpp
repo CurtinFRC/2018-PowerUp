@@ -50,6 +50,7 @@ public:
   uint8_t message = 72;
   double maxspeed = 1;
   bool pressedTurn = false;
+  bool rampsReleased = false;
 
   void RobotInit() {
     camera = CameraServer::GetInstance()->StartAutomaticCapture();
@@ -193,11 +194,14 @@ public:
     man->RunPeriodic();
 
 //———[driver station]—————————————————————————————————————————————————————————
+    //Green buttons
     bool ledButton = station->GetRawButton(1);
+    bool foulStop = station->GetRawButton(2);
 
-    bool liftOverride = station->GetRawButton(3);
-    bool intakeOverride = station->GetRawButton(4);
-    bool zeroLift = station->GetRawButton(5);
+    //Red buttons
+    bool liftOverride = station->GetRawButton(4);
+    bool intakeOverride = station->GetRawButton(5);
+    bool zeroLift = station->GetRawButton(6);
 
     bool rampSwitch = station->GetRawButton(0);
 
@@ -208,7 +212,10 @@ public:
 
     if(rampSwitch) {
       ramp->ConfirmIntentionalDeployment();
+      rampsReleased = true;
     }
+
+    if(foulStop && rampsReleased) ramp->ReleaseFoulStopper();
   }
 
 };
