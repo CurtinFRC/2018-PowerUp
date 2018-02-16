@@ -197,11 +197,9 @@ public:
     bool intakeOverride = station->GetRawButton(4);
     bool zeroLift = station->GetRawButton(5);
 
-    if(liftOverride) {
-      lift->overrideLift(true);
-    } else {
-      lift->overrideLift(false);
-    }
+    lift->overrideLift(liftOverride);
+    man->overrideIntake(intakeOverride);
+
   }
 
 };
