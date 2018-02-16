@@ -23,8 +23,10 @@ namespace components {
       void Restrain();
       void Release();
       void RunPeriodic();
+      void OverrideIntake(bool overridden);
 
     private:
+      bool intakeOverride = false;
       double intakeSpeed = 0.0;
       double deadzone = 0.05;
   };

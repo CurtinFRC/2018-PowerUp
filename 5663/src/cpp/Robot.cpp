@@ -29,6 +29,7 @@ using namespace nt;
 class Robot : public IterativeRobot {
   UsbCamera camera;
   XboxController *xbox, *xbox2;
+  Joystick *station;
   PowerDistributionPanel *pdp;
   SendableChooser<int*> *AutoChooser; // Choose auto mode
   SendableChooser<int*> *StartingPosition; // Choose starting position
@@ -54,6 +55,7 @@ public:
 
     xbox = new XboxController(0);
     xbox2 = new XboxController(1);
+    station = new Joystick(2);
 
     pdp = new PowerDistributionPanel(0);
 
@@ -187,7 +189,21 @@ public:
     drive->RunPeriodic();
     lift->RunPeriodic();
     man->RunPeriodic();
+
+//———[driver station]—————————————————————————————————————————————————————————
+    bool ledButton = station->GetRawButton(0);
+
+    bool liftOverride = station->GetRawButton(3);
+    bool intakeOverride = station->GetRawButton(4);
+    bool zeroLift = station->GetRawButton(5);
+
+    lift->OverrideLift(liftOverride);
+    man->OverrideIntake(intakeOverride);
+
+    if(zeroLift) lift->ResetEncoder();
+
   }
+
 };
 
 START_ROBOT_CLASS(Robot)

@@ -21,11 +21,15 @@ void Manipulator::Restrain() {
   SmartDashboard::PutNumber("arm", restrainer->Get());
 }
 
-// Retract actuator to open restrainer and release power cube
+// Retract actuator to open restrainer and grab power cube
 void Manipulator::Release() {
-  intakeSpeed = -1;
+  if(!intakeOverride) intakeSpeed = -1;
   restrainer->Set(restrainer->kReverse);
   SmartDashboard::PutNumber("arm", restrainer->Get());
+}
+
+void Manipulator::OverrideIntake(bool overridden) {
+  intakeOverride = overridden;
 }
 
 void Manipulator::RunPeriodic() {
