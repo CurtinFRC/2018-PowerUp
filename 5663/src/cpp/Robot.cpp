@@ -191,11 +191,17 @@ public:
     man->RunPeriodic();
 
 //———[driver station]—————————————————————————————————————————————————————————
-    int ledButton = station->GetRawButton(0);
+    bool ledButton = station->GetRawButton(0);
 
-    int liftOverride = station->GetRawButton(3);
-    int intakeOverride = station->GetRawButton(4);
-    int zeroLift = station->GetRawButton(5);
+    bool liftOverride = station->GetRawButton(3);
+    bool intakeOverride = station->GetRawButton(4);
+    bool zeroLift = station->GetRawButton(5);
+
+    if(liftOverride) {
+      lift->overrideLift(true);
+    } else {
+      lift->overrideLift(false);
+    }
   }
 
 };

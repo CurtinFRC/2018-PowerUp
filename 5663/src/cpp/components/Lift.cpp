@@ -27,26 +27,32 @@ Lift::Lift(int m1, int m2) {
 
 // Move lift to high position (for scale)
 void Lift::SetHighPosition() {
-  motor1->Set(ControlMode::PercentOutput, 0);
-  motor1->Set(ControlMode::MotionMagic, highPosition);
-  pos = 2;
-  manualMode = false;
+  if(!encoderOverride) {
+    motor1->Set(ControlMode::PercentOutput, 0);
+    motor1->Set(ControlMode::MotionMagic, highPosition);
+    pos = 2;
+    manualMode = false;
+  }
 }
 
 // Move lift to mid position (for switch)
 void Lift::SetMidPosition() {
-  motor1->Set(ControlMode::PercentOutput, 0);
-  motor1->Set(ControlMode::MotionMagic, midPosition);
-  pos = 1;
-  manualMode = false;
+  if(!encoderOverride) {
+    motor1->Set(ControlMode::PercentOutput, 0);
+    motor1->Set(ControlMode::MotionMagic, midPosition);
+    pos = 1;
+    manualMode = false;
+  }
 }
 
 // Move lift to low position
 void Lift::SetLowPosition() {
-  motor1->Set(ControlMode::PercentOutput, 0);
-  motor1->Set(ControlMode::MotionMagic, 0);
-  pos = 0;
-  manualMode = false;
+  if(!encoderOverride) {
+    motor1->Set(ControlMode::PercentOutput, 0);
+    motor1->Set(ControlMode::MotionMagic, 0);
+    pos = 0;
+    manualMode = false;
+  }
 }
 
 void Lift::Stop() {
@@ -59,22 +65,25 @@ void Lift::SetSpeed(double speed) {
    if(fabs(speed) < deadzone) {
      speed = 0;
      if(manualMode) {
-       motor1->Set(ControlMode::MotionMagic, GetLiftPosition());
+       if(!encoderOverride) motor1->Set(ControlMode::MotionMagic, GetLiftPosition());
        manualMode = false;
      }
    } else {
      manualMode = true;
      speed *= fabs(speed);
 
-     //Lower lift boundries
-     if(lowSwitch->Get() && speed < 0) speed = 0; //limit switch
-     if(GetLiftPosition() < 6000 && speed < 0) speed *= 0.2;  //Soft speed limit
-     if(motor1->GetSelectedSensorVelocity(0) < -600 && GetLiftPosition() < 7000) speed = 0;  //Hardstop
-     //Upper lift boundries
-     if(topSwitch->Get() && speed > 0) speed = 0; //limit switch
-     if(GetLiftPosition() > 21000 && speed > 0) speed *= 0.5; //Soft speed limit
-     if(motor1->GetSelectedSensorVelocity(0) > 800 && GetLiftPosition() > 22000) speed = 0.2; //Hardstop
-     if(motor1->GetSelectedSensorVelocity(0) > 1200 && GetLiftPosition() > 22000) speed = 0.05; //Hardstop
+     //Check if limit switches are enabled
+     if(!encoderOverride) {
+       //Lower lift boundries
+       if(lowSwitch->Get() && speed < 0) speed = 0; //limit switch
+       if(GetLiftPosition() < 6000 && speed < 0) speed *= 0.2;  //Soft speed limit
+       if(motor1->GetSelectedSensorVelocity(0) < -600 && GetLiftPosition() < 7000) speed = 0;  //Hardstop
+       //Upper lift boundries
+       if(topSwitch->Get() && speed > 0) speed = 0; //limit switch
+       if(GetLiftPosition() > 21000 && speed > 0) speed *= 0.5; //Soft speed limit
+       if(motor1->GetSelectedSensorVelocity(0) > 800 && GetLiftPosition() > 22000) speed = 0.2; //Hardstop
+       if(motor1->GetSelectedSensorVelocity(0) > 1200 && GetLiftPosition() > 22000) speed = 0.05; //Hardstop
+     }
 
      motor1->Set(ControlMode::PercentOutput, speed);
      pos = 3;
@@ -84,6 +93,11 @@ void Lift::SetSpeed(double speed) {
 // Reset Lift class motor encoder
 void Lift::ResetEncoder() {
   motor1->SetSelectedSensorPosition(0, 0, 10);
+}
+
+// Override MotionMagic and limit switch control in favour of PercentOutput
+void Lift::overrideLift(bool overridden) {
+  encoderOverride = overridden;
 }
 
 // Run periodic tasks

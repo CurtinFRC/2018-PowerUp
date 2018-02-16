@@ -27,10 +27,12 @@ namespace components {
       void SetSpeed(double speed);
       void ResetEncoder();
       void RunPeriodic();
+      void overrideLift(bool overridden);
 
       int GetLiftPosition(){return motor1->GetSelectedSensorPosition(0);}
     private:
       bool manualMode = false;
+      bool encoderOverride = false;
       int pos = 3, lastpos = 3, midPosition = 11000, highPosition = 26500;
       double deadzone = 0.25, maxVelocity = 1800;
   };
