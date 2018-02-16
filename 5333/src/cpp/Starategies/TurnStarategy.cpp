@@ -19,8 +19,8 @@ void TurnStarategy::tick(double time) {
   pid_output = pid_loop.calculate(pid_input, time);
   if (pid_loop.done(pid_input, time)) this->done = true;
 
-  drive->set_left(throttle + pid_output);
-  drive->set_right(throttle - pid_output);
+  drive->set_left(throttle * pid_output);
+  drive->set_right(-throttle * pid_output);
 }
 
 void TurnStarategy::stop() {
