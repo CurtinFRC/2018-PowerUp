@@ -12,7 +12,7 @@
 #include <cstring>
 #include <string>
 #include <cstdint>
-#include "config.h"
+#include <iostream>
 
 const int PORT = 0xDEAD;
 
@@ -27,5 +27,3 @@ class rioreceive
 		int sockfd;
 		struct sockaddr_in addr;
 };
-
-#include "rioreceive.cpp"

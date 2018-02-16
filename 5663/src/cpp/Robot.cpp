@@ -18,6 +18,8 @@
 #include "components/Climber.h"
 #include "autonomous/Autonomous.h"
 
+#include "rioreceive.h"
+
 using namespace frc;
 using namespace curtinfrc;
 using namespace std;
@@ -67,7 +69,7 @@ public:
                       6, 5, 4,  //right
                       0, 1);    //solenoid
     lift = new Lift(8, 7);
-    ramp = new Ramp(4, 5, 6, 7); // CHECK THESE!!!
+    ramp = new Ramp(6, 7, 4, 5); // CHECK THESE!!!
     man = new Manipulator(0, 2, 3);
 
     compressor = new Compressor(0);
@@ -191,17 +193,22 @@ public:
     man->RunPeriodic();
 
 //———[driver station]—————————————————————————————————————————————————————————
-    bool ledButton = station->GetRawButton(0);
+    bool ledButton = station->GetRawButton(1);
 
     bool liftOverride = station->GetRawButton(3);
     bool intakeOverride = station->GetRawButton(4);
     bool zeroLift = station->GetRawButton(5);
+
+    bool rampSwitch = station->GetRawButton(0);
 
     lift->OverrideLift(liftOverride);
     man->OverrideIntake(intakeOverride);
 
     if(zeroLift) lift->ResetEncoder();
 
+    if(rampSwitch) {
+      ramp->ConfirmIntentionalDeployment();
+    }
   }
 
 };

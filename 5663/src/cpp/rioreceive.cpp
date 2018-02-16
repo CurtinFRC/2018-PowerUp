@@ -1,3 +1,5 @@
+#include "rioreceive.h"
+
 void rioreceive::init()
 {
 	if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) == -1) {
