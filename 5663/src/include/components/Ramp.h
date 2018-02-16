@@ -5,9 +5,12 @@
 namespace components {
   class Ramp {
     DoubleSolenoid *solenoid;
+    DoubleSolenoid *fsSolenoid;
 
     public:
-      Ramp(int fwd, int rev);
+      Ramp(int fwd, int rev, int fsFwd, int fsRev);
       void ConfirmIntentionalDeployment();
+      void ReleaseFoulStopper();
+      void Reset();
   };
 }

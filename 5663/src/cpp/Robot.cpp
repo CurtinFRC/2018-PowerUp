@@ -65,7 +65,7 @@ public:
                       6, 5, 4,  //right
                       0, 1);    //solenoid
     lift = new Lift(8, 7);
-    ramp = new Ramp(4, 5);
+    ramp = new Ramp(4, 5, 6, 7); // CHECK THESE!!!
     man = new Manipulator(0, 2, 3);
 
     compressor = new Compressor(0);
@@ -108,7 +108,7 @@ public:
     drive->ResetEncoder();
     lift->ResetEncoder();
     lift->SetLowPosition();
-    
+
     auton->SetStageOne((int)AutoChooser->GetSelected(), (int)StartingPosition->GetSelected(), (int)AutoWait->GetSelected());
     auton->ChooseStage();
   }
