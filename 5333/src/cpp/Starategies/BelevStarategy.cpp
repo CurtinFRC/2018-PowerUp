@@ -1,10 +1,10 @@
+#include "Starategies\BelevStarategy.h"
+
 #include <iostream>
 
-#include "BelevStarategy.h"
-
-#include "..\ControlMap.h"
-#include "..\IO.h"
-#include "..\Map.h"
+#include "ControlMap.h"
+#include "IO.h"
+#include "Map.h"
 
 using namespace std;
 

@@ -1,10 +1,10 @@
-#include "TurnStarategy.h"
+#include "Starategies\TurnStarategy.h"
 
 #include "curtinfrc/drivetrain.h"
 #include "PID.h"
 
-#include "..\IO.h"
-#include "..\Map.h"
+#include "IO.h"
+#include "Map.h"
 
 using namespace std;
 

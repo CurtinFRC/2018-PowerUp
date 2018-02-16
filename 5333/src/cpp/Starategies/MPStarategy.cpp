@@ -1,10 +1,11 @@
-#include "MPStarategy.h"
-#include "..\IO.h"
+#include "Starategies\MPStarategy.h"
+
+#include <string>
 
 #include "curtinfrc/drivetrain.h"
 #include "curtinfrc/strategy/mp_strategy.h"
 
-#include <string>
+#include "IO.h"
 
 using namespace curtinfrc;
 

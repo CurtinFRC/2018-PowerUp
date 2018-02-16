@@ -1,10 +1,10 @@
+#include "Starategies\AutoBelevStarategy.h"
+
 #include <iostream>
-
 #include "WPILib.h"
-#include "AutoBelevStarategy.h"
-#include "..\ControlMap.h"
 
-#include "..\Map.h"
+#include "ControlMap.h"
+#include "Map.h"
 
 using namespace frc;
 using namespace std;
