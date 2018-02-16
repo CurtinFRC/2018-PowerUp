@@ -197,8 +197,10 @@ public:
     bool intakeOverride = station->GetRawButton(4);
     bool zeroLift = station->GetRawButton(5);
 
-    lift->overrideLift(liftOverride);
-    man->overrideIntake(intakeOverride);
+    lift->OverrideLift(liftOverride);
+    man->OverrideIntake(intakeOverride);
+
+    if(zeroLift) lift->ResetEncoder();
 
   }
 

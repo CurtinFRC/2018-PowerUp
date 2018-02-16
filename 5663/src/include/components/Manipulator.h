@@ -23,7 +23,7 @@ namespace components {
       void Restrain();
       void Release();
       void RunPeriodic();
-      void overrideIntake(bool overridden);
+      void OverrideIntake(bool overridden);
 
     private:
       bool intakeOverride = false;

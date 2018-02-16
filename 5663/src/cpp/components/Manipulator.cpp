@@ -28,7 +28,7 @@ void Manipulator::Release() {
   SmartDashboard::PutNumber("arm", restrainer->Get());
 }
 
-void Manipulator::overrideIntake(bool overridden) {
+void Manipulator::OverrideIntake(bool overridden) {
   intakeOverride = overridden;
 }
 

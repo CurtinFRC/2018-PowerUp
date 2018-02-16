@@ -27,7 +27,7 @@ namespace components {
       void SetSpeed(double speed);
       void ResetEncoder();
       void RunPeriodic();
-      void overrideLift(bool overridden);
+      void OverrideLift(bool overridden);
 
       int GetLiftPosition(){return motor1->GetSelectedSensorPosition(0);}
     private:

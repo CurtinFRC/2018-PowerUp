@@ -96,7 +96,7 @@ void Lift::ResetEncoder() {
 }
 
 // Override MotionMagic and limit switch control in favour of PercentOutput
-void Lift::overrideLift(bool overridden) {
+void Lift::OverrideLift(bool overridden) {
   encoderOverride = overridden;
 }
 
