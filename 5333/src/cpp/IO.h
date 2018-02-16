@@ -2,6 +2,7 @@
 
 #include "WPILib.h"
 #include "curtinfrc/motors/CurtinTalonSRX.h"
+
 #include "AHRS.h"
 #include "Map.h"
 
@@ -12,16 +13,23 @@ class IO {
 public:
   int init();
 
-  CurtinTalonSRX *left_motors[2];
-  CurtinTalonSRX *right_motors[2];
+  CurtinTalonSRX *left_motors[Map::Motors::n_drive_motors];
+  CurtinTalonSRX *right_motors[Map::Motors::n_drive_motors];
 
-  CurtinTalonSRX *belev_motors[1];
-  CurtinTalonSRX *intake_motors[2][1];
+  CurtinTalonSRX *belev_motors[Map::Motors::n_belev_motors];
+  CurtinTalonSRX *intake_motors_left[Map::Motors::n_intake_motors];
+  CurtinTalonSRX *intake_motors_right[Map::Motors::n_intake_motors];
+  CurtinTalonSRX *winch_motors[Map::Motors::n_winch_motors];
 
-  DoubleSolenoid *intake_solenoids[2];
-  DoubleSolenoid *claw_solenoids[1];
+  DoubleSolenoid *shifter_solenoids[Map::Pneumatics::n_shifter_solenoids];
+  DoubleSolenoid *brake_solenoids[Map::Pneumatics::n_brake_solenoids];
+  DoubleSolenoid *intake_solenoids[Map::Pneumatics::n_intake_solenoids];
+
 
   AHRS *navx;
+
+  DigitalInput *belev_limit_max, *belev_limit_min;
+
 
   #ifdef XBOX_CONTROL
 
@@ -69,10 +77,12 @@ public:
 
   XboxController *xbox;
 
+  bool get_left_xbox_trigger();
   bool get_left_xbox_bumper();
   double get_left_xbox_Y();
   bool get_left_xbox_stick();
 
+  bool get_right_xbox_trigger();
   bool get_right_xbox_bumper();
   double get_right_xbox_Y();
   bool get_right_xbox_stick();
@@ -98,6 +108,11 @@ public:
   bool get_right_button(int nButton);
 
   #endif
+
+
+  bool get_belev_limit_max();
+  bool get_belev_limit_min();
+
 
   static IO *get_instance();
 };

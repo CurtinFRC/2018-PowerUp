@@ -1,7 +1,7 @@
 sudo apt-get update
 
 sudo apt-get -y install build-essential cmake cmake-curses-gui pkg-config
-sudo apt-get -y install libjpeg-dev libtiff5-dev libjasper-dev libpng12-dev libavcodec-dev libavformat-dev libswscale-dev libeigen3-dev libxvidcore-dev libx264-dev libgtk2.0-dev
+sudo apt-get -y install libjpeg-dev libtiff5-dev libjasper-dev libavcodec-dev libavformat-dev libswscale-dev libeigen3-dev libxvidcore-dev libx264-dev libgtk2.0-dev
 sudo apt-get -y install libv4l-dev v4l-utils
 sudo modprobe bcm2835-v4l2
 sudo apt-get -y install libatlas-base-dev gfortran

@@ -1,8 +1,8 @@
 #include "capture.h"
 
-void capture::init()
+void capture::init(int camera = 0)
 {
-	video_capture = new cv::VideoCapture(0);
+	video_capture = new cv::VideoCapture(camera);
 	if (!video_capture->isOpened()) {
 		std::cerr << "Could not open camera." << std::endl;
 		exit(-1);
@@ -19,7 +19,6 @@ void capture::run()
 	(*video_capture) >> frame;
 	frame_mtx.unlock();
 	cap_cv.notify_all();
-	cv::waitKey(10);
 }
 
 cv::Mat* capture::get_frame()

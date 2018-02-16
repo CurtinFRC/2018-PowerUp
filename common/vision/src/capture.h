@@ -3,12 +3,12 @@
 #include <condition_variable>
 #include <mutex>
 #include <memory>
+#include "config.h" 
 
-const int CAMERA_WIDTH = 640, CAMERA_HEIGHT = 480;
-
-class capture {
+class capture
+{
 	public:
-		void init();
+		void init(int camera);
 		void run();
 		cv::Mat* get_frame();
 		void lock();
