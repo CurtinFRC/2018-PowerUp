@@ -32,6 +32,8 @@ class Robot : public IterativeRobot {
   UsbCamera camera;
   XboxController *xbox, *xbox2;
   Joystick *station;
+  JoystickButton *rampSwitch;
+
   PowerDistributionPanel *pdp;
   SendableChooser<int*> *AutoChooser; // Choose auto mode
   SendableChooser<int*> *StartingPosition; // Choose starting position
@@ -59,6 +61,8 @@ public:
     xbox = new XboxController(0);
     xbox2 = new XboxController(1);
     station = new Joystick(2);
+    rampSwitch = new JoystickButton(station, 0);
+
 
     pdp = new PowerDistributionPanel(0);
 
@@ -71,6 +75,7 @@ public:
                       0, 1);    //solenoid
     lift = new Lift(8, 7);
     ramp = new Ramp(6, 7, 4, 5); // CHECK THESE!!!
+    ramp->Reset();
     man = new Manipulator(0, 2, 3);
 
     compressor = new Compressor(0);
@@ -129,6 +134,7 @@ public:
     drive->Stop();
     lift->Stop();
     man->SetIntakeSpeed(0);
+    ramp->Reset();
   }
 
   void TeleopPeriodic() {
@@ -178,8 +184,10 @@ public:
 
   //———[ramp]———————————————————————————————————————————————————————————————————
     if(xbox->GetBumper(xbox->kLeftHand) && xbox->GetBumper(xbox->kRightHand) && xbox2->GetBumper(xbox2->kLeftHand) && xbox2->GetBumper(xbox2->kRightHand)) {
-      if(timer->GetMatchTime() < 30) ramp->ConfirmIntentionalDeployment();
+      //if(timer->GetMatchTime() < 30)
+      ramp->ConfirmIntentionalDeployment();
     }
+    if(xbox->GetXButton()) ramp->ReleaseFoulStopper();
 
   //———[climber]————————————————————————————————————————————————————————————————
 
@@ -203,16 +211,16 @@ public:
     bool intakeOverride = station->GetRawButton(5);
     bool zeroLift = station->GetRawButton(6);
 
-    bool rampSwitch = station->GetRawButton(0);
-
     lift->OverrideLift(liftOverride);
     man->OverrideIntake(intakeOverride);
 
     if(zeroLift) lift->ResetEncoder();
 
-    if(rampSwitch) {
+    if(rampSwitch->Get()) {
       ramp->ConfirmIntentionalDeployment();
       rampsReleased = true;
+    } else {
+      //ramp->Reset();
     }
 
     if(foulStop && rampsReleased) ramp->ReleaseFoulStopper();
