@@ -39,6 +39,8 @@ public:
   Robot() { }
 
   void RobotInit() {
+    CameraServer::GetInstance()->StartAutomaticCapture();
+
     io = IO::get_instance(); // Refer to IO
 
     drive = new Drivetrain(io->left_motors[0], io->right_motors[0], io->left_motors[0], io->right_motors[0]);

@@ -1,10 +1,10 @@
+#include "Starategies\BelevStarategy.h"
+
 #include <iostream>
 
-#include "BelevStarategy.h"
-
-#include "..\ControlMap.h"
-#include "..\IO.h"
-#include "..\Map.h"
+#include "ControlMap.h"
+#include "IO.h"
+#include "Map.h"
 
 using namespace std;
 
@@ -13,8 +13,6 @@ BelevStarategy::BelevStarategy(CurtinTalonSRX *_belev_motor) {
 }
 
 void BelevStarategy::start() {
-  belev_motor->SetControlMode(CurtinTalonSRX::ControlMode::PercentOutput);
-  belev_motor->configure_pidf(0.0, 0.0, 0.0, 0.0);
   belev_motor->Set(0);
 }
 

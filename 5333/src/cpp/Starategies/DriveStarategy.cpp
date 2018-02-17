@@ -1,10 +1,11 @@
+#include "Starategies\DriveStarategy.h"
+
 #include <iostream>
 
-#include "DriveStarategy.h"
 #include "curtinfrc/drivetrain.h"
-#include "..\ControlMap.h"
+#include "ControlMap.h"
 
-#include "..\Map.h"
+#include "Map.h"
 
 using namespace std;
 

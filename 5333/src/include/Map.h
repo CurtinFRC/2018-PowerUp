@@ -92,9 +92,8 @@ namespace Map { // Map ports
 
     namespace Belev {
       constexpr double kp = 0.01;
-      constexpr double ki = 0.001;
+      constexpr double ki = 0.0;
       constexpr double kd = 0.0;
-      constexpr double kf = 0.0;
 
       constexpr double kde = 1;
     };
