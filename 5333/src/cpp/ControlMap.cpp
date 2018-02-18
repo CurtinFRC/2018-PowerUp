@@ -7,6 +7,8 @@
 
 using namespace std;
 
+static Toggle *override_toggle;
+
 #ifdef XBOX_CONTROL
 
 int ControlMap::init() { return 0; }
@@ -31,7 +33,10 @@ int ControlMap::init() { return 0; }
 
 #elif DRIVER_TRAINING
 
-int ControlMap::init() { return 0; }
+int ControlMap::init() {
+  override_toggle = new Toggle(Toggle::Trigger::True);
+  return 0;
+}
 
 bool ControlMap::throttle_decrement() {
   if (IO::get_instance()->get_left_xbox_bumper()) { return true; }
@@ -64,10 +69,7 @@ double ControlMap::left_drive_power() {
   double left_power = 0;
   string mode = "Driving";
 
-  if (IO::get_instance()->get_xbox_A()) {
-    mode = "BRAKE";
-    left_power = 0;
-  } else if (IO::get_instance()->get_left_xbox_stick() || IO::get_instance()->get_right_xbox_stick() || IO::get_instance()->get_left_xbox_trigger() || IO::get_instance()->get_right_xbox_trigger()) {
+  if (override_toggle->apply(IO::get_instance()->get_xbox_A())) {
     mode = "Driving Overridden";
     left_power = IO::get_instance()->get_left_xbox_Y();
   } else {
@@ -103,10 +105,7 @@ double ControlMap::right_drive_power() {
   double right_power = 0;
   string mode = "Driving";
 
-  if (IO::get_instance()->get_xbox_A()) {
-    mode = "BRAKE";
-    right_power = 0;
-  } else if (IO::get_instance()->get_left_xbox_stick() || IO::get_instance()->get_right_xbox_stick() || IO::get_instance()->get_left_xbox_trigger() || IO::get_instance()->get_right_xbox_trigger()) {
+  if (override_toggle->apply(IO::get_instance()->get_xbox_A())) {
     mode = "Driving Overridden";
     right_power = IO::get_instance()->get_right_xbox_Y();
   } else {
@@ -153,7 +152,5 @@ double ControlMap::belevator_motor_power() { return IO::get_instance()->get_righ
 
 double ControlMap::intake_motor_power() { return (IO::get_instance()->get_left_button(9) ? -1 : 0) + (IO::get_instance()->get_left_button(10) ? 1 : 0); }
 bool ControlMap::intake_claw_state() { return IO::get_instance()->get_left_button(8); }
-
-double ControlMap::winch_power() { return (IO::get_instance()->get_left_button(11) ? -1 : 0) + (IO::get_instance()->get_left_button(12) ? 1 : 0); }
 
 #endif

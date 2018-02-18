@@ -8,7 +8,6 @@
 #include "IO.h"
 #include "Belev.h"
 #include "Map.h"
-#include "Winch.h"
 #include "ControlMap.h"
 #include "Starategies/DriveStarategy.h"
 #include "Auto.h"
@@ -26,10 +25,7 @@ using namespace std;
 class Robot : public TimedRobot {
 public:
   Drivetrain *drive;
-
   BelevatorControl *belev;
-  WinchControl *winch;
-
   IO *io;
 
   AutoControl *auto_;
@@ -42,10 +38,8 @@ public:
     CameraServer::GetInstance()->StartAutomaticCapture();
 
     io = IO::get_instance(); // Refer to IO
-
     drive = new Drivetrain(io->left_motors[0], io->right_motors[0], io->left_motors[0], io->right_motors[0]);
     belev = new BelevatorControl();
-    winch = new WinchControl();
 
     auto_ = new AutoControl(drive);
 
@@ -54,7 +48,6 @@ public:
 
   void AutonomousInit() {
     cout << "Auto Init" << endl;
-    auto io = IO::get_instance();
     io->navx->ZeroYaw();
 
     auto_->init();
@@ -64,7 +57,6 @@ public:
     drive->strategy_controller().periodic();
     drive->log_write(); // Make this bit call only on mutates later *
     // belev->log_write();
-    // winch->log_write();
   }
 
   void TeleopInit() {
@@ -80,8 +72,6 @@ public:
     belev->tick();
     belev->claw(ControlMap::intake_claw_state());
     belev->intake(ControlMap::intake_motor_power());
-
-    winch->send_to_robot(ControlMap::winch_power());
   }
 
   void TestInit() {

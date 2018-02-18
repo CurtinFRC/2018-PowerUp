@@ -15,6 +15,4 @@ namespace ControlMap {
 
   double intake_motor_power();
   bool intake_claw_state();
-
-  double winch_power();
 };

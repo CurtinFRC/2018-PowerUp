@@ -43,20 +43,15 @@ namespace Map { // Map ports
     const int n_intake_motors                            = 1;
     constexpr int intake_motors_left[n_intake_motors]    = {38};
     constexpr int intake_motors_right[n_intake_motors]   = {39};
-
-    const int n_winch_motors                             = 1;
-    constexpr int winch_motors[n_winch_motors]           = {30};
   };
 
   namespace Pneumatics {
     const int n_intake_solenoids                                           = 1;
     constexpr int intake_solenoids[n_intake_solenoids][nSolenoidPorts]     = {{2, 5}};
 
-    const int n_brake_solenoids                                            = 1;
-    constexpr int brake_solenoids[n_brake_solenoids][nSolenoidPorts]       = {{1, 6}};
+    constexpr int brake_solenoid[nSolenoidPorts]       = {1, 6};
 
-    const int n_shifter_solenoids                                          = 1;
-    constexpr int shifter_solenoids[n_shifter_solenoids][nSolenoidPorts]   = {{0, 7}};
+    constexpr int shifter_solenoid[nSolenoidPorts]   = {0, 7};
   };
 
   namespace Robot { // Robot stats
