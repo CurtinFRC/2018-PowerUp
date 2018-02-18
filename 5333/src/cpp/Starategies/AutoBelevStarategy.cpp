@@ -3,25 +3,27 @@
 #include <iostream>
 #include "WPILib.h"
 
+#include "IO.h"
 #include "ControlMap.h"
 #include "Map.h"
+#include "Belev.h"
 
 using namespace frc;
 using namespace std;
 
 void AutoBelevStarategy::start() {
-  belev_motor->Set(0);
+  belev->lift(0);
 }
 
 void AutoBelevStarategy::tick(double time) {
-  double pid_input = belev_motor->GetEncoder(), pid_output;
+  double pid_input = IO::get_instance()->belev_motors[0]->GetEncoder(), pid_output;
 
   pid_output = pid_loop.calculate(pid_input, time);
   if (pid_loop.done(pid_input, time)) this->done = true;
 
-  belev_motor->Set(pid_output);
+  belev->lift(pid_output);
 }
 
 void AutoBelevStarategy::stop() {
-  belev_motor->Set(0);
+  belev->lift(0);
 }

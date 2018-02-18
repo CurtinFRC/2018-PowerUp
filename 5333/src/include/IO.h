@@ -19,10 +19,9 @@ public:
   CurtinTalonSRX *belev_motors[Map::Motors::n_belev_motors];
   CurtinTalonSRX *intake_motors_left[Map::Motors::n_intake_motors];
   CurtinTalonSRX *intake_motors_right[Map::Motors::n_intake_motors];
-  CurtinTalonSRX *winch_motors[Map::Motors::n_winch_motors];
 
-  DoubleSolenoid *shifter_solenoids[Map::Pneumatics::n_shifter_solenoids];
-  DoubleSolenoid *brake_solenoids[Map::Pneumatics::n_brake_solenoids];
+  DoubleSolenoid *shifter_solenoid;
+  DoubleSolenoid *brake_solenoid;
   DoubleSolenoid *intake_solenoids[Map::Pneumatics::n_intake_solenoids];
 
 

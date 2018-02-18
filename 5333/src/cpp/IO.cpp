@@ -20,19 +20,33 @@ int IO::init() { // Sets up IO
   right_motors[1]->SetDual(CurtinTalonSRX::ControlMode::Follower, right_motors[0]->GetDeviceID());
 
   for (int n = 0; n < Map::Motors::n_belev_motors; n++) {
-    if (!n) {
-      belev_motors[n] = new CurtinTalonSRX(Map::Motors::left_motors[0]);
+    if (n == 0) {
+      belev_motors[n] = new CurtinTalonSRX(Map::Motors::belev_motors[0]);
       belev_motors[n]->SetInverted(false);
     } else {
-      belev_motors[n] = new CurtinTalonSRX(Map::Motors::left_motors[1]);
+      belev_motors[n] = new CurtinTalonSRX(Map::Motors::belev_motors[n]);
       belev_motors[n]->SetInverted(false);
-      belev_motors[n]->SetDual(CurtinTalonSRX::ControlMode::Follower, left_motors[0]->GetDeviceID());
+      belev_motors[n]->SetDual(CurtinTalonSRX::ControlMode::Follower, belev_motors[0]->GetDeviceID());
     }
   }
 
-  for (int n = 0; n < Map::Motors::n_intake_motors; n++) intake_motors_left[n] = new CurtinTalonSRX(Map::Motors::intake_motors_left[n]);
-  for (int n = 0; n < Map::Motors::n_intake_motors; n++) intake_motors_right[n] = new CurtinTalonSRX(Map::Motors::intake_motors_right[n]);
-  for (int n = 0; n < Map::Motors::n_winch_motors; n++) winch_motors[n] = new CurtinTalonSRX(Map::Motors::winch_motors[n]);
+  for (int n = 0; n < Map::Motors::n_intake_motors; n++) {
+    if (n == 0) {
+      intake_motors_left[0] = new CurtinTalonSRX(Map::Motors::intake_motors_left[n]);
+      intake_motors_left[0]->SetInverted(false);
+
+      intake_motors_right[0] = new CurtinTalonSRX(Map::Motors::intake_motors_right[n]);
+      intake_motors_right[0]->SetInverted(true);
+    } else {
+      intake_motors_left[n] = new CurtinTalonSRX(Map::Motors::intake_motors_left[n]);
+      intake_motors_left[n]->SetInverted(false);
+      intake_motors_left[n]->SetDual(CurtinTalonSRX::ControlMode::Follower, intake_motors_left[0]->GetDeviceID());
+
+      intake_motors_right[n] = new CurtinTalonSRX(Map::Motors::intake_motors_right[n]);
+      intake_motors_right[n]->SetInverted(true);
+      intake_motors_right[n]->SetDual(CurtinTalonSRX::ControlMode::Follower, intake_motors_right[0]->GetDeviceID());
+    }
+  }
 
 
   try {
@@ -50,8 +64,8 @@ int IO::init() { // Sets up IO
 
 
   for (int n = 0; n < Map::Pneumatics::n_intake_solenoids; n++) intake_solenoids[n] = new DoubleSolenoid(0, Map::Pneumatics::intake_solenoids[n][0], Map::Pneumatics::intake_solenoids[n][1]);
-  for (int n = 0; n < Map::Pneumatics::n_brake_solenoids; n++) brake_solenoids[n] = new DoubleSolenoid(0, Map::Pneumatics::brake_solenoids[n][0], Map::Pneumatics::brake_solenoids[n][1]);
-  for (int n = 0; n < Map::Pneumatics::n_shifter_solenoids; n++) shifter_solenoids[n] = new DoubleSolenoid(0, Map::Pneumatics::shifter_solenoids[n][0], Map::Pneumatics::shifter_solenoids[n][1]);
+  brake_solenoid = new DoubleSolenoid(0, Map::Pneumatics::brake_solenoid[0], Map::Pneumatics::brake_solenoid[1]);
+  shifter_solenoid = new DoubleSolenoid(0, Map::Pneumatics::shifter_solenoid[0], Map::Pneumatics::shifter_solenoid[1]);
 
   #ifdef XBOX_CONTROL
   xbox = new XboxController(Map::Controllers::xbox);
