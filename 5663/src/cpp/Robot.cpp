@@ -18,8 +18,6 @@
 #include "components/Climber.h"
 #include "autonomous/Autonomous.h"
 
-#include "rioreceive.h"
-
 using namespace frc;
 using namespace curtinfrc;
 using namespace std;
@@ -31,9 +29,6 @@ using namespace nt;
 class Robot : public IterativeRobot {
   UsbCamera camera;
   XboxController *xbox, *xbox2;
-  Joystick *station;
-  JoystickButton *rampSwitch;
-
   PowerDistributionPanel *pdp;
   SendableChooser<int*> *AutoChooser; // Choose auto mode
   SendableChooser<int*> *StartingPosition; // Choose starting position
@@ -47,12 +42,13 @@ class Robot : public IterativeRobot {
   Autonomous *auton;
   I2C *arduino;
   Timer *timer;
+  Joystick *station;
+  //JoystickButton *rampSwitch;
 
 public:
   uint8_t message = 72;
   double maxspeed = 1;
   bool pressedTurn = false;
-  bool rampsReleased = false;
 
   void RobotInit() {
     camera = CameraServer::GetInstance()->StartAutomaticCapture();
@@ -60,9 +56,6 @@ public:
 
     xbox = new XboxController(0);
     xbox2 = new XboxController(1);
-    station = new Joystick(2);
-    rampSwitch = new JoystickButton(station, 0);
-
 
     pdp = new PowerDistributionPanel(0);
 
@@ -73,10 +66,9 @@ public:
     drive = new Drive(1, 2, 3,  //left
                       6, 5, 4,  //right
                       0, 1);    //solenoid
-    lift = new Lift(8, 7);
-    ramp = new Ramp(6, 7, 4, 5); // CHECK THESE!!!
-    ramp->Reset();
-    man = new Manipulator(0, 2, 3);
+    lift = new Lift(7, 8);
+    ramp = new Ramp(6, 7, 4, 5);
+    man = new Manipulator(0, 2, 3 );
 
     compressor = new Compressor(0);
     compressor->SetClosedLoopControl(true);
@@ -91,7 +83,7 @@ public:
     AutoChooser->AddDefault("Cross Baseline",(int*) 0);
     AutoChooser->AddObject("Single Switch",(int*) 1);
     AutoChooser->AddObject("Single Scale",(int*) 2);
-    //SmartDashboard::PutData("AutoChooser", AutoChooser);
+    SmartDashboard::PutData("AutoChooser", AutoChooser);
 
     StartingPosition->AddObject("Left (1)", (int*) 1);
     StartingPosition->AddDefault("Middle (2)", (int*) 2);
@@ -110,6 +102,8 @@ public:
     AutoWait->AddObject("9S",(int*) 9);
     AutoWait->AddObject("10S",(int*) 10);
     SmartDashboard::PutData("AutoWait", AutoWait);
+    station = new Joystick(2);
+    //rampSwitch = new JoystickButton(station, 0);
   }
 
   void AutonomousInit() {
@@ -142,9 +136,9 @@ public:
   //———[drivetrain]—————————————————————————————————————————————————————————————
     if(lift->GetLiftPosition() > 11000) drive->SetSlowGear();
 
-    if(lift->GetLiftPosition() > 14000) maxspeed = 0.4;
+    if(lift->GetLiftPosition() > 14000) maxspeed = 0.35;
     else if(9000 <= lift->GetLiftPosition() && lift->GetLiftPosition() <= 14000) {
-      maxspeed = -(1.0/300.0) * (45.0 - ( sqrt(15.0) * sqrt(15835.0-lift->GetLiftPosition()) ) );
+      maxspeed = (-(1.0/300.0) * (45.0 - ( sqrt(15.0) * sqrt(15835.0-lift->GetLiftPosition()) ) )) - 0.1;
     }
     else if(lift->GetLiftPosition() < 9000) maxspeed = 1;
 
@@ -183,49 +177,30 @@ public:
     }
 
   //———[ramp]———————————————————————————————————————————————————————————————————
-    if(xbox->GetBumper(xbox->kLeftHand) && xbox->GetBumper(xbox->kRightHand) && xbox2->GetBumper(xbox2->kLeftHand) && xbox2->GetBumper(xbox2->kRightHand)) {
-      //if(timer->GetMatchTime() < 30)
-      ramp->ConfirmIntentionalDeployment();
-    }
-    if(xbox->GetXButton()) ramp->ReleaseFoulStopper();
+    //if(xbox->GetBumper(xbox->kLeftHand) && xbox->GetBumper(xbox->kRightHand) && xbox2->GetBumper(xbox2->kLeftHand) && xbox2->GetBumper(xbox2->kRightHand)) {
+    // if(xbox->GetBButton()) {
+    //   //if(timer->GetMatchTime() < 30)
+    //   ramp->ConfirmIntentionalDeployment();
+    // }
+    if(station->GetRawButton(4)) ramp->ReleaseFoulStopper();
+    if(station->GetRawButton(1)) ramp->ConfirmIntentionalDeployment();
 
   //———[climber]————————————————————————————————————————————————————————————————
 
 
   //———[periodic]———————————————————————————————————————————————————————————————
     message = 76;
+    SmartDashboard::PutBoolean("Joystickstation,", station->GetRawButton(0));
+    SmartDashboard::PutBoolean("Joystickstation1,", station->GetRawButton(1));
+    SmartDashboard::PutBoolean("Joystickstation2,", station->GetRawButton(2));
+
     SmartDashboard::PutBoolean("transaction", arduino->Transaction(&message, 1, NULL, 0));
     SmartDashboard::PutBoolean("rampsReady", (timer->GetMatchTime() < 30));
-    SmartDashboard::PutData("AutoWait", AutoWait);
+
     drive->RunPeriodic();
     lift->RunPeriodic();
     man->RunPeriodic();
-
-//———[driver station]—————————————————————————————————————————————————————————
-    //Green buttons
-    bool ledButton = station->GetRawButton(1);
-    bool foulStop = station->GetRawButton(2);
-
-    //Red buttons
-    bool liftOverride = station->GetRawButton(4);
-    bool intakeOverride = station->GetRawButton(5);
-    bool zeroLift = station->GetRawButton(6);
-
-    lift->OverrideLift(liftOverride);
-    man->OverrideIntake(intakeOverride);
-
-    if(zeroLift) lift->ResetEncoder();
-
-    if(rampSwitch->Get()) {
-      ramp->ConfirmIntentionalDeployment();
-      rampsReleased = true;
-    } else {
-      //ramp->Reset();
-    }
-
-    if(foulStop && rampsReleased) ramp->ReleaseFoulStopper();
-  }
-
+   }
 };
 
 START_ROBOT_CLASS(Robot)

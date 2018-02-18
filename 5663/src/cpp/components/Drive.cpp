@@ -83,9 +83,9 @@ bool Drive::TurnAngle(double speed, double angle, double timeout) {
   if(turning) {
 
     if(currentGear) {
-      if(turn->GetError() > 30) turn->SetPID(0.02, 0.0, 0.06); //fast  //0.05 = D
+      if(fabs(turn->GetError()) > 30) turn->SetPID(0.02, 0.0, 0.068); //fast  //0.05 = D
       else turn->SetPID(0.02, 0.0005, 0.06);
-      SetRampRate(0.6);
+      SetRampRate(0.8);
     }
     else {
       turn->SetPID(0.02, 0.0, 0.005); //slow
@@ -130,10 +130,11 @@ bool Drive::TurnAngle(double speed, double angle, double timeout) {
 bool Drive::DriveDistance(double speed, double distance, double timeout) {
   if(!driving) { // Run setup
     int encoderCount = 0;
-    if(currentGear) encoderCount = kFG * distance;
-    else encoderCount = kSG * distance;
-    double F = 2.7, P = 4.0, I = 0, D = 0; // P = 2.0
-    int acceleration = 400;
+    encoderCount = kFG * distance;
+    // if(currentGear) encoderCount = kFG * distance;
+    // else encoderCount = kSG * distance;
+    double F = 3.5, P = 4.0, I = 0, D = 0; // P = 2.0
+    int acceleration = 380;
     if(currentGear) acceleration = 200;
     left1->SetSelectedSensorPosition(0,0,10);
     right1->SetSelectedSensorPosition(0,0,10);

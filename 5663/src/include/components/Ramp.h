@@ -12,5 +12,7 @@ namespace components {
       void ConfirmIntentionalDeployment();
       void ReleaseFoulStopper();
       void Reset();
+
+      bool rampsDown = false;
   };
 }

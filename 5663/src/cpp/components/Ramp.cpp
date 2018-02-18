@@ -14,14 +14,16 @@ Ramp::Ramp(int fwd, int rev, int fsFwd, int fsRev) {
 // Deploy ramp
 void Ramp::ConfirmIntentionalDeployment() {
   solenoid->Set(solenoid->kReverse);
+  rampsDown = true;
 }
 
 void Ramp::ReleaseFoulStopper() {
-  fsSolenoid->Set(fsSolenoid->kForward);
+  if(rampsDown) fsSolenoid->Set(fsSolenoid->kForward);
 }
 
 // Reset ramp
 void Ramp::Reset() {
+  rampsDown = false;
   solenoid->Set(solenoid->kForward);
   fsSolenoid->Set(solenoid->kReverse);
 }

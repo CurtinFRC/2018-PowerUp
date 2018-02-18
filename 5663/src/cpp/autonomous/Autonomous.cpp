@@ -125,17 +125,22 @@ bool Autonomous::Wait(int delay) {
 bool Autonomous::BackDrive() {
   switch (autoState) {
     case 0:
-      autoLift->SetMidPosition();
-      autoState++;
+      autoMan->SetIntakeSpeed(-1);
+      autoMan->Restrain();
+      //autoDrive->TankDrive(-0.5, -0.5);
+      if(Wait(0.3)) autoState++;
       break;
     case 1:
-      autoMan->SetIntakeSpeed(-1);
-      autoDrive->TankDrive(-0.5, -0.5);
+      autoDrive->TankDrive(0, 0);
       if(Wait(0.3)) autoState++;
       break;
     case 2:
       autoDrive->TankDrive(0, 0);
       autoMan->SetIntakeSpeed(0);
+      autoLift->SetMidPosition();
+      autoState++;
+      break;
+    case 3:
       if(Wait(waitStart)) autoState++;
       break;
     default:
@@ -164,35 +169,37 @@ bool Autonomous::Sw1L() {
       if(autoDrive->DriveDistance(1, 3.7)) autoState++;
       break;
     case 1:
-      if(autoDrive->TurnAngle(0.8, 90, 1)) autoState++;
+      if(autoDrive->TurnAngle(0.8, 90, 2)) autoState++;
       break;
     case 2:
       if(autoDrive->DriveDistance(1, 0.4, 1)) autoState++;
       break;
     case 3:
-      autoMan->SetIntakeSpeed(1.0);
-      if(Wait(0.5)) autoState++;
+      //autoMan->Release();
+      autoMan->SetIntakeSpeed(0.8);
+      if(Wait(1)) autoState++;
       break;
     case 4:
+      //autoMan->Restrain();
       autoMan->SetIntakeSpeed(0);
       if(autoDrive->DriveDistance(1, -0.5)) autoState++;
       break;
     case 5:
       autoLift->SetLowPosition();
-      autoState++;
+      if(Wait(0.3)) autoState++;
       break;
     case 6:
-      if(autoDrive->TurnAngle(1, -90, 1)) autoState++;
+      if(autoDrive->TurnAngle(0.7, -90, 2)) autoState++;
       break;
     case 7:
-      if(autoDrive->DriveDistance(1, 1.5)) autoState++;
+      if(autoDrive->DriveDistance(1, 1)) autoState++;
       break;
     case 8:
-      if(autoDrive->TurnAngle(1, 135, 1.5)) autoState++;
+      if(autoDrive->TurnAngle(0.65, 100, 2.5)) autoState++;
       break;
     case 9:
       autoMan->Release();
-      if(autoDrive->DriveDistance(1, 0.5, 0.6)) autoState++;
+      if(autoDrive->DriveDistance(1, 0.6, 2)) autoState++;
       break;
     case 10:
       autoMan->Restrain();
@@ -211,28 +218,29 @@ bool Autonomous::Sw1L() {
 
 // Routine: Initial (2) > Switch (left)
 bool Autonomous::Sw2L() {
+  SmartDashboard::PutBoolean("one sw2", true);
   switch(autoState) {
     case 0:
-      if(autoDrive->DriveDistance(1, 0.3)) autoState++;
+      if(autoDrive->DriveDistance(1, 0.25)) autoState++;
       break;
     case 1:
-      if(autoDrive->TurnAngle(1, -45, 0.5)) autoState++;
+      if(autoDrive->TurnAngle(1, -50, 1.5)) autoState++;
       break;
     case 2:
-      if(autoDrive->DriveDistance(1, 2.5)) autoState++;
+      if(autoDrive->DriveDistance(1, 2.0)) autoState++;
       break;
     case 3:
-      if(autoDrive->TurnAngle(1, 45, 0.5)) autoState++;
+      if(autoDrive->TurnAngle(1, 55, 1.5)) autoState++;
       break;
     case 4:
-      if(autoDrive->DriveDistance(1, 1.2, 1.5)) autoState++;
+      if(autoDrive->DriveDistance(1, 0.7, 1)) autoState++;
       break;
     case 5:
       autoMan->SetIntakeSpeed(1);
       if(Wait(0.5)) autoState++;
       break;
     case 6:
-      if(autoDrive->DriveDistance(1, -0.5)) autoState++;
+      if(autoDrive->DriveDistance(1, -0.30)) autoState++;
       break;
     case 7:
       autoMan->SetIntakeSpeed(0);
@@ -240,11 +248,11 @@ bool Autonomous::Sw2L() {
       autoState++;
       break;
     case 8:
-      if(autoDrive->TurnAngle(1, 90, 1)) autoState++;
+      if(autoDrive->TurnAngle(0.6, 77, 1.5)) autoState++;
       break;
     case 9:
       autoMan->Release();
-      if(autoDrive->DriveDistance(1, 0.8, 1)) autoState++;
+      if(autoDrive->DriveDistance(1, 0.75, 1)) autoState++;
       break;
     case 10:
       autoMan->Restrain();
@@ -252,10 +260,10 @@ bool Autonomous::Sw2L() {
       break;
     case 11:
       autoMan->SetIntakeSpeed(0);
-      if(autoDrive->DriveDistance(1, -0.8)) autoState++;
+      if(autoDrive->DriveDistance(1, -0.55)) autoState++;
       break;
     case 12:
-      if(autoDrive->TurnAngle(1, -90, 1)) autoState++;
+      if(autoDrive->TurnAngle(0.6, -70, 1.5)) autoState++;
       break;
     case 13:
       autoLift->SetMidPosition();
@@ -265,11 +273,11 @@ bool Autonomous::Sw2L() {
       if(Wait(0.3)) autoState++;
       break;
     case 15:
-      if(autoDrive->DriveDistance(1, 0.8, 1)) autoState++;
+      if(autoDrive->DriveDistance(1, 0.5, 1)) autoState++;
       break;
     case 16:
       autoMan->SetIntakeSpeed(1);
-      if(Wait(0.5)) autoState++;
+      if(Wait(1)) autoState++;
       break;
     case 17:
       autoMan->SetIntakeSpeed(0);
@@ -357,7 +365,7 @@ bool Autonomous::Sw2R() {
       if(autoDrive->DriveDistance(1, -0.8)) autoState++;
       break;
     case 12:
-      if(autoDrive->TurnAngle(1, 90, 1)) autoState++;
+      if(autoDrive->TurnAngle(1, 80, 1)) autoState++;
       break;
     case 13:
       autoLift->SetMidPosition();
@@ -395,35 +403,37 @@ bool Autonomous::Sw3R() {
       if(autoDrive->DriveDistance(1, 3.7)) autoState++;
       break;
     case 1:
-      if(autoDrive->TurnAngle(0.8, -90, 1)) autoState++;
+      if(autoDrive->TurnAngle(0.8, -90, 2)) autoState++;
       break;
     case 2:
       if(autoDrive->DriveDistance(1, 0.4, 1)) autoState++;
       break;
     case 3:
-      autoMan->SetIntakeSpeed(1.0);
-      if(Wait(0.5)) autoState++;
+      //autoMan->Release();
+      autoMan->SetIntakeSpeed(0.8);
+      if(Wait(1)) autoState++;
       break;
     case 4:
+      //autoMan->Restrain();
       autoMan->SetIntakeSpeed(0);
       if(autoDrive->DriveDistance(1, -0.5)) autoState++;
       break;
     case 5:
       autoLift->SetLowPosition();
-      autoState++;
+      if(Wait(0.3)) autoState++;
       break;
     case 6:
-      if(autoDrive->TurnAngle(1, 90, 1)) autoState++;
+      if(autoDrive->TurnAngle(0.7, 90, 2)) autoState++;
       break;
     case 7:
-      if(autoDrive->DriveDistance(1, 1.5)) autoState++;
+      if(autoDrive->DriveDistance(1, 1)) autoState++;
       break;
     case 8:
-      if(autoDrive->TurnAngle(1, -135, 1.5)) autoState++;
+      if(autoDrive->TurnAngle(0.65, -115, 2.5)) autoState++;
       break;
     case 9:
       autoMan->Release();
-      if(autoDrive->DriveDistance(1, 0.5, 0.6)) autoState++;
+      if(autoDrive->DriveDistance(1, 1, 2)) autoState++;
       break;
     case 10:
       autoMan->Restrain();
@@ -443,42 +453,42 @@ bool Autonomous::Sw3R() {
 bool Autonomous::Sc1L() {
   switch (autoState) {
     case 0:
-      if(autoDrive->DriveDistance(1, 6.5)) autoState++;
+      if(autoDrive->DriveDistance(0.9, 6.0)) autoState++;
       break;
     case 1:
-      if(autoDrive->TurnAngle(0.8, 40, 0.6)) autoState++;
+      if(autoDrive->TurnAngle(0.65, 50, 1)) autoState++;
       break;
     case 2:
       autoLift->SetHighPosition();
       autoState++;
       break;
     case 3:
-      if(Wait(1)) autoState++;
+      if(Wait(1.5)) autoState++;
       break;
     case 4:
-      if(autoDrive->DriveDistance(0.5, 1, 1)) autoState++;
+      if(autoDrive->DriveDistance(0.4, 0.5, 1.2)) autoState++;
       break;
     case 5:
       autoMan->SetIntakeSpeed(1);
-      if(Wait(0.5)) autoState++;
+      if(Wait(1)) autoState++;
       break;
     case 6:
-      if(autoDrive->DriveDistance(0.5, -1)) autoState++;
+      autoMan->SetIntakeSpeed(0);
+      if(autoDrive->DriveDistance(0.35, -0.5)) autoState++;
       break;
     case 7:
       autoLift->SetLowPosition();
-      autoMan->SetIntakeSpeed(0);
       autoState++;
       break;
     case 8:
-      if(Wait(0.3)) autoState++;
+      if(Wait(1)) autoState++;
       break;
     case 9:
-      if(autoDrive->TurnAngle(1, 95, 1)) autoState++;
+      if(autoDrive->TurnAngle(0.7, 80, 1.5)) autoState++;
       break;
     case 10:
       autoMan->Release();
-      if(autoDrive->DriveDistance(1, 2.0, 1)) autoState++;
+      if(autoDrive->DriveDistance(1, 1.8, 1.5)) autoState++;
       break;
     case 11:
       autoMan->Restrain();
@@ -542,42 +552,42 @@ bool Autonomous::Sc2R() {
 bool Autonomous::Sc3R() {
   switch (autoState) {
     case 0:
-      if(autoDrive->DriveDistance(1, 6.5)) autoState++;
+      if(autoDrive->DriveDistance(0.9, 6.0)) autoState++;
       break;
     case 1:
-      if(autoDrive->TurnAngle(0.8, -40, 0.6)) autoState++;
+      if(autoDrive->TurnAngle(0.7, -55, 1)) autoState++;
       break;
     case 2:
       autoLift->SetHighPosition();
       autoState++;
       break;
     case 3:
-      if(Wait(1)) autoState++;
+      if(Wait(1.5)) autoState++;
       break;
     case 4:
-      if(autoDrive->DriveDistance(0.5, 1, 1)) autoState++;
+      if(autoDrive->DriveDistance(0.4, 0.5, 1.2)) autoState++;
       break;
     case 5:
       autoMan->SetIntakeSpeed(1);
-      if(Wait(0.5)) autoState++;
+      if(Wait(1)) autoState++;
       break;
     case 6:
-      if(autoDrive->DriveDistance(0.5, -1)) autoState++;
+      autoMan->SetIntakeSpeed(0);
+      if(autoDrive->DriveDistance(0.35, -0.5)) autoState++;
       break;
     case 7:
-      autoMan->SetIntakeSpeed(0);
       autoLift->SetLowPosition();
       autoState++;
       break;
     case 8:
-      if(Wait(0.3)) autoState++;
+      if(Wait(1)) autoState++;
       break;
     case 9:
-      if(autoDrive->TurnAngle(1, 95, 1)) autoState++;
+      if(autoDrive->TurnAngle(0.7, -80, 1.5)) autoState++;
       break;
     case 10:
       autoMan->Release();
-      if(autoDrive->DriveDistance(1, 2.0, 1)) autoState++;
+      if(autoDrive->DriveDistance(1, 1.5, 1.5)) autoState++;
       break;
     case 11:
       autoMan->Restrain();
