@@ -47,8 +47,7 @@ namespace autonomous {
       bool Sc2R();
       bool Sc3R();
 
-      std::string gameData = "LRL";  //BIG OOF IF NO REMOVE
-
+      std::string gameData;
       std::function<bool()> autoFunction,
       stage1 = [=](){return this->Baseline();},
       stage2 = [=](){return this->Stop();},

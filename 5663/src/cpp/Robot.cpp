@@ -79,9 +79,9 @@ public:
 
     timer = new Timer(); timer->Start();
 
-    AutoChooser->AddDefault("Cross Baseline",(int*) 0);
-    AutoChooser->AddObject("Single Switch",(int*) 1);
-    AutoChooser->AddObject("Single Scale",(int*) 2);
+    AutoChooser->AddObject("Cross Baseline",(int*) 0);
+    AutoChooser->AddDefault("Switch",(int*) 1);
+    AutoChooser->AddObject("Scale",(int*) 2);
     SmartDashboard::PutData("AutoChooser", AutoChooser);
 
     StartingPosition->AddObject("Left (1)", (int*) 1);
@@ -89,8 +89,8 @@ public:
     StartingPosition->AddObject("Right (3)", (int*) 3);
     SmartDashboard::PutData("StartingPosition", StartingPosition);
 
-    AutoWait->AddDefault("0S",(int*) 0);
-    AutoWait->AddObject("1S",(int*) 1);
+    AutoWait->AddObject("0S",(int*) 0);
+    AutoWait->AddDefault("1S",(int*) 1);
     AutoWait->AddObject("2S",(int*) 2);
     AutoWait->AddObject("3S",(int*) 3);
     AutoWait->AddObject("4S",(int*) 4);
@@ -99,8 +99,8 @@ public:
     AutoWait->AddObject("7S",(int*) 7);
     AutoWait->AddObject("8S",(int*) 8);
     AutoWait->AddObject("9S",(int*) 9);
-    AutoWait->AddObject("10S",(int*) 10);
     SmartDashboard::PutData("AutoWait", AutoWait);
+    
     station = new Joystick(2);
   }
 
@@ -163,8 +163,8 @@ public:
     } else if(xbox2->GetYButton()) {
       lift->SetHighPosition();
     }
-
     lift->SetSpeed(-xbox2->GetY(xbox2->kRightHand));
+    lift->OverrideLift(station->GetRawButton(4));
 
   //———[manipulator]————————————————————————————————————————————————————————————
     if(xbox2->GetBumper(xbox2->kLeftHand)) {
@@ -181,14 +181,11 @@ public:
     if(station->GetRawButton(4)) ramp->ReleaseFoulStopper();
     if(station->GetRawButton(1)) ramp->ConfirmIntentionalDeployment();
 
-  //———[climber]————————————————————————————————————————————————————————————————
-
-
   //———[periodic]———————————————————————————————————————————————————————————————
     message = 76;
-    SmartDashboard::PutBoolean("Joystickstation,", station->GetRawButton(0));
     SmartDashboard::PutBoolean("Joystickstation1,", station->GetRawButton(1));
-    SmartDashboard::PutBoolean("Joystickstation2,", station->GetRawButton(2));
+    SmartDashboard::PutBoolean("Joystickstation4,", station->GetRawButton(4));
+    SmartDashboard::PutBoolean("Joystickstation3,", station->GetRawButton(3));
 
     SmartDashboard::PutBoolean("transaction", arduino->Transaction(&message, 1, NULL, 0));
     SmartDashboard::PutBoolean("rampsReady", (timer->GetMatchTime() < 30));

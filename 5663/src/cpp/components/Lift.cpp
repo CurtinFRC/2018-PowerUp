@@ -56,8 +56,10 @@ void Lift::SetLowPosition() {
 }
 
 void Lift::Stop() {
-  manualMode = true;
-  SetSpeed(0);
+  if(!encoderOverride) {
+    manualMode = true;
+    SetSpeed(0);
+  }
 }
 
 // Set speed of Lift class motors

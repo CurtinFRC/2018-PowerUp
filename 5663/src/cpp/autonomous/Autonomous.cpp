@@ -18,7 +18,7 @@ void Autonomous::SetStageOne(int mode, int startingPosition, int wait) {
   autoState = 0;
   waitStart = wait;
   gameData = DriverStation::GetInstance().GetGameSpecificMessage();
-
+  if(gameData.length() > 0) {
   switch(mode) {
     case 0: //Baseline
       stage1 = [=](){return this->Baseline();};
@@ -28,27 +28,45 @@ void Autonomous::SetStageOne(int mode, int startingPosition, int wait) {
       if(gameData[0] == 'L') {
         if(startingPosition == 1) stage1 = [=](){return this->Sw1L();};
         else if(startingPosition == 2) stage1 = [=](){return this->Sw2L();};
-        else stage1 = [=](){return this->Sw3L();};
+        else {
+          if(gameData[1] == 'R') stage1 = [=](){return this->Sc3R();};
+          else stage1 = [=](){return this->Baseline();};
+        }
       } else {
-        if(startingPosition == 1) stage1 = [=](){return this->Sw1R();};
+        if(startingPosition == 1) {
+          if(gameData[1] == 'L') stage1 = [=](){return this->Sc1L();};
+          else stage1 = [=](){return this->Baseline();};
+        }
         else if(startingPosition == 2) stage1 = [=](){return this->Sw2R();};
         else stage1 = [=](){return this->Sw3R();};
       }
       break;
 
     case 2: //Scale
-      if(gameData[0] == 'L') {
+      if(gameData[1] == 'L') {
         if(startingPosition == 1) stage1 = [=](){return this->Sc1L();};
-        else if(startingPosition == 2) stage1 = [=](){return this->Sc2L();};
-        else stage1 = [=](){return this->Sc3L();};
+        else if(startingPosition == 2) {
+          if(gameData[0] == 'L') stage1 = [=](){return this->Sw2L();};
+          else stage1 = [=](){return this->Sw2R();};
+        }
+        else {
+          if(gameData[0] == 'R') stage1 = [=](){return this->Sw3R();};
+          else stage1 = [=](){return this->Baseline();};
+        }
       } else {
-        if(startingPosition == 1) stage1 = [=](){return this->Sc1R();};
-        else if(startingPosition == 2) stage1 = [=](){return this->Sc2R();};
+        if(startingPosition == 1) {
+          if(gameData[0] == 'L') stage1 = [=](){return this->Sw1L();};
+          else stage1 = [=](){return this->Baseline();};
+        }
+        else if(startingPosition == 2) {
+          if(gameData[0] == 'L') stage1 = [=](){return this->Sw2L();};
+          else stage1 = [=](){return this->Sw2R();};
+        }
         else stage1 = [=](){return this->Sc3R();};
       }
       break;
   }
-
+  }
 }
 
 void Autonomous::SetStageTwo(int mode) {
@@ -87,9 +105,9 @@ void Autonomous::RunPeriodic() {
   // gameData will be an array with 3 characters, eg. "LRL"
   // check https://wpilib.screenstepslive.com/s/currentCS/m/getting_started/l/826278-2018-game-data-details
   SmartDashboard::PutString("switch", &gameData[0]);
-  if(&gameData[0] == "L") SmartDashboard::PutBoolean("switchBool", true);
+  if(gameData[0] == 'L') SmartDashboard::PutBoolean("switchBool", true);
   else SmartDashboard::PutBoolean("switchBool", false);
-  if(&gameData[0] == "L") SmartDashboard::PutBoolean("scaleBool", true);
+  if(gameData[0] == 'L') SmartDashboard::PutBoolean("scaleBool", true);
   else SmartDashboard::PutBoolean("scaleBool", false);
   SmartDashboard::PutString("scale", &gameData[1]);
   SmartDashboard::PutNumber("autoState", autoState);
@@ -105,7 +123,6 @@ void Autonomous::RunPeriodic() {
 
 bool Autonomous::Stop() {
   autoDrive->Stop();
-  //autoMan->SetIntakeSpeed(0);
   return true;
 }
 
@@ -127,7 +144,7 @@ bool Autonomous::BackDrive() {
     case 0:
       autoMan->SetIntakeSpeed(-1);
       autoMan->Restrain();
-      //autoDrive->TankDnrive(-0.5, -0.5);
+      autoDrive->TankDrive(-0.5, -0.5);
       if(Wait(0.3)) autoState++;
       break;
     case 1:

@@ -9,6 +9,7 @@ Ramp::Ramp(int fwd, int rev, int fsFwd, int fsRev) {
 
   fsSolenoid = new DoubleSolenoid(fsFwd, fsRev);
   fsSolenoid->Set(solenoid->kReverse);
+  SmartDashboard::PutBoolean("Foul Stoppers Released", false);
 }
 
 // Deploy ramp
@@ -19,10 +20,12 @@ void Ramp::ConfirmIntentionalDeployment() {
 
 void Ramp::ReleaseFoulStopper() {
   if(rampsDown) fsSolenoid->Set(fsSolenoid->kForward);
+  SmartDashboard::PutBoolean("Foul Stoppers Released", true);
 }
 
 void Ramp::ResetFoulStopper() {
   fsSolenoid->Set(fsSolenoid->kReverse);
+  SmartDashboard::PutBoolean("Foul Stoppers Released", false);
 }
 
 // Reset ramp
