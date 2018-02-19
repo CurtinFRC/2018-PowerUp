@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "Toggle.h"
+#include "curtinfrc/toggle.h"
 
 #include "ControlMap.h"
 #include "Belev.h"

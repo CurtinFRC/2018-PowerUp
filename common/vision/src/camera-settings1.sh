@@ -1,6 +1,6 @@
 #!/bin/bash
 
-device="/dev/video0"
+device="/dev/video1"
 
 #white balance
 v4l2-ctl -d $device --set-ctrl=white_balance_temperature_auto=0

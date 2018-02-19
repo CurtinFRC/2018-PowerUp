@@ -1,7 +1,7 @@
-CC=g++ --std=c++17 -pthread 
+CC=g++ --std=c++1y -pthread 
 C_FLAGS=`pkg-config --cflags opencv` -g
 L_FLAGS=`pkg-config --libs opencv`
-OBJS=obj/main.o obj/capture.o obj/processing.o obj/display.o
+OBJS=obj/main.o obj/capture.o obj/process.o obj/display.o obj/transmit.o
 OBJ_NAME=vision_exec
 
 all: $(OBJS)
@@ -16,8 +16,11 @@ obj/main.o: main.cpp
 obj/capture.o: capture.cpp
 	$(CC) $(C_FLAGS) -c capture.cpp -o obj/capture.o
 
-obj/processing.o: processing.cpp
-	$(CC) $(C_FLAGS) -c processing.cpp -o obj/processing.o
+obj/process.o: process.cpp
+	$(CC) $(C_FLAGS) -c process.cpp -o obj/process.o
 
 obj/display.o: display.cpp
 	$(CC) $(C_FLAGS) -c display.cpp -o obj/display.o
+
+obj/transmit.o: transmit.cpp
+	$(CC) $(C_FLAGS) -c transmit.cpp -o obj/transmit.o
