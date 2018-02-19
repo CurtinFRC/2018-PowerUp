@@ -5,14 +5,15 @@
 #include "curtinfrc/drivetrain.h"
 #include "curtinfrc/strategy/mp_strategy.h"
 
+#include "Map.h"
 #include "IO.h"
 
 using namespace curtinfrc;
 
 static constexpr MotionProfileConfig mcfg = {
- 1440, 6,                  // enc ticks, wheel diameter inches
- 1.0 / 0.2, 0, 0,          // P, I, D
- 3.34 / 12.0, 0.76 / 12.0  // kV, kA
+ 1440, Map::Robot::wheel_diam / f_t_m / f_t_m,   // enc ticks, wheel diameter inches
+ 1.0 / 0.2 * f_t_m, 0, 0,                        // P, I, D
+ 3.34 / 12.0 * f_t_m, 0.76 / 12.0 * f_t_m        // kV, kA
 };
 
 static constexpr double kt = 3 * (1.0 / 80.0);
