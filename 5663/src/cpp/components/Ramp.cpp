@@ -21,6 +21,10 @@ void Ramp::ReleaseFoulStopper() {
   if(rampsDown) fsSolenoid->Set(fsSolenoid->kForward);
 }
 
+void Ramp::ResetFoulStopper() {
+  fsSolenoid->Set(fsSolenoid->kReverse);
+}
+
 // Reset ramp
 void Ramp::Reset() {
   rampsDown = false;

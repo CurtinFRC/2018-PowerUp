@@ -80,7 +80,7 @@ void Lift::SetSpeed(double speed) {
        if(motor1->GetSelectedSensorVelocity(0) < -600 && GetLiftPosition() < 7000) speed = 0;  //Hardstop
        //Upper lift boundries
        if(topSwitch->Get() && speed > 0) speed = 0; //limit switch
-       if(GetLiftPosition() > 21000 && speed > 0) speed *= 0.5; //Soft speed limit
+       if(GetLiftPosition() > 21000 && speed > 0) speed *= 0.7; //Soft speed limit
        if(motor1->GetSelectedSensorVelocity(0) > 800 && GetLiftPosition() > 22000) speed = 0.2; //Hardstop
        if(motor1->GetSelectedSensorVelocity(0) > 1200 && GetLiftPosition() > 22000) speed = 0.05; //Hardstop
      }

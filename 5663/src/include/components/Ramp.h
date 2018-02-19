@@ -11,6 +11,7 @@ namespace components {
       Ramp(int fwd, int rev, int fsFwd, int fsRev);
       void ConfirmIntentionalDeployment();
       void ReleaseFoulStopper();
+      void ResetFoulStopper();
       void Reset();
 
       bool rampsDown = false;

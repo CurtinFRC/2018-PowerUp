@@ -43,7 +43,6 @@ class Robot : public IterativeRobot {
   I2C *arduino;
   Timer *timer;
   Joystick *station;
-  //JoystickButton *rampSwitch;
 
 public:
   uint8_t message = 72;
@@ -103,7 +102,6 @@ public:
     AutoWait->AddObject("10S",(int*) 10);
     SmartDashboard::PutData("AutoWait", AutoWait);
     station = new Joystick(2);
-    //rampSwitch = new JoystickButton(station, 0);
   }
 
   void AutonomousInit() {
@@ -177,11 +175,9 @@ public:
     }
 
   //———[ramp]———————————————————————————————————————————————————————————————————
-    //if(xbox->GetBumper(xbox->kLeftHand) && xbox->GetBumper(xbox->kRightHand) && xbox2->GetBumper(xbox2->kLeftHand) && xbox2->GetBumper(xbox2->kRightHand)) {
-    // if(xbox->GetBButton()) {
-    //   //if(timer->GetMatchTime() < 30)
-    //   ramp->ConfirmIntentionalDeployment();
-    // }
+    if(xbox->GetXButton() && xbox2->GetXButton() && timer->GetMatchTime() < 30)  ramp->ConfirmIntentionalDeployment();
+    if(xbox->GetStartButton() || xbox2->GetStartButton()) ramp->ReleaseFoulStopper();
+    if(xbox->GetBackButton() || xbox2->GetBackButton()) ramp->ResetFoulStopper();
     if(station->GetRawButton(4)) ramp->ReleaseFoulStopper();
     if(station->GetRawButton(1)) ramp->ConfirmIntentionalDeployment();
 

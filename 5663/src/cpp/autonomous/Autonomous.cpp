@@ -127,7 +127,7 @@ bool Autonomous::BackDrive() {
     case 0:
       autoMan->SetIntakeSpeed(-1);
       autoMan->Restrain();
-      //autoDrive->TankDrive(-0.5, -0.5);
+      //autoDrive->TankDnrive(-0.5, -0.5);
       if(Wait(0.3)) autoState++;
       break;
     case 1:
@@ -326,13 +326,13 @@ bool Autonomous::Sw2R() {
       if(autoDrive->DriveDistance(1, 0.5)) autoState++;
       break;
     case 1:
-      if(autoDrive->TurnAngle(1, 30, 0.4)) autoState++;
+      if(autoDrive->TurnAngle(1, 30, 1)) autoState++;
       break;
     case 2:
       if(autoDrive->DriveDistance(1, 1.4)) autoState++;
       break;
     case 3:
-      if(autoDrive->TurnAngle(1, -25, 0.4)) autoState++;
+      if(autoDrive->TurnAngle(1, -25, 1)) autoState++;
       break;
     case 4:
       if(autoDrive->DriveDistance(1, 1.1, 1)) autoState++;
@@ -350,7 +350,7 @@ bool Autonomous::Sw2R() {
       autoState++;
       break;
     case 8:
-      if(autoDrive->TurnAngle(1, -90, 1)) autoState++;
+      if(autoDrive->TurnAngle(1, -90, 1.5)) autoState++;
       break;
     case 9:
       autoMan->Release();
@@ -365,7 +365,7 @@ bool Autonomous::Sw2R() {
       if(autoDrive->DriveDistance(1, -0.8)) autoState++;
       break;
     case 12:
-      if(autoDrive->TurnAngle(1, 80, 1)) autoState++;
+      if(autoDrive->TurnAngle(1, 80, 1.2)) autoState++;
       break;
     case 13:
       autoLift->SetMidPosition();
