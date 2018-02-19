@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include "WPILib.h"
+#include "curtinfrc/PID.h"
 
 #include "IO.h"
 #include "ControlMap.h"

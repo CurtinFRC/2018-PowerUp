@@ -2,7 +2,7 @@
 
 #include "curtinfrc/strategy/strategy.h"
 #include "curtinfrc/drivetrain.h"
-#include "PID.h"
+#include "curtinfrc/PID.h"
 
 #include "..\Map.h"
 

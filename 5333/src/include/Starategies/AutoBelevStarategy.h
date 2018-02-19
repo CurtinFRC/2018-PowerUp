@@ -3,7 +3,7 @@
 #include "WPILib.h"
 #include "curtinfrc/motors/CurtinTalonSRX.h"
 #include "curtinfrc/strategy/strategy.h"
-#include "PID.h"
+#include "curtinfrc/PID.h"
 
 #include "../Map.h"
 #include "../Belev.h"
