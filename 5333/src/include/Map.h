@@ -64,7 +64,7 @@ namespace Map { // Map ports
     constexpr float wheel_diam        = 0.1524;  // Metres
     constexpr float wheel_circ        = 0.4788;  // Metres
     constexpr float track_width       = 0.61;    // Metres
-    const int encoder_ticks_per_rot   = 1000;
+    constexpr int encoder_ticks_per_rot[2]   = { 1440, 1000 };
 
     // Belev winch
     const int belev_encoder_ticks_per_rot   = 1;
