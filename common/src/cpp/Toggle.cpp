@@ -1,4 +1,6 @@
-#include "Toggle.h"
+#include "curtinfrc/toggle.h"
+
+using namespace curtinfrc;
 
 Toggle::Toggle(Trigger _mode) {
   trigger_mode = _mode;

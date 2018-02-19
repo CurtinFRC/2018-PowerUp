@@ -2,12 +2,14 @@
 #include "Map.h"
 #include "IO.h"
 
+#include "curtinfrc/toggle.h"
+
 #include <iostream>
 #include <string>
 
 using namespace std;
 
-static Toggle *override_toggle;
+static curtinfrc::Toggle *override_toggle;
 
 #ifdef XBOX_CONTROL
 

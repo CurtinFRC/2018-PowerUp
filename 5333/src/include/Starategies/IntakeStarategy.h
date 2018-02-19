@@ -3,7 +3,7 @@
 #include "WPILib.h"
 #include "curtinfrc/motors/CurtinTalonSRX.h"
 #include "curtinfrc/strategy/strategy.h"
-#include "Toggle.h"
+#include "curtinfrc/toggle.h"
 
 #include "Belev.h"
 
@@ -18,5 +18,5 @@ public:
 
 private:
   BelevatorControl *belev;
-  Toggle *intake_toggle;
+  curtinfrc::Toggle *intake_toggle;
 };
