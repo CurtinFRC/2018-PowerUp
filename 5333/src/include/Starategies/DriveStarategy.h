@@ -7,7 +7,7 @@ using namespace curtinfrc;
 
 class DriveStarategy : public Strategy {
 public:
-  DriveStarategy(Drivetrain *_drive, double _throttle = 0.6f);
+  DriveStarategy(Drivetrain *_drive, double _throttle = 1.0f);
   void start() override;
   void tick(double time) override;
   void stop() override;

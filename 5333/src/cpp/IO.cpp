@@ -50,7 +50,7 @@ int IO::init() { // Sets up IO
 
 
   try {
-    navx = new AHRS(I2C::Port::kOnboard);
+    navx = new AHRS(I2C::Port::kMXP);
   } catch (std::exception& ex) {
     std::string err_string = "Error instantiating navX MXP:  ";
     err_string += ex.what();
@@ -67,78 +67,13 @@ int IO::init() { // Sets up IO
   brake_solenoid = new DoubleSolenoid(0, Map::Pneumatics::brake_solenoid[0], Map::Pneumatics::brake_solenoid[1]);
   shifter_solenoid = new DoubleSolenoid(0, Map::Pneumatics::shifter_solenoid[0], Map::Pneumatics::shifter_solenoid[1]);
 
-  #ifdef XBOX_CONTROL
-  xbox = new XboxController(Map::Controllers::xbox);
-
-  #elif JOY_CONTROL
   left_joy = new Joystick(Map::Controllers::joy[0]);
   right_joy = new Joystick(Map::Controllers::joy[1]);
-
-  #elif DRIVER_TRAINING
-  left_joy = new Joystick(Map::Controllers::joy[0]);
-  right_joy = new Joystick(Map::Controllers::joy[1]);
-
-  xbox = new XboxController(Map::Controllers::xbox);
-
-  #endif
 
   return 0;
 }
 
 // Aliases
-#ifdef XBOX_CONTROL
-
-double IO::get_left_trigger() { return xbox->GetTriggerAxis(XboxController::JoystickHand::kLeftHand); }
-bool IO::get_left_bumper() { return xbox->GetBumper(XboxController::JoystickHand::kLeftHand); }
-double IO::get_left_X() { return xbox->GetX(XboxController::JoystickHand::kLeftHand); }
-double IO::get_left_Y() { return -xbox->GetY(XboxController::JoystickHand::kLeftHand); }
-bool IO::get_left_stick() { return xbox->GetStickButton(XboxController::JoystickHand::kLeftHand); }
-
-double IO::get_right_trigger() { return xbox->GetTriggerAxis(XboxController::JoystickHand::kRightHand); }
-bool IO::get_right_bumper() { return xbox->GetBumper(XboxController::JoystickHand::kRightHand); }
-double IO::get_right_X() { return xbox->GetX(XboxController::JoystickHand::kRightHand); }
-double IO::get_right_Y() { return -xbox->GetY(XboxController::JoystickHand::kRightHand); }
-bool IO::get_right_stick() { return xbox->GetStickButton(XboxController::JoystickHand::kRightHand); }
-
-bool IO::get_A() { return xbox->GetAButton(); }
-bool IO::get_B() { return xbox->GetBButton(); }
-bool IO::get_X() { return xbox->GetXButton(); }
-bool IO::get_Y() { return xbox->GetYButton(); }
-bool IO::get_back() { return xbox->GetBackButton(); }
-bool IO::get_start() { return xbox->GetStartButton(); }
-
-#elif JOY_CONTROL
-
-double IO::get_left_Y() { return -left_joy->GetY(); }
-double IO::get_left_X() { return left_joy->GetX(); }
-double IO::get_left_twist() { return left_joy->GetZ(); }
-
-bool IO::get_left_trigger() { return left_joy->GetTrigger(); }
-bool IO::get_left_button(int nButton) { return left_joy->GetRawButton(nButton); }
-
-
-double IO::get_right_Y() { return -right_joy->GetY(); }
-double IO::get_right_X() { return right_joy->GetX(); }
-double IO::get_right_twist() { return right_joy->GetZ(); }
-
-bool IO::get_right_trigger() { return right_joy->GetTrigger(); }
-bool IO::get_right_button(int nButton) { return right_joy->GetRawButton(nButton); }
-
-#elif DRIVER_TRAINING
-
-bool IO::get_left_xbox_trigger() { return xbox->GetTriggerAxis(XboxController::JoystickHand::kLeftHand) > Map::Controllers::xbox_trigger_deadzone; }
-bool IO::get_left_xbox_bumper() { return xbox->GetBumper(XboxController::JoystickHand::kLeftHand); }
-double IO::get_left_xbox_Y() { return -xbox->GetY(XboxController::JoystickHand::kLeftHand); }
-bool IO::get_left_xbox_stick() { return xbox->GetStickButton(XboxController::JoystickHand::kLeftHand); }
-
-bool IO::get_right_xbox_trigger() { return xbox->GetTriggerAxis(XboxController::JoystickHand::kRightHand) > Map::Controllers::xbox_trigger_deadzone; }
-bool IO::get_right_xbox_bumper() { return xbox->GetBumper(XboxController::JoystickHand::kRightHand); }
-double IO::get_right_xbox_Y() { return -xbox->GetY(XboxController::JoystickHand::kRightHand); }
-bool IO::get_right_xbox_stick() { return xbox->GetStickButton(XboxController::JoystickHand::kRightHand); }
-
-bool IO::get_xbox_A() { return xbox->GetAButton(); }
-
-
 
 double IO::get_left_Y() { return -left_joy->GetY(); }
 double IO::get_left_X() { return left_joy->GetX(); }
@@ -158,11 +93,9 @@ double IO::get_right_twist() { return -right_joy->GetZ(); }
 bool IO::get_right_trigger() { return right_joy->GetTrigger(); }
 bool IO::get_right_button(int nButton) { return right_joy->GetRawButton(nButton); }
 
-#endif
 
-
-bool IO::get_belev_limit_max() { return belev_limit_max->Get(); }
-bool IO::get_belev_limit_min() { return belev_limit_min->Get(); }
+bool IO::get_belev_limit_max() { return !belev_limit_max->Get(); }
+bool IO::get_belev_limit_min() { return !belev_limit_min->Get(); }
 
 
 IO *IO::get_instance() { // Only make one instance of IO

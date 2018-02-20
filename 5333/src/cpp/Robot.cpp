@@ -9,8 +9,14 @@
 #include "Belev.h"
 #include "Map.h"
 #include "ControlMap.h"
-#include "Starategies/DriveStarategy.h"
 #include "Auto.h"
+
+// Starategies
+#include "Starategies/DriveStarategy.h"
+#include "Starategies/AutoBelevStarategy.h"
+#include "Starategies/BelevStarategy.h"
+#include "Starategies/IntakeStarategy.h"
+#include "Starategies/TurnStarategy.h"
 
 // Other required libraries
 #include <string>
@@ -48,8 +54,6 @@ public:
 
   void AutonomousInit() {
     cout << "Auto Init" << endl;
-    io->navx->ZeroYaw();
-
     auto_->init();
   }
   void AutonomousPeriodic() {
@@ -63,23 +67,29 @@ public:
     cout << "Teleop Init" << endl;
     ControlMap::init();
 
-    auto strat = make_shared<DriveStarategy>(drive);
-    drive->strategy_controller().set_active(strat);
+    auto drive_strat = std::make_shared<DriveStarategy>(drive);
+    drive->strategy_controller().set_active(drive_strat);
+
+    auto belev_strat = make_shared<BelevStarategy>(belev);
+    belev->strategy_controller().set_active(belev_strat);
   }
   void TeleopPeriodic() {
+    SmartDashboard::PutNumber("Yaw", io->navx->GetYaw());
+
     drive->strategy_controller().periodic();
 
+    belev->strategy_controller().periodic();
     belev->tick();
     belev->claw(ControlMap::intake_claw_state());
-    belev->intake(ControlMap::intake_motor_power());
+    belev->winch_mode(ControlMap::winch_shifter_state() ? BelevatorControl::Gear::High : BelevatorControl::Gear::Low);
+
+    double intake_throttle = 0.5 * (IO::get_instance()->right_joy->GetRawAxis(3) - 1);
+    belev->intake(ControlMap::intake_motor_power() * intake_throttle);
+    SmartDashboard::PutNumber("Intake Throttle", -intake_throttle);
   }
 
   void TestInit() {
-    auto io = IO::get_instance();
-    auto strat = std::make_shared<curtinfrc::MotionProfileTunerStrategy>(
-      io->left_motors[0], io->right_motors[0],
-      io->navx, 1440, 6
-    );
+    auto strat = std::make_shared<TurnStarategy>(drive, 90, 0.5);
     drive->strategy_controller().set_active(strat);
   }
 

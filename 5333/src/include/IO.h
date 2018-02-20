@@ -29,32 +29,6 @@ public:
 
   DigitalInput *belev_limit_max, *belev_limit_min;
 
-
-  #ifdef XBOX_CONTROL
-
-  XboxController *xbox;
-
-  double get_left_trigger();
-  bool get_left_bumper();
-  double get_left_X();
-  double get_left_Y();
-  bool get_left_stick();
-
-  double get_right_trigger();
-  bool get_right_bumper();
-  double get_right_X();
-  double get_right_Y();
-  bool get_right_stick();
-
-  bool get_A();
-  bool get_B();
-  bool get_X();
-  bool get_Y();
-  bool get_back();
-  bool get_start();
-
-  #elif JOY_CONTROL
-
   Joystick *left_joy, *right_joy;
 
   double get_left_Y();
@@ -71,43 +45,6 @@ public:
 
   bool get_right_trigger();
   bool get_right_button(int nButton);
-
-  #elif DRIVER_TRAINING
-
-  XboxController *xbox;
-
-  bool get_left_xbox_trigger();
-  bool get_left_xbox_bumper();
-  double get_left_xbox_Y();
-  bool get_left_xbox_stick();
-
-  bool get_right_xbox_trigger();
-  bool get_right_xbox_bumper();
-  double get_right_xbox_Y();
-  bool get_right_xbox_stick();
-
-  bool get_xbox_A();
-
-
-  Joystick *left_joy, *right_joy;
-
-  double get_left_Y();
-  double get_left_X();
-  double get_left_twist();
-
-  bool get_left_trigger();
-  bool get_left_button(int nButton);
-
-
-  double get_right_Y();
-  double get_right_X();
-  double get_right_twist();
-
-  bool get_right_trigger();
-  bool get_right_button(int nButton);
-
-  #endif
-
 
   bool get_belev_limit_max();
   bool get_belev_limit_min();

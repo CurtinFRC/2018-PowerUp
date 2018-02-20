@@ -1,6 +1,7 @@
 #include "Starategies\MPStarategy.h"
 
 #include <string>
+#include <iostream>
 
 #include "curtinfrc/drivetrain.h"
 #include "curtinfrc/strategy/mp_strategy.h"
@@ -11,9 +12,9 @@
 using namespace curtinfrc;
 
 static MotionProfileConfig mcfg_left = {
- Map::Robot::encoder_ticks_per_rot[0], Map::Robot::wheel_diam / f_t_m / f_t_m,   // enc ticks, wheel diameter inches
- 1.0 / 0.2 * f_t_m, 0, 0,                        // P, I, D
- 3.34 / 12.0 * f_t_m, 0.76 / 12.0 * f_t_m        // kV, kA
+ Map::Robot::encoder_ticks_per_rot[0], Map::Robot::wheel_diam * 3.28,   // enc ticks, wheel diameter inches
+ 1.0 / 0.2 * 3.28, 0, 0,                        // P, I, D
+ 3.34 / 12.0 * 3.28, 0.76 / 12.0 * 3.28        // kV, kA
 };
 static MotionProfileConfig mcfg_right = mcfg_left;
 
