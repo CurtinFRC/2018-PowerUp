@@ -8,6 +8,9 @@
 
 #define DRIVER_TRAINING 1
 
+
+const double f_t_m = 0.3048; // feet to metres
+
 namespace Map { // Map ports
   namespace Controllers {
     #ifdef XBOX_CONTROL
@@ -58,13 +61,14 @@ namespace Map { // Map ports
     constexpr float max_v             = 9.8;
     constexpr float max_a             = 3;
     constexpr float max_j             = 60;
-    constexpr float wheel_circ        = 0.4788; // Metres
-    constexpr float track_width       = 0.61; // Metres
-    const int encoder_ticks_per_rot   = 1000;
+    constexpr float wheel_diam        = 0.1524;  // Metres
+    constexpr float wheel_circ        = 0.4788;  // Metres
+    constexpr float track_width       = 0.61;    // Metres
+    constexpr int encoder_ticks_per_rot[2]   = { 1440, 1000 };
 
     // Belev winch
     const int belev_encoder_ticks_per_rot   = 1;
-    constexpr float belev_winch_diameter    = 0.37; // Metres
+    constexpr float belev_winch_diameter    = 0.37;  // Metres
 
     constexpr double belev_ticks_per_metre = belev_encoder_ticks_per_rot / (M_PI * belev_winch_diameter);
   };
