@@ -6,28 +6,12 @@
 #define nSolenoidPorts 2
 
 
-#define DRIVER_TRAINING 1
-
-
 const double f_t_m = 0.3048; // feet to metres
 
 namespace Map { // Map ports
   namespace Controllers {
-    #ifdef XBOX_CONTROL
-    const int xbox = 0;
-    constexpr double deadzone = 0.04;
-
-    #elif JOY_CONTROL
     constexpr int joy[2] = {0, 1};
     constexpr double deadzone = 0.08;
-
-    #elif DRIVER_TRAINING
-    constexpr int joy[2] = {0, 1};
-    const int xbox = 2;
-    constexpr double deadzone = 0.08;
-    constexpr double xbox_trigger_deadzone = 0.2;
-
-    #endif
   };
 
   namespace Sensors {
@@ -37,15 +21,15 @@ namespace Map { // Map ports
 
   namespace Motors {
     const int n_drive_motors                             = 2;
-    constexpr int left_motors[n_drive_motors]            = {36, 35};
-    constexpr int right_motors[n_drive_motors]           = {32, 34};
+    constexpr int left_motors[n_drive_motors]            = {38, 34};
+    constexpr int right_motors[n_drive_motors]           = {32, 37};
 
-    const int n_belev_motors                             = 1;
-    constexpr int belev_motors[n_belev_motors]           = {37};
+    const int n_belev_motors                             = 2;
+    constexpr int belev_motors[n_belev_motors]           = {35, 15};
 
     const int n_intake_motors                            = 1;
-    constexpr int intake_motors_left[n_intake_motors]    = {38};
-    constexpr int intake_motors_right[n_intake_motors]   = {39};
+    constexpr int intake_motors_left[n_intake_motors]    = {18};
+    constexpr int intake_motors_right[n_intake_motors]   = {19};
   };
 
   namespace Pneumatics {

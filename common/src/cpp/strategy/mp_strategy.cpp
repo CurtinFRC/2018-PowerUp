@@ -29,7 +29,7 @@ void DrivetrainMotionProfileStrategy::start() {
     double r = _mode_right->calculate();
 
     if (_ahrs != nullptr && _mode_left->gyro_capable() && _mode_right->gyro_capable()) {
-      double gyro = fmod(-_ahrs->GetAngle(), 360);
+      double gyro = fmod(-_ahrs->GetYaw(), 360);
       double heading = _mode_left->gyro_desired();
 
       double angle_error = fmod(heading - gyro, 360);
@@ -43,6 +43,7 @@ void DrivetrainMotionProfileStrategy::start() {
     _drivetrain->set_left(l);
     _drivetrain->set_right(r);
   });
+  _notifier->StartPeriodic(_mode_left->ctrl_period());
 }
 
 void DrivetrainMotionProfileStrategy::tick(double time) { }
