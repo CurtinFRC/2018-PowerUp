@@ -11,6 +11,7 @@ deploy {
         artifact("robotCode", jaci.openrio.gradle.frc.FRCNativeArtifact) {
             targets << "roborio5333"
             component = 'frcUserProgram'
+            predeploy << { execute 'rm frcUserProgram' }
         }
         fileCollectionArtifact('paths') {
             files = project(':common').fileTree(dir: 'src/paths', include: '*.csv')
@@ -40,8 +41,8 @@ model {
                 lib library: "wpilib"
                 lib library: "ctre"
                 lib library: "navx"
-                lib library: "pathfinder"
                 lib library: "openrio.powerup.matchData"
+                lib library: "pathfinder"
                 lib project: ":common", library: "curtinFrcCommon", linkage: "static"
             }
         }

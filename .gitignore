@@ -49,3 +49,5 @@ junit/
 *.vcxproj.*
 
 .vs/
+
+cleanup\.js
