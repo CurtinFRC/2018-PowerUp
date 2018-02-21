@@ -78,6 +78,62 @@ void Drive::TankDrive(double left, double right, bool square, double maxspeed) {
   SmartDashboard::PutNumber("maxspeed", maxspeed);
 }
 
+bool Drive::EncoderTurn(double speed, double angle, double timeout) {
+  if(turning) {
+    left1->Set(ControlMode::MotionMagic, finalDistance); //drive code in this format
+    right1->Set(ControlMode::MotionMagic, -finalDistance);
+
+    if(abs(finalDistance) + driveTolerance > abs(left1->GetSelectedSensorPosition(0)) &&  abs(finalDistance) - driveTolerance < abs(left1->GetSelectedSensorPosition(0)) && left1->GetSelectedSensorPosition(0) * finalDistance >= 0) {
+      if(abs(finalDistance) + driveTolerance > abs(right1->GetSelectedSensorPosition(0)) &&  abs(finalDistance) - driveTolerance < abs(right1->GetSelectedSensorPosition(0)) && right1->GetSelectedSensorPosition(0) * finalDistance >= 0) {
+        Stop();
+        driving = false;
+        return true;
+      }
+    }
+
+	  if(timeoutCheck->HasPeriodPassed(timeout) && timeout != 0) {
+      Stop();
+      driving = false;
+	 	  return true;
+    }
+  } else {
+    left1->SetSelectedSensorPosition(0,0,10);
+    right1->SetSelectedSensorPosition(0,0,10);
+    timeoutCheck->Reset();
+    int encoderCount = (2.199114857712855 * (angle/360.0)) * kFG;
+    double F = 3.5, P = 4.0, I = 0, D = 0; // P = 2.0
+    int acceleration = 380;
+    if(currentGear) acceleration = 200;
+    left1->SetSelectedSensorPosition(0,0,10);
+    right1->SetSelectedSensorPosition(0,0,10);
+    finalDistance = encoderCount;
+    //setup PID and start driving...
+    left1->ConfigNominalOutputForward(0,0); //configuring the left encoder PID
+    left1->ConfigNominalOutputReverse(0,0);
+    left1->ConfigPeakOutputForward(1,10);
+    left1->ConfigPeakOutputReverse(-1,10);
+    left1->ConfigMotionCruiseVelocity(620*speed, 0);
+    left1->ConfigMotionAcceleration(acceleration, 0);
+
+    left1->Config_kF(0,F,0); //set left PID-F values
+    left1->Config_kP(0,P,0);  //4.2
+    left1->Config_kI(0,I,0);
+    left1->Config_kD(0,D,0);
+
+    right1->ConfigNominalOutputForward(0,0); //configuring the right encoder PID
+    right1->ConfigNominalOutputReverse(0,0);
+    right1->ConfigPeakOutputForward(1,10);
+    right1->ConfigPeakOutputReverse(-1,10);
+    right1->ConfigMotionCruiseVelocity(630*speed, 0);
+    right1->ConfigMotionAcceleration(acceleration, 0);
+
+    right1->Config_kF(0,F,0); //set right PID-F values
+    right1->Config_kP(0,P,0);
+    right1->Config_kI(0,I,0);
+    right1->Config_kD(0,D,0);
+  }
+}
+
 // Start or continue a turn
 bool Drive::TurnAngle(double speed, double angle, double timeout) {
   if(turning) {

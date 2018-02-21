@@ -37,6 +37,7 @@ namespace components {
       void TankDrive(double left, double right, bool square=false, double maxspeed=1);
       void Stop();
       void SetRampRate(double rate);
+      bool EncoderTurn(double speed, double angle, double timeout=0);
       bool TurnAngle(double speed, double angle, double timeout=0);
       bool DriveDistance(double speed, double distance, double timeout=0);
       bool SetSlowGear();
