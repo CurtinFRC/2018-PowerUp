@@ -23,7 +23,7 @@ void Autonomous::SetStageOne(int mode, int startingPosition, int wait) {
     case 0: //Baseline
       stage1 = [=](){return this->Baseline();};
       break;
-
+      
     case 1: //Switch
       if(gameData[0] == 'L') {
         if(startingPosition == 1) stage1 = [=](){return this->Sw1L();};

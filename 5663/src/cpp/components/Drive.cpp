@@ -102,8 +102,7 @@ bool Drive::EncoderTurn(double speed, double angle, double timeout) {
     timeoutCheck->Reset();
     int encoderCount = (2.199114857712855 * (angle/360.0)) * kFG;
     double F = 3.5, P = 4.0, I = 0, D = 0; // P = 2.0
-    int acceleration = 380;
-    if(currentGear) acceleration = 200;
+    int acceleration = 200;
     left1->SetSelectedSensorPosition(0,0,10);
     right1->SetSelectedSensorPosition(0,0,10);
     finalDistance = encoderCount;
