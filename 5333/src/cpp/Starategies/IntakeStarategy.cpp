@@ -20,7 +20,9 @@ void IntakeStarategy::start() {
 }
 
 void IntakeStarategy::tick(double time) {
-  if (intake_toggle->apply(ControlMap::intake_claw_state())) belev->claw(intake_toggle->mode);
+  bool claw_state = ControlMap::intake_claw_state();
+
+  if (intake_toggle->apply(claw_state)) belev->claw(intake_toggle->apply(claw_state));
   belev->intake(ControlMap::intake_motor_power());
 }
 
