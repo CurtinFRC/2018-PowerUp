@@ -12,6 +12,7 @@ deploy {
             targets << "roborio5333"
             component = 'frcUserProgram'
             predeploy << { execute 'rm frcUserProgram' }
+            debug = true
         }
         fileCollectionArtifact('paths') {
             files = project(':common').fileTree(dir: 'src/paths', include: '*.csv')
