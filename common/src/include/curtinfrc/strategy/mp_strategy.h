@@ -26,6 +26,7 @@ namespace curtinfrc {
   private:
     std::shared_ptr<MotionProfilingMode> _mode;
     frc::SpeedController *_esc;
+    bool _running;
 
     frc::Notifier *_notifier;
   };
@@ -49,6 +50,7 @@ namespace curtinfrc {
     AHRS *_ahrs;
     double _ahrs_kP;
     frc::Notifier *_notifier;
+    bool _running;
   };
 
   /**

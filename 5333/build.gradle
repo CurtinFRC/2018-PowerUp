@@ -12,7 +12,7 @@ deploy {
             targets << "roborio5333"
             component = 'frcUserProgram'
             predeploy << { execute 'rm frcUserProgram' }
-            debug = true
+            debug = false
         }
         fileCollectionArtifact('paths') {
             files = project(':common').fileTree(dir: 'src/paths', include: '*.csv')
@@ -20,6 +20,10 @@ deploy {
             targets << "roborio5333"
         }
     }
+}
+
+wpi {
+	ctreVersion = "5.2.2.0"
 }
 
 model {

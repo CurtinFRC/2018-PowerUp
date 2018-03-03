@@ -7,17 +7,22 @@ using namespace curtinfrc;
 
 void MotionProfileStrategy::start() {
   _notifier = new frc::Notifier([=]() {
-    _esc->Set(_mode->calculate());
-    done = _mode->done;
+    if (_running) {
+      _esc->Set(_mode->calculate());
+      done = _mode->done;
+    }
   });
   _mode->init();
+  _running = true;
   _notifier->StartPeriodic(_mode->ctrl_period());
 }
 
 void MotionProfileStrategy::tick(double time) {}
 
 void MotionProfileStrategy::stop() {
+  _running = false;
   _notifier->Stop();
+  delete _notifier;
   _esc->StopMotor();
 }
 
@@ -25,31 +30,38 @@ void MotionProfileStrategy::stop() {
 
 void DrivetrainMotionProfileStrategy::start() {
   _notifier = new frc::Notifier([=]() {
-    double l = _mode_left->calculate();
-    double r = _mode_right->calculate();
+    if (_running) {
+      double l = _mode_left->calculate();
+      double r = _mode_right->calculate();
 
-    if (_ahrs != nullptr && _mode_left->gyro_capable() && _mode_right->gyro_capable()) {
-      double gyro = fmod(-_ahrs->GetYaw(), 360);
-      double heading = _mode_left->gyro_desired();
+      if (_ahrs != nullptr && _mode_left->gyro_capable() && _mode_right->gyro_capable()) {
+        double gyro = fmod(-_ahrs->GetYaw(), 360);
+        double heading = _mode_left->gyro_desired();
 
-      double angle_error = fmod(heading - gyro, 360);
-      angle_error = angle_error > 180 ? angle_error - 360 : angle_error;
-      double turn = _ahrs_kP * angle_error;
+        double angle_error = fmod(heading - gyro, 360);
+        angle_error = angle_error > 180 ? angle_error - 360 : angle_error;
+        double turn = _ahrs_kP * angle_error;
 
-      l -= turn;
-      r += turn;
+        l -= turn;
+        r += turn;
+      }
+
+      _drivetrain->set_left(l);
+      _drivetrain->set_right(r);
     }
-
-    _drivetrain->set_left(l);
-    _drivetrain->set_right(r);
   });
+  _mode_left->init();
+  _mode_right->init();
+  _running = true;
   _notifier->StartPeriodic(_mode_left->ctrl_period());
 }
 
 void DrivetrainMotionProfileStrategy::tick(double time) { }
 
 void DrivetrainMotionProfileStrategy::stop() {
+  _running = false;
   _notifier->Stop();
+  delete _notifier;
   _drivetrain->set_both(0);
 }
 
