@@ -1,0 +1,217 @@
+[1mdiff --git a/5663/src/cpp/Robot.cpp b/5663/src/cpp/Robot.cpp[m
+[1mindex 8549994..72e8849 100644[m
+[1m--- a/5663/src/cpp/Robot.cpp[m
+[1m+++ b/5663/src/cpp/Robot.cpp[m
+[36m@@ -79,9 +79,9 @@[m [mpublic:[m
+ [m
+     timer = new Timer(); timer->Start();[m
+ [m
+[31m-    AutoChooser->AddDefault("Cross Baseline",(int*) 0);[m
+[31m-    AutoChooser->AddObject("Single Switch",(int*) 1);[m
+[31m-    AutoChooser->AddObject("Single Scale",(int*) 2);[m
+[32m+[m[32m    AutoChooser->AddObject("Cross Baseline",(int*) 0);[m
+[32m+[m[32m    AutoChooser->AddDefault("Switch",(int*) 1);[m
+[32m+[m[32m    AutoChooser->AddObject("Scale",(int*) 2);[m
+     SmartDashboard::PutData("AutoChooser", AutoChooser);[m
+ [m
+     StartingPosition->AddObject("Left (1)", (int*) 1);[m
+[36m@@ -89,8 +89,8 @@[m [mpublic:[m
+     StartingPosition->AddObject("Right (3)", (int*) 3);[m
+     SmartDashboard::PutData("StartingPosition", StartingPosition);[m
+ [m
+[31m-    AutoWait->AddDefault("0S",(int*) 0);[m
+[31m-    AutoWait->AddObject("1S",(int*) 1);[m
+[32m+[m[32m    AutoWait->AddObject("0S",(int*) 0);[m
+[32m+[m[32m    AutoWait->AddDefault("1S",(int*) 1);[m
+     AutoWait->AddObject("2S",(int*) 2);[m
+     AutoWait->AddObject("3S",(int*) 3);[m
+     AutoWait->AddObject("4S",(int*) 4);[m
+[36m@@ -99,8 +99,8 @@[m [mpublic:[m
+     AutoWait->AddObject("7S",(int*) 7);[m
+     AutoWait->AddObject("8S",(int*) 8);[m
+     AutoWait->AddObject("9S",(int*) 9);[m
+[31m-    AutoWait->AddObject("10S",(int*) 10);[m
+     SmartDashboard::PutData("AutoWait", AutoWait);[m
+[32m+[m[41m    [m
+     station = new Joystick(2);[m
+   }[m
+ [m
+[36m@@ -163,8 +163,8 @@[m [mpublic:[m
+     } else if(xbox2->GetYButton()) {[m
+       lift->SetHighPosition();[m
+     }[m
+[31m-[m
+     lift->SetSpeed(-xbox2->GetY(xbox2->kRightHand));[m
+[32m+[m[32m    lift->OverrideLift(station->GetRawButton(4));[m
+ [m
+   //———[manipulator]————————————————————————————————————————————————————————————[m
+     if(xbox2->GetBumper(xbox2->kLeftHand)) {[m
+[36m@@ -181,14 +181,11 @@[m [mpublic:[m
+     if(station->GetRawButton(4)) ramp->ReleaseFoulStopper();[m
+     if(station->GetRawButton(1)) ramp->ConfirmIntentionalDeployment();[m
+ [m
+[31m-  //———[climber]————————————————————————————————————————————————————————————————[m
+[31m-[m
+[31m-[m
+   //———[periodic]———————————————————————————————————————————————————————————————[m
+     message = 76;[m
+[31m-    SmartDashboard::PutBoolean("Joystickstation,", station->GetRawButton(0));[m
+     SmartDashboard::PutBoolean("Joystickstation1,", station->GetRawButton(1));[m
+[31m-    SmartDashboard::PutBoolean("Joystickstation2,", station->GetRawButton(2));[m
+[32m+[m[32m    SmartDashboard::PutBoolean("Joystickstation4,", station->GetRawButton(4));[m
+[32m+[m[32m    SmartDashboard::PutBoolean("Joystickstation3,", station->GetRawButton(3));[m
+ [m
+     SmartDashboard::PutBoolean("transaction", arduino->Transaction(&message, 1, NULL, 0));[m
+     SmartDashboard::PutBoolean("rampsReady", (timer->GetMatchTime() < 30));[m
+[1mdiff --git a/5663/src/cpp/autonomous/Autonomous.cpp b/5663/src/cpp/autonomous/Autonomous.cpp[m
+[1mindex cac67ca..3ad583c 100644[m
+[1m--- a/5663/src/cpp/autonomous/Autonomous.cpp[m
+[1m+++ b/5663/src/cpp/autonomous/Autonomous.cpp[m
+[36m@@ -18,7 +18,7 @@[m [mvoid Autonomous::SetStageOne(int mode, int startingPosition, int wait) {[m
+   autoState = 0;[m
+   waitStart = wait;[m
+   gameData = DriverStation::GetInstance().GetGameSpecificMessage();[m
+[31m-[m
+[32m+[m[32m  if(gameData.length() > 0) {[m
+   switch(mode) {[m
+     case 0: //Baseline[m
+       stage1 = [=](){return this->Baseline();};[m
+[36m@@ -28,27 +28,45 @@[m [mvoid Autonomous::SetStageOne(int mode, int startingPosition, int wait) {[m
+       if(gameData[0] == 'L') {[m
+         if(startingPosition == 1) stage1 = [=](){return this->Sw1L();};[m
+         else if(startingPosition == 2) stage1 = [=](){return this->Sw2L();};[m
+[31m-        else stage1 = [=](){return this->Sw3L();};[m
+[32m+[m[32m        else {[m
+[32m+[m[32m          if(gameData[1] == 'R') stage1 = [=](){return this->Sc3R();};[m
+[32m+[m[32m          else stage1 = [=](){return this->Baseline();};[m
+[32m+[m[32m        }[m
+       } else {[m
+[31m-        if(startingPosition == 1) stage1 = [=](){return this->Sw1R();};[m
+[32m+[m[32m        if(startingPosition == 1) {[m
+[32m+[m[32m          if(gameData[1] == 'L') stage1 = [=](){return this->Sc1L();};[m
+[32m+[m[32m          else stage1 = [=](){return this->Baseline();};[m
+[32m+[m[32m        }[m
+         else if(startingPosition == 2) stage1 = [=](){return this->Sw2R();};[m
+         else stage1 = [=](){return this->Sw3R();};[m
+       }[m
+       break;[m
+ [m
+     case 2: //Scale[m
+[31m-      if(gameData[0] == 'L') {[m
+[32m+[m[32m      if(gameData[1] == 'L') {[m
+         if(startingPosition == 1) stage1 = [=](){return this->Sc1L();};[m
+[31m-        else if(startingPosition == 2) stage1 = [=](){return this->Sc2L();};[m
+[31m-        else stage1 = [=](){return this->Sc3L();};[m
+[32m+[m[32m        else if(startingPosition == 2) {[m
+[32m+[m[32m          if(gameData[0] == 'L') stage1 = [=](){return this->Sw2L();};[m
+[32m+[m[32m          else stage1 = [=](){return this->Sw2R();};[m
+[32m+[m[32m        }[m
+[32m+[m[32m        else {[m
+[32m+[m[32m          if(gameData[0] == 'R') stage1 = [=](){return this->Sw3R();};[m
+[32m+[m[32m          else stage1 = [=](){return this->Baseline();};[m
+[32m+[m[32m        }[m
+       } else {[m
+[31m-        if(startingPosition == 1) stage1 = [=](){return this->Sc1R();};[m
+[31m-        else if(startingPosition == 2) stage1 = [=](){return this->Sc2R();};[m
+[32m+[m[32m        if(startingPosition == 1) {[m
+[32m+[m[32m          if(gameData[0] == 'L') stage1 = [=](){return this->Sw1L();};[m
+[32m+[m[32m          else stage1 = [=](){return this->Baseline();};[m
+[32m+[m[32m        }[m
+[32m+[m[32m        else if(startingPosition == 2) {[m
+[32m+[m[32m          if(gameData[0] == 'L') stage1 = [=](){return this->Sw2L();};[m
+[32m+[m[32m          else stage1 = [=](){return this->Sw2R();};[m
+[32m+[m[32m        }[m
+         else stage1 = [=](){return this->Sc3R();};[m
+       }[m
+       break;[m
+   }[m
+[31m-[m
+[32m+[m[32m  }[m
+ }[m
+ [m
+ void Autonomous::SetStageTwo(int mode) {[m
+[36m@@ -87,9 +105,9 @@[m [mvoid Autonomous::RunPeriodic() {[m
+   // gameData will be an array with 3 characters, eg. "LRL"[m
+   // check https://wpilib.screenstepslive.com/s/currentCS/m/getting_started/l/826278-2018-game-data-details[m
+   SmartDashboard::PutString("switch", &gameData[0]);[m
+[31m-  if(&gameData[0] == "L") SmartDashboard::PutBoolean("switchBool", true);[m
+[32m+[m[32m  if(gameData[0] == 'L') SmartDashboard::PutBoolean("switchBool", true);[m
+   else SmartDashboard::PutBoolean("switchBool", false);[m
+[31m-  if(&gameData[0] == "L") SmartDashboard::PutBoolean("scaleBool", true);[m
+[32m+[m[32m  if(gameData[0] == 'L') SmartDashboard::PutBoolean("scaleBool", true);[m
+   else SmartDashboard::PutBoolean("scaleBool", false);[m
+   SmartDashboard::PutString("scale", &gameData[1]);[m
+   SmartDashboard::PutNumber("autoState", autoState);[m
+[36m@@ -105,7 +123,6 @@[m [mvoid Autonomous::RunPeriodic() {[m
+ [m
+ bool Autonomous::Stop() {[m
+   autoDrive->Stop();[m
+[31m-  //autoMan->SetIntakeSpeed(0);[m
+   return true;[m
+ }[m
+ [m
+[36m@@ -127,7 +144,7 @@[m [mbool Autonomous::BackDrive() {[m
+     case 0:[m
+       autoMan->SetIntakeSpeed(-1);[m
+       autoMan->Restrain();[m
+[31m-      //autoDrive->TankDnrive(-0.5, -0.5);[m
+[32m+[m[32m      autoDrive->TankDrive(-0.5, -0.5);[m
+       if(Wait(0.3)) autoState++;[m
+       break;[m
+     case 1:[m
+[1mdiff --git a/5663/src/cpp/components/Lift.cpp b/5663/src/cpp/components/Lift.cpp[m
+[1mindex 63822ef..9e6e202 100644[m
+[1m--- a/5663/src/cpp/components/Lift.cpp[m
+[1m+++ b/5663/src/cpp/components/Lift.cpp[m
+[36m@@ -56,8 +56,10 @@[m [mvoid Lift::SetLowPosition() {[m
+ }[m
+ [m
+ void Lift::Stop() {[m
+[31m-  manualMode = true;[m
+[31m-  SetSpeed(0);[m
+[32m+[m[32m  if(!encoderOverride) {[m
+[32m+[m[32m    manualMode = true;[m
+[32m+[m[32m    SetSpeed(0);[m
+[32m+[m[32m  }[m
+ }[m
+ [m
+ // Set speed of Lift class motors[m
+[1mdiff --git a/5663/src/cpp/components/Ramp.cpp b/5663/src/cpp/components/Ramp.cpp[m
+[1mindex 1ffcd39..7eb7970 100644[m
+[1m--- a/5663/src/cpp/components/Ramp.cpp[m
+[1m+++ b/5663/src/cpp/components/Ramp.cpp[m
+[36m@@ -9,6 +9,7 @@[m [mRamp::Ramp(int fwd, int rev, int fsFwd, int fsRev) {[m
+ [m
+   fsSolenoid = new DoubleSolenoid(fsFwd, fsRev);[m
+   fsSolenoid->Set(solenoid->kReverse);[m
+[32m+[m[32m  SmartDashboard::PutBoolean("Foul Stoppers Released", false);[m
+ }[m
+ [m
+ // Deploy ramp[m
+[36m@@ -19,10 +20,12 @@[m [mvoid Ramp::ConfirmIntentionalDeployment() {[m
+ [m
+ void Ramp::ReleaseFoulStopper() {[m
+   if(rampsDown) fsSolenoid->Set(fsSolenoid->kForward);[m
+[32m+[m[32m  SmartDashboard::PutBoolean("Foul Stoppers Released", true);[m
+ }[m
+ [m
+ void Ramp::ResetFoulStopper() {[m
+   fsSolenoid->Set(fsSolenoid->kReverse);[m
+[32m+[m[32m  SmartDashboard::PutBoolean("Foul Stoppers Released", false);[m
+ }[m
+ [m
+ // Reset ramp[m
+[1mdiff --git a/5663/src/include/autonomous/Autonomous.h b/5663/src/include/autonomous/Autonomous.h[m
+[1mindex 10cb5b7..c1b1ba3 100644[m
+[1m--- a/5663/src/include/autonomous/Autonomous.h[m
+[1m+++ b/5663/src/include/autonomous/Autonomous.h[m
+[36m@@ -47,8 +47,7 @@[m [mnamespace autonomous {[m
+       bool Sc2R();[m
+       bool Sc3R();[m
+ [m
+[31m-      std::string gameData = "LRL";  //BIG OOF IF NO REMOVE[m
+[31m-[m
+[32m+[m[32m      std::string gameData;[m
+       std::function<bool()> autoFunction,[m
+       stage1 = [=](){return this->Baseline();},[m
+       stage2 = [=](){return this->Stop();},[m
