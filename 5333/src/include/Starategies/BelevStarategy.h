@@ -3,8 +3,8 @@
 #include "curtinfrc/motors/CurtinTalonSRX.h"
 #include "curtinfrc/strategy/strategy.h"
 
-#include "..\Map.h"
-#include "..\Belev.h"
+#include "../Map.h"
+#include "../Belev.h"
 
 using namespace curtinfrc;
 

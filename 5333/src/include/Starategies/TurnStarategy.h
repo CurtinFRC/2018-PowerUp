@@ -4,7 +4,7 @@
 #include "curtinfrc/drivetrain.h"
 #include "curtinfrc/PID.h"
 
-#include "..\Map.h"
+#include "../Map.h"
 
 using namespace curtinfrc;
 

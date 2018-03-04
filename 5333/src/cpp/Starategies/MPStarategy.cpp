@@ -1,4 +1,4 @@
-#include "Starategies\MPStarategy.h"
+#include "Starategies/MPStarategy.h"
 
 #include <string>
 #include <iostream>

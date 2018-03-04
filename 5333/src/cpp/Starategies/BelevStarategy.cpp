@@ -1,4 +1,4 @@
-#include "Starategies\BelevStarategy.h"
+#include "Starategies/BelevStarategy.h"
 
 #include <iostream>
 

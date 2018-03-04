@@ -1,6 +1,11 @@
 apply plugin: "jaci.openrio.gradle.GradleRIO"
 apply plugin: "cpp"
 
+wpi {
+	ctreVersion = "5.2.2.0"
+    wpilibVersion = "2018.3.3"
+}
+
 model {
     components {
         curtinFrcCommon(NativeLibrarySpec) {
