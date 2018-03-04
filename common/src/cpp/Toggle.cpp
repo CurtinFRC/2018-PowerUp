@@ -4,7 +4,6 @@ using namespace curtinfrc;
 
 Toggle::Toggle(Trigger _mode) {
   trigger_mode = _mode;
-  mode = _mode == Trigger::False;
 }
 
 bool Toggle::apply(bool statement) {

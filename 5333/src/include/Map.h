@@ -36,18 +36,17 @@ namespace Map { // Map ports
     const int n_intake_solenoids                                           = 1;
     constexpr int intake_solenoids[n_intake_solenoids][nSolenoidPorts]     = {{2, 5}};
 
-    constexpr int brake_solenoid[nSolenoidPorts]       = {1, 6};
-
-    constexpr int shifter_solenoid[nSolenoidPorts]   = {0, 7};
+    constexpr int brake_solenoid[nSolenoidPorts]      = {1, 6};
+    constexpr int shifter_solenoid[nSolenoidPorts]    = {0, 7};
   };
 
   namespace Robot { // Robot stats
-    constexpr float max_v             = 9.8;
-    constexpr float max_a             = 3;
-    constexpr float max_j             = 60;
-    constexpr float wheel_diam        = 0.1524;  // Metres
-    constexpr float wheel_circ        = 0.4788;  // Metres
-    constexpr float track_width       = 0.61;    // Metres
+    constexpr float max_v                    = 9.8;
+    constexpr float max_a                    = 3;
+    constexpr float max_j                    = 60;
+    constexpr float wheel_diam               = 0.1524;  // Metres
+    constexpr float wheel_circ               = 0.4788;  // Metres
+    constexpr float track_width              = 0.61;    // Metres
     constexpr int encoder_ticks_per_rot[2]   = { 1440, 1000 };
 
     // Belev winch

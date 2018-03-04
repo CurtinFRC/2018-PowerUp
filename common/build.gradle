@@ -7,6 +7,7 @@ model {
             targetPlatform 'roborio'
             binaries.all {
                 if (it instanceof SharedLibraryBinarySpec) it.buildable = false   // This library should be static only
+				cppCompiler.args << '-g'
             }
             sources.cpp {
                 source {
