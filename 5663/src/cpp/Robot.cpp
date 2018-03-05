@@ -100,7 +100,7 @@ public:
     AutoWait->AddObject("8S",(int*) 8);
     AutoWait->AddObject("9S",(int*) 9);
     SmartDashboard::PutData("AutoWait", AutoWait);
-    
+
     station = new Joystick(2);
   }
 
@@ -164,6 +164,8 @@ public:
       lift->SetHighPosition();
     }
     lift->SetSpeed(-xbox2->GetY(xbox2->kRightHand));
+
+    // Lift Safety Override
     lift->OverrideLift(station->GetRawButton(4));
 
   //———[manipulator]————————————————————————————————————————————————————————————

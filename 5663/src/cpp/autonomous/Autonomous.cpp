@@ -23,7 +23,7 @@ void Autonomous::SetStageOne(int mode, int startingPosition, int wait) {
     case 0: //Baseline
       stage1 = [=](){return this->Baseline();};
       break;
-      
+
     case 1: //Switch
       if(gameData[0] == 'L') {
         if(startingPosition == 1) stage1 = [=](){return this->Sw1L();};
@@ -170,7 +170,7 @@ bool Autonomous::BackDrive() {
 bool Autonomous::Baseline() {
   switch (autoState) {
     case 0:
-      if(autoDrive->DriveDistance(1, 3.0)) autoState++;  //Change to 4secs after testing
+      if(autoDrive->DriveDistance(1, 3.4, 5)) autoState++;
       break;
     default:
       Stop();
