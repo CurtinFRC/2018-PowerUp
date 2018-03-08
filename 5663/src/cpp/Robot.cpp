@@ -178,6 +178,12 @@ public:
 
   //———[manipulator]————————————————————————————————————————————————————————————
     if(xbox2->GetBumper(xbox2->kLeftHand)) {
+      if(fabs(xbox2->GetY(xbox2->kLeftHand)) > 0.18) {
+        man->OverrideIntake(true);
+        man->SetIntakeSpeed(-xbox2->GetY(xbox2->kLeftHand));
+      } else {
+        man->OverrideIntake(false);
+      }
       man->Release();
     } else {
       man->Restrain();
