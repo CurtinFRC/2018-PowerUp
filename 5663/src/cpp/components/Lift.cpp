@@ -7,12 +7,12 @@ Lift::Lift(int m1, int m2) {
   motor1 = new TalonSRX(m1);
   motor2 = new TalonSRX(m2);
 
-  motor1->ConfigContinuousCurrentLimit(30, 0);
-  motor2->ConfigContinuousCurrentLimit(30, 0);
+  motor1->ConfigContinuousCurrentLimit(27, 0);
+  motor2->ConfigContinuousCurrentLimit(27, 0);
   motor1->ConfigPeakCurrentLimit(40, 0);
   motor2->ConfigPeakCurrentLimit(40, 0);
-  motor1->ConfigPeakCurrentDuration(100, 0);
-  motor2->ConfigPeakCurrentDuration(100, 0);
+  motor1->ConfigPeakCurrentDuration(75, 0);
+  motor2->ConfigPeakCurrentDuration(75, 0);
   motor1->EnableCurrentLimit(true);
   motor2->EnableCurrentLimit(true);
 

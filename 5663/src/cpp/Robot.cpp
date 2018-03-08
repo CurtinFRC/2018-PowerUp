@@ -32,7 +32,8 @@ class Robot : public IterativeRobot {
   PowerDistributionPanel *pdp;
   SendableChooser<int*> *AutoChooser; // Choose auto mode
   SendableChooser<int*> *StartingPosition; // Choose starting position
-  SendableChooser<int*> *AutoWait;
+  SendableChooser<int*> *AutoWait; // Time to wait before starting auto
+  SendableChooser<int*> *FarMode; // Chooser to disable far switch/scale
   Drive *drive;
   Lift *lift;
   Ramp *ramp;
@@ -89,8 +90,8 @@ public:
     StartingPosition->AddObject("Right (3)", (int*) 3);
     SmartDashboard::PutData("StartingPosition", StartingPosition);
 
-    AutoWait->AddObject("0S",(int*) 0);
-    AutoWait->AddDefault("1S",(int*) 1);
+    AutoWait->AddDefault("0S",(int*) 0);
+    AutoWait->AddObject("1S",(int*) 1);
     AutoWait->AddObject("2S",(int*) 2);
     AutoWait->AddObject("3S",(int*) 3);
     AutoWait->AddObject("4S",(int*) 4);
@@ -100,7 +101,11 @@ public:
     AutoWait->AddObject("8S",(int*) 8);
     AutoWait->AddObject("9S",(int*) 9);
     SmartDashboard::PutData("AutoWait", AutoWait);
-    
+
+    FarMode->AddDefault("Enable Far Switch",(int*) 1);
+    FarMode->AddObject("Disable Far Switch",(int*) 0);
+    SmartDashboard::PutData("FarMode", FarMode);
+
     station = new Joystick(2);
   }
 
@@ -110,7 +115,9 @@ public:
     drive->ResetEncoder();
     lift->ResetEncoder();
     lift->SetLowPosition();
+    ramp->Reset();
 
+    auton->SetFarMode((int)FarMode->GetSelected());
     auton->SetStageOne((int)AutoChooser->GetSelected(), (int)StartingPosition->GetSelected(), (int)AutoWait->GetSelected());
     auton->ChooseStage();
   }
@@ -127,6 +134,7 @@ public:
     lift->Stop();
     man->SetIntakeSpeed(0);
     ramp->Reset();
+    timer->Reset();
   }
 
   void TeleopPeriodic() {
@@ -164,10 +172,18 @@ public:
       lift->SetHighPosition();
     }
     lift->SetSpeed(-xbox2->GetY(xbox2->kRightHand));
+
+    // Lift Safety Override
     lift->OverrideLift(station->GetRawButton(4));
 
   //———[manipulator]————————————————————————————————————————————————————————————
     if(xbox2->GetBumper(xbox2->kLeftHand)) {
+      if(fabs(xbox2->GetY(xbox2->kLeftHand)) > 0.18) {
+        man->OverrideIntake(true);
+        man->SetIntakeSpeed(-xbox2->GetY(xbox2->kLeftHand));
+      } else {
+        man->OverrideIntake(false);
+      }
       man->Release();
     } else {
       man->Restrain();
@@ -176,8 +192,11 @@ public:
 
   //———[ramp]———————————————————————————————————————————————————————————————————
     if(xbox->GetXButton() && xbox2->GetXButton() && timer->GetMatchTime() < 30)  ramp->ConfirmIntentionalDeployment();
+    //if(xbox->GetXButton() && xbox2->GetXButton() && timer->HasPeriodPassed(135)) ramp->ConfirmIntentionalDeployment(); //Use if above line broke
+
     if(xbox->GetStartButton() || xbox2->GetStartButton()) ramp->ReleaseFoulStopper();
     if(xbox->GetBackButton() || xbox2->GetBackButton()) ramp->ResetFoulStopper();
+
     if(station->GetRawButton(4)) ramp->ReleaseFoulStopper();
     if(station->GetRawButton(1)) ramp->ConfirmIntentionalDeployment();
 

@@ -12,6 +12,17 @@ Autonomous::Autonomous(Drive *drive, Lift *lift, Manipulator *man) {
   timer->Start();
 }
 
+// Set whether to do far switch or not
+void Autonomous::SetFarMode(int choice) {
+  if(choice == 0) {
+    //Disable Far Mode
+    FarModeEnabled = false;
+  } else {
+    //Enable Far Mode
+    FarModeEnabled = true;
+  }
+}
+
 // Set starting position and auto Mode
 void Autonomous::SetStageOne(int mode, int startingPosition, int wait) {
   currentStage = 0;
@@ -23,7 +34,7 @@ void Autonomous::SetStageOne(int mode, int startingPosition, int wait) {
     case 0: //Baseline
       stage1 = [=](){return this->Baseline();};
       break;
-      
+
     case 1: //Switch
       if(gameData[0] == 'L') {
         if(startingPosition == 1) stage1 = [=](){return this->Sw1L();};
@@ -158,7 +169,7 @@ bool Autonomous::BackDrive() {
       autoState++;
       break;
     case 3:
-      if(Wait(waitStart)) autoState++;
+      if(Wait(waitStart+0.5)) autoState++;
       break;
     default:
       Stop();
@@ -170,7 +181,7 @@ bool Autonomous::BackDrive() {
 bool Autonomous::Baseline() {
   switch (autoState) {
     case 0:
-      if(autoDrive->DriveDistance(1, 3.0)) autoState++;  //Change to 4secs after testing
+      if(autoDrive->DriveDistance(1, 3.4, 5)) autoState++;
       break;
     default:
       Stop();
@@ -315,6 +326,29 @@ bool Autonomous::Sw2L() {
 bool Autonomous::Sw3L() {
   switch(autoState) {
     case 0:
+      if(autoDrive->DriveDistance(1, 6)) autoState++;
+      break;
+    case 1:
+      if(autoDrive->TurnAngle(0.8, -90, 1)) autoState++;
+      break;
+    case 2:
+      if(autoDrive->DriveDistance(1, 5)) autoState++;
+      break;
+    case 3:
+      if(autoDrive->TurnAngle(0.8, -90, 1)) autoState++;
+      break;
+    case 4:
+      if(autoDrive->DriveDistance(1, 2, 1.5)) autoState++;
+      break;
+    case 5:
+      if(autoDrive->TurnAngle(0.8, -90, 1)) autoState++;
+      break;
+    case 6:
+      if(autoDrive->DriveDistance(1, 0.5, 0.6)) autoState++;
+      break;
+    case 7:
+      autoMan->SetIntakeSpeed(1);
+      if(Wait(1)) autoState++;
       break;
     default:
       Stop();
@@ -327,6 +361,29 @@ bool Autonomous::Sw3L() {
 bool Autonomous::Sw1R() {
   switch(autoState) {
     case 0:
+      if(autoDrive->DriveDistance(1, 6)) autoState++;
+      break;
+    case 1:
+      if(autoDrive->TurnAngle(0.8, 90, 1)) autoState++;
+      break;
+    case 2:
+      if(autoDrive->DriveDistance(1, 5)) autoState++;
+      break;
+    case 3:
+      if(autoDrive->TurnAngle(0.8, 90, 1)) autoState++;
+      break;
+    case 4:
+      if(autoDrive->DriveDistance(1, 2, 1.5)) autoState++;
+      break;
+    case 5:
+      if(autoDrive->TurnAngle(0.8, 90, 1)) autoState++;
+      break;
+    case 6:
+      if(autoDrive->DriveDistance(1, 0.5, 0.6)) autoState++;
+      break;
+    case 7:
+      autoMan->SetIntakeSpeed(1);
+      if(Wait(1)) autoState++;
       break;
     default:
       Stop();
